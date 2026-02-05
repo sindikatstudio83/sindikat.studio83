@@ -1,1 +1,96 @@
+/* assets/css/pages/index.css */
+
+/* HERO */
+.hero {
+  padding: 140px 0 120px;
+}
+
+.heroInner {
+  max-width: 720px;
+}
+
+.heroTitle {
+  font-size: clamp(42px, 6vw, 68px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.heroSub {
+  margin-top: 20px;
+  font-size: 18px;
+  color: rgba(255,255,255,.78);
+  line-height: 1.6;
+}
+
+.heroActions {
+  margin-top: 34px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* SECTION */
+.section {
+  padding: 100px 0;
+}
+
+.sectionHead {
+  max-width: 560px;
+  margin-bottom: 48px;
+}
+
+.sectionHead h2 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.sectionHead p {
+  margin-top: 12px;
+  color: rgba(255,255,255,.72);
+}
+
+/* SERVICES */
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 980px) {
+  .serviceGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .serviceGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CTA */
+.ctaSection {
+  padding: 120px 0;
+}
+
+.ctaBox {
+  max-width: 720px;
+  padding: 42px;
+  border-radius: 16px;
+  border: 1px solid #2A2A31;
+  background: rgba(11,11,13,.65);
+  backdrop-filter: blur(10px);
+}
+
+.ctaBox h2 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.ctaBox p {
+  margin-top: 12px;
+  margin-bottom: 28px;
+  color: rgba(255,255,255,.72);
+}
 
