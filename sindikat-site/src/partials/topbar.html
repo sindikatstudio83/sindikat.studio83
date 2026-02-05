@@ -1,1 +1,47 @@
+<!-- BOTTOM BAR -->
+<header class="topbar">
+  <div class="topbarInner reveal">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>SINDIKAT</div>
+    </div>
+
+    <!-- CTA (desktop centered) -->
+    <a class="btn primary ctaCenter" href="https://sindikatevents.me/kontakt/">
+      <span class="dot"></span> Sarađuj sa nama
+    </a>
+
+    <div class="navWrap">
+      <nav aria-label="Primary">
+        <a href="https://sindikatevents.me/">Početna</a>
+        <a href="https://sindikatevents.me/poslovi/">Poslovi</a>
+        <a href="https://sindikatevents.me/onama/">O nama</a>
+        <a href="https://sindikatevents.me/kontakt/">Kontakt</a>
+      </nav>
+
+      <!-- BITNO: zadržan ID -->
+      <button class="hamburger" id="mobileMenuBtn" aria-label="Open menu" type="button" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div class="mobileMenu" id="mobileMenu" aria-label="Mobile menu">
+    <div class="mobileMenuInner">
+      <a href="https://sindikatevents.me/">Početna</a>
+      <a href="https://sindikatevents.me/poslovi/">Poslovi</a>
+      <a href="https://sindikatevents.me/onama/">O nama</a>
+      <a href="https://sindikatevents.me/kontakt/">Kontakt</a>
+      <!-- optional anchor links (page-specific) -->
+      <a href="#jobs">Oglasi</a>
+      <a href="#categories">Kategorije</a>
+    </div>
+  </div>
+</header>
+
+<!-- overlay (for mobile menu) -->
+<div id="mobileOverlay"
+  style="position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index:49; opacity:0; pointer-events:none;">
+</div>
 
