@@ -55,3 +55,69 @@
     { passive: true }
   );
 })();
+
+
+
+// assets/js/components.js
+
+const prefersReduced =
+  window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * Mobile menu toggle (radi sa elementima:
+ * #mobileMenuBtn, #mobileMenu, #mobileOverlay)
+ */
+(function mobileMenu() {
+  const btn = document.getElementById("mobileMenuBtn");
+  const menu = document.getElementById("mobileMenu");
+  const overlay = document.getElementById("mobileOverlay");
+
+  if (!btn || !menu) return;
+
+  function setOpen(open) {
+    menu.classList.toggle("open", open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+
+    if (overlay) {
+      overlay.style.opacity = open ? "1" : "0";
+      overlay.style.pointerEvents = open ? "auto" : "none";
+    }
+  }
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setOpen(!menu.classList.contains("open"));
+  });
+
+  overlay?.addEventListener("click", () => setOpen(false));
+
+  document.addEventListener("click", (e) => {
+    if (!menu.classList.contains("open")) return;
+    const inside = menu.contains(e.target) || btn.contains(e.target);
+    if (!inside) setOpen(false);
+  });
+
+  menu.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => setOpen(false));
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+})();
+
+/**
+ * Optional: partner marquee (ako postoji #partnersRow i želiš auto-move bez animejs)
+ * Ako koristiš anime.js, preskoči ovo.
+ */
+(function partnersMarquee() {
+  const row = document.getElementById("partnersRow");
+  if (!row) return;
+  if (prefersReduced) return;
+
+  // Ako već imaš anime.js loop, ne diramo.
+  if (window.anime) return;
+
+  // Minimal CSS-driven fallback: ništa ne radi ovdje.
+})();
