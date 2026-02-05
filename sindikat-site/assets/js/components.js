@@ -121,3 +121,53 @@ const prefersReduced =
 
   // Minimal CSS-driven fallback: ništa ne radi ovdje.
 })();
+
+
+// assets/js/components.js
+
+(() => {
+  const btn = document.getElementById("mobileMenuBtn");
+  const menu = document.getElementById("mobileMenu");
+  const overlay = document.getElementById("mobileOverlay");
+
+  if (!btn || !menu) return;
+
+  const setMobile = (open) => {
+    menu.classList.toggle("open", open);
+
+    if (overlay) {
+      overlay.style.opacity = open ? "1" : "0";
+      overlay.style.pointerEvents = open ? "auto" : "none";
+    }
+
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  };
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setMobile(!menu.classList.contains("open"));
+  });
+
+  overlay?.addEventListener("click", () => setMobile(false));
+
+  document.addEventListener("click", (e) => {
+    if (!menu.classList.contains("open")) return;
+    const inside = menu.contains(e.target) || btn.contains(e.target);
+    if (!inside) setMobile(false);
+  });
+
+  // zatvori kad klikneš link u meniju
+  menu.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => setMobile(false));
+  });
+
+  // ESC zatvara
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setMobile(false);
+  });
+
+  // fail-safe: na resize preko breakpointa zatvori menu
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 980) setMobile(false);
+  });
+})();
