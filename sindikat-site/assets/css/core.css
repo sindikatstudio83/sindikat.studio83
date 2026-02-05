@@ -147,3 +147,61 @@ img{max-width:100%; display:block}
   opacity:.06;
   mix-blend-mode:overlay;
 }
+
+
+/* REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  will-change: transform, opacity;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* BG VIDEO SYSTEM (ako koristiš background.html) */
+.bgVideo {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  filter: saturate(1.05) contrast(1.08) brightness(0.55);
+}
+.bgVideoOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.22),
+    rgba(6, 1, 13, 0.86) 62%,
+    rgba(6, 1, 13, 0.92)
+  );
+}
+.heroBg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.blob {
+  position: fixed;
+  z-index: 1;
+  pointer-events: none;
+  width: 520px;
+  height: 520px;
+  border-radius: 999px;
+  filter: blur(18px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+.blob.b2 {
+  width: 420px;
+  height: 420px;
+  opacity: 0.45;
+}
