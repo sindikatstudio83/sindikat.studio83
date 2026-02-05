@@ -118,3 +118,32 @@ img{max-width:100%; display:block}
 @media (max-width:520px){
   .wrap{padding:16px 14px 96px}
 }
+
+
+/* =========================
+   GLOBAL BACKGROUND
+========================= */
+
+.siteBackground{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(800px 520px at 12% 10%, rgba(243,106,46,.16), transparent 60%),
+    radial-gradient(900px 520px at 88% 8%, rgba(255,255,255,.06), transparent 58%),
+    linear-gradient(180deg, #0B0B0D, #141418);
+
+  overflow: hidden;
+}
+
+/* subtle grain */
+.siteBackground::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.06;
+  mix-blend-mode:overlay;
+}
