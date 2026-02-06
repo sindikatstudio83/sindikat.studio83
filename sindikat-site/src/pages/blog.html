@@ -2,21 +2,78 @@
 <html lang="sr">
   <head>
     <!-- PARTIAL: head -->
+    <title>Blog — Sindikat</title>
+    <meta
+      name="description"
+      content="Blog: kratke bilješke o performansu, aktivacijama, kreativi i operativi. Jasno, konkretno, bez prazne priče."
+    />
+    <link rel="stylesheet" href="/assets/css/pages/blog.css" />
   </head>
 
   <body data-page="blog">
-
     <!-- PARTIAL: background -->
     <!-- PARTIAL: topbar -->
 
     <main id="top">
-      <section class="wrap">
-        <h1>Blog</h1>
+      <!-- HERO -->
+      <section class="hero wrap">
+        <h1 class="reveal">Blog</h1>
+        <p class="lead reveal">
+          Kratki tekstovi o tome kako pravimo rezultat: struktura kampanja,
+          kreativni testovi, aktivacije i operativa.
+        </p>
+
+        <div class="blogToolbar card reveal">
+          <div class="toolLeft">
+            <div class="inputIcon" aria-hidden="true">🔎</div>
+            <input id="blogSearch" type="text" placeholder="Pretraga (npr. 'Meta', 'landing', 'event')" />
+          </div>
+
+          <div class="toolRight">
+            <select id="blogTag">
+              <option value="">Sve teme</option>
+              <option value="performance">Performance</option>
+              <option value="creative">Creative</option>
+              <option value="activation">Activation</option>
+              <option value="ops">Ops</option>
+            </select>
+            <a class="btn primary" href="/kontakt.html">
+              <span class="dot" aria-hidden="true"></span>
+              Zakaži poziv
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIST -->
+      <section class="section wrap">
+        <div class="grid" id="blogGrid">
+          <!-- JS render -->
+        </div>
+
+        <div class="blogEmpty card" id="blogEmpty" style="display:none;">
+          Nema rezultata za zadate filtere.
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="ctaSection wrap reveal">
+        <div class="ctaBox">
+          <h2>Hoćeš da ovo primijenimo na tvoj case?</h2>
+          <p>
+            Pošalji cilj i kontekst, mi vraćamo predlog sistema (kanali, kreativa,
+            aktivacija, tracking).
+          </p>
+          <a href="/kontakt.html" class="btn primary large">
+            <span class="dot"></span>
+            Kontakt
+          </a>
+        </div>
       </section>
     </main>
 
     <!-- PARTIAL: footer -->
     <!-- PARTIAL: scripts -->
+    <script src="/assets/js/pages/blog.js"></script>
   </body>
 </html>
-
