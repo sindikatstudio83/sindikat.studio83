@@ -55,3 +55,88 @@ body[data-page="ponuda"] .svcGrid .bullets {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================
+   PACKAGES GRID
+========================= */
+
+body[data-page="ponuda"] .pkgGrid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+body[data-page="ponuda"] .pkgGrid .card {
+  padding: 32px;
+}
+
+body[data-page="ponuda"] .pkgTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+body[data-page="ponuda"] .badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(243,106,46,.14);
+  border: 1px solid rgba(243,106,46,.45);
+  color: #fff;
+}
+
+body[data-page="ponuda"] .pkgGrid .bullets {
+  margin: 16px 0 26px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  body[data-page="ponuda"] .pkgGrid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================
+   CTA SECTION
+========================= */
+
+body[data-page="ponuda"] .ctaSection {
+  margin-top: 100px;
+  margin-bottom: 80px;
+}
+
+body[data-page="ponuda"] .ctaBox {
+  padding: 48px 40px;
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(243,106,46,.18),
+    rgba(243,106,46,.06)
+  );
+  border: 1px solid rgba(243,106,46,.45);
+  text-align: center;
+}
+
+body[data-page="ponuda"] .ctaBox h2 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  font-size: 28px;
+  letter-spacing: -0.4px;
+}
+
+body[data-page="ponuda"] .ctaBox p {
+  max-width: 640px;
+  margin: 0 auto 26px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  body[data-page="ponuda"] .ctaBox {
+    padding: 36px 22px;
+  }
+}
