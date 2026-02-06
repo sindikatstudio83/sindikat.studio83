@@ -1,1 +1,21 @@
+/* assets/css/pages/kontakt.css */
 
+.hero {
+  padding: 120px 0 70px;
+}
+
+.hero h1 {
+  font-size: clamp(40px, 6vw, 64px);
+  margin: 0;
+}
+
+.lead {
+  margin-top: 16px;
+  font-size: 18px;
+  color: rgba(255,255,255,.75);
+  max-width: 720px;
+}
+
+.section {
+  padding: 70px 0 90px;
+}
