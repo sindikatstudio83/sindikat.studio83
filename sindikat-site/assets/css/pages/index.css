@@ -1,96 +1,88 @@
-/* assets/css/pages/index.css */
+/* =========================
+   INDEX / HOME PAGE
+========================= */
 
-/* HERO */
-.hero {
-  padding: 140px 0 120px;
+body[data-page="index"] .hero {
+  padding-top: 160px;
+  padding-bottom: 100px;
 }
 
-.heroInner {
+body[data-page="index"] .hero h1 {
+  font-size: 56px;
+  letter-spacing: -0.8px;
   max-width: 720px;
 }
 
-.heroTitle {
-  font-size: clamp(42px, 6vw, 68px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.heroSub {
+body[data-page="index"] .lead {
+  max-width: 640px;
   margin-top: 20px;
   font-size: 18px;
-  color: rgba(255,255,255,.78);
   line-height: 1.6;
+  color: rgba(255,255,255,.78);
 }
 
-.heroActions {
-  margin-top: 34px;
+body[data-page="index"] .heroActions {
+  margin-top: 28px;
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
 }
 
-/* SECTION */
-.section {
-  padding: 100px 0;
-}
+/* =========================
+   HOW WE WORK GRID
+========================= */
 
-.sectionHead {
-  max-width: 560px;
-  margin-bottom: 48px;
-}
-
-.sectionHead h2 {
-  margin: 0;
-  font-size: 34px;
-}
-
-.sectionHead p {
-  margin-top: 12px;
-  color: rgba(255,255,255,.72);
-}
-
-/* SERVICES */
-.serviceGrid {
+body[data-page="index"] .svcGrid {
+  margin-top: 60px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  gap: 20px;
 }
 
-@media (max-width: 980px) {
-  .serviceGrid {
+body[data-page="index"] .svcGrid .card {
+  padding: 28px;
+}
+
+body[data-page="index"] .svcGrid h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+body[data-page="index"] .svcGrid .muted {
+  color: rgba(255,255,255,.72);
+  line-height: 1.55;
+}
+
+/* =========================
+   CTA
+========================= */
+
+body[data-page="index"] .ctaSection {
+  margin-top: 100px;
+  margin-bottom: 80px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  body[data-page="index"] .svcGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 520px) {
-  .serviceGrid {
+@media (max-width: 640px) {
+  body[data-page="index"] .hero {
+    padding-top: 120px;
+    padding-bottom: 80px;
+  }
+
+  body[data-page="index"] .hero h1 {
+    font-size: 40px;
+  }
+
+  body[data-page="index"] .svcGrid {
     grid-template-columns: 1fr;
   }
 }
-
-/* CTA */
-.ctaSection {
-  padding: 120px 0;
-}
-
-.ctaBox {
-  max-width: 720px;
-  padding: 42px;
-  border-radius: 16px;
-  border: 1px solid #2A2A31;
-  background: rgba(11,11,13,.65);
-  backdrop-filter: blur(10px);
-}
-
-.ctaBox h2 {
-  margin: 0;
-  font-size: 32px;
-}
-
-.ctaBox p {
-  margin-top: 12px;
-  margin-bottom: 28px;
-  color: rgba(255,255,255,.72);
-}
-
