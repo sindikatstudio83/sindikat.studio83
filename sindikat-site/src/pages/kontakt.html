@@ -1,35 +1,55 @@
-<!doctype html>
-<html lang="sr">
-  <head>
-    <!-- PARTIAL: head -->
-    <title>Kontakt — Sindikat</title>
-    <meta
-      name="description"
-      content="Kontaktiraj nas. Počinjemo od cilja i predlažemo sistem koji daje rezultat."
-    />
-    <link rel="stylesheet" href="/assets/css/pages/kontakt.css" />
-  </head>
+<section class="section wrap">
+  <div class="contactGrid">
+    <!-- INFO -->
+    <div class="card reveal">
+      <h3>Kako radimo</h3>
+      <p class="muted">
+        Prvi korak je kratak poziv. Definišemo cilj, kontekst i rok.
+        Ako nema jasnog cilja — ne krećemo.
+      </p>
 
-  <body data-page="kontakt">
-    <!-- PARTIAL: background -->
-    <!-- PARTIAL: topbar -->
+      <ul class="bullets">
+        <li>30 min discovery poziv</li>
+        <li>Jasan predlog sistema</li>
+        <li>Bez obaveze</li>
+      </ul>
 
-    <main id="top">
-      <!-- HERO -->
-      <section class="hero wrap">
-        <h1 class="reveal">Kontakt</h1>
-        <p class="lead reveal">
-          Reci cilj. Mi vraćamo predlog sistema.
-        </p>
-      </section>
+      <p class="muted">
+        Podgorica · Crna Gora<br />
+        hello@siks.me
+      </p>
+    </div>
 
-      <!-- CONTENT -->
-      <section class="section wrap">
-        <!-- ovdje ide forma i info -->
-      </section>
-    </main>
+    <!-- FORMA (markup only) -->
+    <div class="card reveal">
+      <h3>Pošalji upit</h3>
 
-    <!-- PARTIAL: footer -->
-    <!-- PARTIAL: scripts -->
-  </body>
-</html>
+      <form>
+        <div class="field">
+          <label>Ime / firma</label>
+          <input type="text" placeholder="npr. Marko / Brand X" />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="email@firma.me" />
+        </div>
+
+        <div class="field">
+          <label>Cilj</label>
+          <input type="text" placeholder="leads / prodaja / launch" />
+        </div>
+
+        <div class="field">
+          <label>Poruka</label>
+          <textarea placeholder="Kratko opiši kontekst i rok"></textarea>
+        </div>
+
+        <button class="btn primary">
+          <span class="dot"></span>
+          Pošalji
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
