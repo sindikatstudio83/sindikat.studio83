@@ -1,1 +1,107 @@
+/* =========================
+   POSLOVI PAGE
+========================= */
 
+body[data-page="poslovi"] .hero {
+  padding-top: 140px;
+  padding-bottom: 80px;
+}
+
+body[data-page="poslovi"] .hero h1 {
+  font-size: 48px;
+  letter-spacing: -0.6px;
+}
+
+body[data-page="poslovi"] .lead {
+  max-width: 680px;
+  margin-top: 18px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255,255,255,.75);
+}
+
+/* =========================
+   WHY GRID
+========================= */
+
+body[data-page="poslovi"] .whyGrid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+body[data-page="poslovi"] .whyGrid .card {
+  padding: 28px;
+}
+
+body[data-page="poslovi"] .whyGrid h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+body[data-page="poslovi"] .whyGrid .muted {
+  color: rgba(255,255,255,.72);
+  line-height: 1.55;
+}
+
+/* =========================
+   ROLES GRID
+========================= */
+
+body[data-page="poslovi"] .rolesGrid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+body[data-page="poslovi"] .rolesGrid .card {
+  padding: 28px;
+}
+
+body[data-page="poslovi"] .rolesGrid h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+/* bullets već postoje globalno, samo spacing */
+body[data-page="poslovi"] .rolesGrid .bullets {
+  margin: 0;
+}
+
+/* =========================
+   CTA
+========================= */
+
+body[data-page="poslovi"] .ctaSection {
+  margin-top: 100px;
+  margin-bottom: 80px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  body[data-page="poslovi"] .whyGrid,
+  body[data-page="poslovi"] .rolesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  body[data-page="poslovi"] .hero {
+    padding-top: 120px;
+    padding-bottom: 70px;
+  }
+
+  body[data-page="poslovi"] .hero h1 {
+    font-size: 40px;
+  }
+
+  body[data-page="poslovi"] .whyGrid,
+  body[data-page="poslovi"] .rolesGrid {
+    grid-template-columns: 1fr;
+  }
+}
