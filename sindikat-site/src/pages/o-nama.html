@@ -1,172 +1,88 @@
-<!doctype html>
-<html lang="sr">
-  <head>
-    <!-- PARTIAL: head -->
-    <title>O nama — Sindikat</title>
-    <meta
-      name="description"
-      content="Ko smo, kako radimo i zašto insistiramo na jasnoći, preciznosti i originalnosti. End-to-end: Define, Design, Build, Launch, Optimize."
-    />
-    <link rel="stylesheet" href="/assets/css/pages/o-nama.css" />
-  </head>
+/* =========================
+   INDEX / HOME PAGE
+========================= */
 
-  <body data-page="o-nama">
-    <!-- PARTIAL: background -->
-    <!-- PARTIAL: topbar -->
+body[data-page="index"] .hero {
+  padding-top: 160px;
+  padding-bottom: 100px;
+}
 
-    <main id="top">
-      <!-- HERO -->
-      <section class="hero wrap">
-        <div class="kicker reveal"><span class="dot"></span> O nama</div>
-        <h1 class="reveal">Performance & Activation Studio.</h1>
-        <p class="lead reveal">
-          Spajamo strategiju, performans kampanje, produkciju i aktivacije u jedan sistem koji
-          prodaje ishod — ne “uslugu”.
-        </p>
+body[data-page="index"] .hero h1 {
+  font-size: 56px;
+  letter-spacing: -0.8px;
+  max-width: 720px;
+}
 
-        <div class="heroCards grid2">
-          <div class="card reveal">
-            <div class="hMini">Kako radimo</div>
-            <div class="miniText">
-              End-to-end: Define → Design → Build → Launch → Optimize. Jedan tim, jedan plan, jedna odgovornost.
-            </div>
-          </div>
-          <div class="card reveal">
-            <div class="hMini">Standard</div>
-            <div class="miniText">
-              Jasnoća u poruci, preciznost u mjerenju i originalnost u izvršenju. Bez šuma, bez improvizacije.
-            </div>
-          </div>
-        </div>
-      </section>
+body[data-page="index"] .lead {
+  max-width: 640px;
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255,255,255,.78);
+}
 
-      <!-- PRINCIPLES -->
-      <section class="section wrap">
-        <div class="headRow">
-          <h2 class="h2 reveal">Principi</h2>
-          <div class="desc reveal">Ovo je filter kroz koji prolazi svaka odluka.</div>
-        </div>
+body[data-page="index"] .heroActions {
+  margin-top: 28px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
 
-        <div class="grid3">
-          <div class="card reveal">
-            <div class="hMini">Clarity</div>
-            <p class="p">
-              Jedna poruka. Jedan CTA. Jedan razlog da korisnik uradi sljedeći korak.
-            </p>
-          </div>
+/* =========================
+   HOW WE WORK GRID
+========================= */
 
-          <div class="card reveal">
-            <div class="hMini">Precision</div>
-            <p class="p">
-              Tracking, test dizajn, KPI i reporting. Optimizacija je proces — ne osjećaj.
-            </p>
-          </div>
+body[data-page="index"] .svcGrid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
 
-          <div class="card reveal">
-            <div class="hMini">Originality</div>
-            <p class="p">
-              Aktivacije i kreativni uglovi koji su “naš potpis” i koji se pamte.
-            </p>
-          </div>
-        </div>
-      </section>
+body[data-page="index"] .svcGrid .card {
+  padding: 28px;
+}
 
-      <!-- PROCESS -->
-      <section class="section wrap">
-        <div class="headRow">
-          <h2 class="h2 reveal">Proces</h2>
-          <div class="desc reveal">Standardizovan tok rada, da bismo brzo isporučili i skalirali.</div>
-        </div>
+body[data-page="index"] .svcGrid h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
 
-        <div class="grid2">
-          <div class="card reveal">
-            <div class="step">
-              <span class="badge accent">01</span>
-              <div>
-                <div class="hMini">Define</div>
-                <div class="miniText">Cilj, publika, ponuda, KPI, ograničenja, budžet, timeline.</div>
-              </div>
-            </div>
+body[data-page="index"] .svcGrid .muted {
+  color: rgba(255,255,255,.72);
+  line-height: 1.55;
+}
 
-            <div class="step">
-              <span class="badge accent">02</span>
-              <div>
-                <div class="hMini">Design</div>
-                <div class="miniText">Struktura kampanja, kreativa matrica, landing, funnel, tracking plan.</div>
-              </div>
-            </div>
+/* =========================
+   CTA
+========================= */
 
-            <div class="step">
-              <span class="badge accent">03</span>
-              <div>
-                <div class="hMini">Build</div>
-                <div class="miniText">Produkcija, implementacija, QA, integracije, priprema aktivacije.</div>
-              </div>
-            </div>
-          </div>
+body[data-page="index"] .ctaSection {
+  margin-top: 100px;
+  margin-bottom: 80px;
+}
 
-          <div class="card reveal">
-            <div class="step">
-              <span class="badge accent">04</span>
-              <div>
-                <div class="hMini">Launch</div>
-                <div class="miniText">Soft launch, validacija signala, stabilizacija troškova, prvi optimizacioni rezovi.</div>
-              </div>
-            </div>
+/* =========================
+   RESPONSIVE
+========================= */
 
-            <div class="step">
-              <span class="badge accent">05</span>
-              <div>
-                <div class="hMini">Optimize</div>
-                <div class="miniText">Iteracije, scaling, kreativa rotacija, LTV logika, reporting i preporuke.</div>
-              </div>
-            </div>
+@media (max-width: 1100px) {
+  body[data-page="index"] .svcGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
-            <div class="divider"></div>
+@media (max-width: 640px) {
+  body[data-page="index"] .hero {
+    padding-top: 120px;
+    padding-bottom: 80px;
+  }
 
-            <a class="btn primary wide" href="/kontakt.html">
-              <span class="dot" aria-hidden="true"></span>
-              Zakaži poziv
-            </a>
-          </div>
-        </div>
-      </section>
+  body[data-page="index"] .hero h1 {
+    font-size: 40px;
+  }
 
-      <!-- TEAM / LOCATION -->
-      <section class="section wrap">
-        <div class="headRow">
-          <h2 class="h2 reveal">Baza</h2>
-          <div class="desc reveal">Podgorica, ali rad globalno i skalabilno od prvog dana.</div>
-        </div>
-
-        <div class="grid2">
-          <div class="card reveal">
-            <div class="hMini">Podgorica</div>
-            <p class="p">
-              Fokus: brza isporuka, ownership nad ishodom i standard koji može da se ponovi na više tržišta.
-            </p>
-            <div class="pillRow">
-              <span class="badge">Strategija</span>
-              <span class="badge">Performance</span>
-              <span class="badge">Produkcija</span>
-              <span class="badge">Aktivacije</span>
-            </div>
-          </div>
-
-          <div class="card reveal">
-            <div class="hMini">Kontakt</div>
-            <p class="p">Ako imaš cilj i rok — mi imamo sistem.</p>
-            <div class="actions">
-              <a class="btn primary" href="/kontakt.html"><span class="dot"></span> Kontakt</a>
-              <a class="btn" href="/ponuda.html">Pogledaj ponudu</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- PARTIAL: footer -->
-    <!-- PARTIAL: scripts -->
-    <script src="/assets/js/pages/o-nama.js"></script>
-  </body>
-</html>
+  body[data-page="index"] .svcGrid {
+    grid-template-columns: 1fr;
+  }
+}
