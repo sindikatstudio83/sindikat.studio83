@@ -1,21 +1,95 @@
-/* assets/css/pages/kontakt.css */
+/* =========================
+   KONTAKT PAGE
+========================= */
 
-.hero {
-  padding: 120px 0 70px;
+body[data-page="kontakt"] .hero {
+  padding-top: 140px;
+  padding-bottom: 80px;
 }
 
-.hero h1 {
-  font-size: clamp(40px, 6vw, 64px);
-  margin: 0;
+body[data-page="kontakt"] .hero h1 {
+  font-size: 48px;
+  letter-spacing: -0.6px;
 }
 
-.lead {
-  margin-top: 16px;
+body[data-page="kontakt"] .lead {
+  max-width: 640px;
+  margin-top: 18px;
   font-size: 18px;
+  line-height: 1.6;
   color: rgba(255,255,255,.75);
-  max-width: 720px;
 }
 
-.section {
-  padding: 70px 0 90px;
+/* =========================
+   CONTACT GRID
+========================= */
+
+body[data-page="kontakt"] .contactGrid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+}
+
+body[data-page="kontakt"] .contactCard {
+  padding: 32px;
+}
+
+body[data-page="kontakt"] .contactCard h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+body[data-page="kontakt"] .contactList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body[data-page="kontakt"] .contactList li {
+  margin-bottom: 10px;
+  color: rgba(255,255,255,.75);
+}
+
+body[data-page="kontakt"] .contactList a {
+  color: #fff;
+  text-decoration: none;
+}
+
+body[data-page="kontakt"] .contactList a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   FORM
+========================= */
+
+body[data-page="kontakt"] form {
+  display: grid;
+  gap: 14px;
+}
+
+body[data-page="kontakt"] input,
+body[data-page="kontakt"] textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #2A2A31;
+  background: rgba(11,11,13,.6);
+  color: #fff;
+}
+
+body[data-page="kontakt"] textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  body[data-page="kontakt"] .contactGrid {
+    grid-template-columns: 1fr;
+  }
 }
