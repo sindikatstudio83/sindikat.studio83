@@ -19,3 +19,39 @@ body[data-page="ponuda"] .lead {
   line-height: 1.6;
   color: rgba(255,255,255,.75);
 }
+/* =========================
+   SERVICE GRID (4 stuba)
+========================= */
+
+body[data-page="ponuda"] .svcGrid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+body[data-page="ponuda"] .svcGrid .card {
+  padding: 28px;
+}
+
+body[data-page="ponuda"] .svcGrid h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+body[data-page="ponuda"] .svcGrid .bullets {
+  margin: 14px 0 22px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  body[data-page="ponuda"] .svcGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  body[data-page="ponuda"] .svcGrid {
+    grid-template-columns: 1fr;
+  }
+}
