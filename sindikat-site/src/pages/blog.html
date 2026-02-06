@@ -5,7 +5,7 @@
     <title>Blog — Sindikat</title>
     <meta
       name="description"
-      content="Blog: kratke bilješke o performansu, aktivacijama, kreativi i operativi. Jasno, konkretno, bez prazne priče."
+      content="Analize, razmišljanja i praktični uvidi iz svijeta performance marketinga, produkcije i aktivacija."
     />
     <link rel="stylesheet" href="/assets/css/pages/blog.css" />
   </head>
@@ -19,50 +19,57 @@
       <section class="hero wrap">
         <h1 class="reveal">Blog</h1>
         <p class="lead reveal">
-          Kratki tekstovi o tome kako pravimo rezultat: struktura kampanja,
-          kreativni testovi, aktivacije i operativa.
+          Razmišljanja iz prakse. Bez buzzworda, bez teorije bez primjene.
         </p>
-
-        <div class="blogToolbar card reveal">
-          <div class="toolLeft">
-            <div class="inputIcon" aria-hidden="true">🔎</div>
-            <input id="blogSearch" type="text" placeholder="Pretraga (npr. 'Meta', 'landing', 'event')" />
-          </div>
-
-          <div class="toolRight">
-            <select id="blogTag">
-              <option value="">Sve teme</option>
-              <option value="performance">Performance</option>
-              <option value="creative">Creative</option>
-              <option value="activation">Activation</option>
-              <option value="ops">Ops</option>
-            </select>
-            <a class="btn primary" href="/kontakt.html">
-              <span class="dot" aria-hidden="true"></span>
-              Zakaži poziv
-            </a>
-          </div>
-        </div>
       </section>
 
-      <!-- LIST -->
+      <!-- POSTS LIST -->
       <section class="section wrap">
-        <div class="grid" id="blogGrid">
-          <!-- JS render -->
-        </div>
+        <div class="postsGrid">
+          <article class="card reveal">
+            <span class="badge">Performance</span>
+            <h3>Zašto većina kampanja ne skalira</h3>
+            <p class="muted">
+              Problem nije budžet. Problem je struktura, poruka i mjerenje.
+            </p>
+            <a href="#" class="btn small">Pročitaj</a>
+          </article>
 
-        <div class="blogEmpty card" id="blogEmpty" style="display:none;">
-          Nema rezultata za zadate filtere.
+          <article class="card reveal">
+            <span class="badge">Produkcija</span>
+            <h3>Content koji prodaje nije lijep content</h3>
+            <p class="muted">
+              Kako balansirati estetiku i konverziju u realnim kampanjama.
+            </p>
+            <a href="#" class="btn small">Pročitaj</a>
+          </article>
+
+          <article class="card reveal">
+            <span class="badge">Aktivacije</span>
+            <h3>Event kao performance kanal</h3>
+            <p class="muted">
+              Kako event prestaje da bude trošak i postaje akvizicioni alat.
+            </p>
+            <a href="#" class="btn small">Pročitaj</a>
+          </article>
+
+          <article class="card reveal">
+            <span class="badge">Sistem</span>
+            <h3>Zašto agencije pucaju na skali</h3>
+            <p class="muted">
+              Fragmentacija timova i zašto “više ljudi” nije rješenje.
+            </p>
+            <a href="#" class="btn small">Pročitaj</a>
+          </article>
         </div>
       </section>
 
       <!-- CTA -->
       <section class="ctaSection wrap reveal">
         <div class="ctaBox">
-          <h2>Hoćeš da ovo primijenimo na tvoj case?</h2>
+          <h2>Imaš konkretan cilj?</h2>
           <p>
-            Pošalji cilj i kontekst, mi vraćamo predlog sistema (kanali, kreativa,
-            aktivacija, tracking).
+            Ako želiš da vidiš kako ovo izgleda u praksi — javi se.
           </p>
           <a href="/kontakt.html" class="btn primary large">
             <span class="dot"></span>
@@ -74,6 +81,5 @@
 
     <!-- PARTIAL: footer -->
     <!-- PARTIAL: scripts -->
-    <script src="/assets/js/pages/blog.js"></script>
   </body>
 </html>
