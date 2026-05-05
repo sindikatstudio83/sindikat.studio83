@@ -31,9 +31,9 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
     const user = data.session?.user;
     const profile = user ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle() : null;
     if (profile?.error) {
-  window.location.href = cleanNextPath(nextPath || null) || "/profil";
-  return;
-}
+      window.location.href = cleanNextPath(nextPath || null) || "/profil";
+      return;
+    }
 
     const role = (profile?.data?.role || "candidate") as Exclude<UserRole, "guest">;
     window.location.href = cleanNextPath(nextPath || null) || roleHomes[role] || "/";
