@@ -31,10 +31,9 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
     const user = data.session?.user;
     const profile = user ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle() : null;
     if (profile?.error) {
-      setMessage("Prijava je uspjela, ali profil nije ucitan. Pokusaj ponovo za par sekundi.");
-      setLoading(false);
-      return;
-    }
+  window.location.href = cleanNextPath(nextPath || null) || "/profil";
+  return;
+}
 
     const role = (profile?.data?.role || "candidate") as Exclude<UserRole, "guest">;
     window.location.href = cleanNextPath(nextPath || null) || roleHomes[role] || "/";
