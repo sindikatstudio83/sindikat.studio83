@@ -2,6 +2,8 @@ import { CompanyCard } from "@/components/company-card";
 import { JobCard } from "@/components/job-card";
 import { Button, EmptyState, PageLabel } from "@/components/ui";
 import { getCompanies, getPublicJobs } from "@/lib/queries/public";
+import Link from "next/link";
+
 
 export default async function HomePage() {
   const [jobs, companies] = await Promise.all([getPublicJobs(3), getCompanies(4)]);
