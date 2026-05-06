@@ -3,25 +3,20 @@
 import { useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
-export function LoginForm({ nextPath, errorMessage }: { nextPath?: string | null; errorMessage?: string | null }) {
+export function LoginForm({ nextPath }: { nextPath?: string | null }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(errorMessage || "");
-  const supabase = createBrowserSupabase();
+  const [error, setError] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     const fd = new FormData(e.currentTarget);
     const email = String(fd.get("email") || "").trim();
     const password = String(fd.get("password") || "");
 
-    if (!email || !password) {
-      setError("Upiši e-postu i lozinku.");
-      setLoading(false);
-      return;
-    }
-
+    const supabase = createBrowserSupabase();
     const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError || !data.session) {
@@ -30,28 +25,26 @@ export function LoginForm({ nextPath, errorMessage }: { nextPath?: string | null
       return;
     }
 
-    // Determine redirect based on role from profile
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .maybeSingle();
+    // Get role from profile to redirect correctly
+    const { data: prof } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+    const role = prof?.role;
 
-    const role = profileData?.role;
-    const dest = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
-      ? nextPath
-      : role === "company" ? "/firma"
-      : role === "admin" ? "/admin"
-      : "/profil";
+    let dest = "/profil";
+    if (nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")) {
+      dest = nextPath;
+    } else if (role === "company") {
+      dest = "/firma";
+    } else if (role === "admin") {
+      dest = "/admin";
+    }
 
-    // Hard reload so cookies and header state sync properly
     window.location.href = dest;
   }
 
   return (
-    <form className="auth-form" onSubmit={handleSubmit}>
+    <form className="auth-form" onSubmit={submit}>
       <label>
-        <span className="label">E-posta</span>
+        <span className="label">E-pošta</span>
         <input className="field" name="email" type="email" autoComplete="email" required />
       </label>
       <label>
@@ -61,25 +54,25 @@ export function LoginForm({ nextPath, errorMessage }: { nextPath?: string | null
       <button className="btn blue" type="submit" disabled={loading}>
         {loading ? "Prijava..." : "Prijavi se"}
       </button>
-      <p className="hint">Sistem automatski otvara pregled za tvoju ulogu.</p>
-      {error ? <p className="notice error">{error}</p> : null}
+      {error && <p className="notice error">{error}</p>}
     </form>
   );
 }
 
 export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "company" }) {
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const supabase = createBrowserSupabase();
+  const [message, setMessage] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+
     const fd = new FormData(e.currentTarget);
     const email = String(fd.get("email") || "").trim();
     const password = String(fd.get("password") || "");
 
+    const supabase = createBrowserSupabase();
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -92,26 +85,25 @@ export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "co
       return;
     }
 
-    setMessage("Nalog je kreiran! Preusmjeravamo na prijavu...");
-    setTimeout(() => { window.location.href = "/login"; }, 1500);
+    setMessage("Nalog kreiran! Preusmjeravamo...");
+    setTimeout(() => { window.location.href = "/login"; }, 1200);
   }
 
   return (
-    <form className="auth-form" onSubmit={handleSubmit}>
+    <form className="auth-form" onSubmit={submit}>
       <input type="hidden" name="role" value={selectedRole} />
       <label>
-        <span className="label">E-posta</span>
+        <span className="label">E-pošta</span>
         <input className="field" name="email" type="email" autoComplete="email" required />
       </label>
       <label>
-        <span className="label">Lozinka</span>
+        <span className="label">Lozinka (min. 8 znakova)</span>
         <input className="field" name="password" type="password" autoComplete="new-password" minLength={8} required />
       </label>
       <button className="btn blue" type="submit" disabled={loading}>
         {loading ? "Kreiranje..." : "Kreiraj nalog"}
       </button>
-      <p className="hint">Lozinka mora imati najmanje 8 znakova.</p>
-      {message ? <p className="notice">{message}</p> : null}
+      {message && <p className="notice">{message}</p>}
     </form>
   );
 }

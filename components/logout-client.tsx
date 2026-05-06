@@ -4,23 +4,15 @@ import { useEffect } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
 export function LogoutClient() {
-  const supabase = createBrowserSupabase();
-
   useEffect(() => {
-    async function logout() {
-      await supabase.auth.signOut();
+    createBrowserSupabase().auth.signOut().then(() => {
       window.location.replace("/login");
-    }
-    logout();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    });
+  }, []);
 
   return (
-    <section className="auth-shell">
-      <div className="panel">
-        <span className="page-label">Odjava</span>
-        <h1>Odjavljujemo nalog...</h1>
-        <p className="lead">Samo trenutak.</p>
-      </div>
-    </section>
+    <div style={{ padding: "60px 20px", textAlign: "center" }}>
+      <p style={{ color: "var(--muted)", fontWeight: 700 }}>Odjava...</p>
+    </div>
   );
 }
