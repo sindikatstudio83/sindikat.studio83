@@ -20,8 +20,9 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   const supabase = createBrowserSupabase();
 
   async function load() {
-    const { data } = await supabase.auth.getSession();
-    const user = data.session?.user;
+    const { data } = await supabase.auth.getUser();
+const user = data.user;
+
     if (!user) return (window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`);
     const profile = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
     if (profile.data?.role !== "company" && profile.data?.role !== "admin") return (window.location.href = "/profil");
@@ -57,8 +58,9 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   useEffect(() => { load(); }, []);
 
   async function saveCompany(formData: FormData) {
-    const { data } = await supabase.auth.getSession();
-    const user = data.session?.user;
+const { data } = await supabase.auth.getUser();
+const user = data.user;
+
     if (!user) return;
     const name = String(formData.get("name") || "").trim();
     if (!name) return setMessage("Upisi naziv firme.");
