@@ -71,7 +71,7 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
       setLoading(false);
     }
     load();
-  }, [expectedRole, supabase]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [expectedRole, supabase]);
 
   if (loading) return (
     <div className="app-shell">

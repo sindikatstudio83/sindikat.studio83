@@ -11,7 +11,7 @@ export function CvBuilder() {
   const [loadMsg, setLoadMsg] = useState("Učitavanje biografije...");
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [supabase] = useState(() => createBrowserSupabase());
-  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -28,7 +28,7 @@ export function CvBuilder() {
       setLoadMsg("Biografija učitana.");
     }
     load();
-  }, [supabase]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [supabase]);
 
   const skills = useMemo(() => (cv.skills || "").split(",").map(s => s.trim()).filter(Boolean), [cv.skills]);
 
