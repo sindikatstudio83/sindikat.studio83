@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
@@ -15,7 +16,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         <p className="lead">Pokušaj ponovo ili se vrati na početnu.</p>
         <div className="auth-actions">
           <button className="btn blue" onClick={reset}>Pokušaj ponovo</button>
-          <a className="btn ghost" href="/">Početna</a>
+          <Link className="btn ghost" href="/">Početna</Link>
         </div>
       </div>
     </section>

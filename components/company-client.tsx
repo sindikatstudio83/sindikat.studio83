@@ -67,7 +67,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function saveCompany(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

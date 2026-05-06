@@ -90,7 +90,7 @@ export function AdminClient({ view }: { view: AdminView }) {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [view]);
+  useEffect(() => { load(); }, [view]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function updateJob(id: number, patch: Record<string, unknown>) {
     setActing(id);
