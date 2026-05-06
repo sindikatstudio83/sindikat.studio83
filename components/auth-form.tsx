@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
-
 function cleanNextPath(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
   return value;
@@ -17,35 +16,19 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
   async function submit(formData: FormData) {
     setLoading(true);
     setMessage("");
+
     const email = String(formData.get("email") || "").trim();
     const password = String(formData.get("password") || "");
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
-      setMessage(/invalid login credentials/i.test(error.message) ? "E-posta ili lozinka nijesu tacni." : error.message);
+      setMessage("E-posta ili lozinka nijesu tacni.");
       setLoading(false);
       return;
     }
 
-    async function submit(formData: FormData) {
-  setLoading(true);
-  setMessage("");
-
-  const email = String(formData.get("email") || "").trim();
-  const password = String(formData.get("password") || "");
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    setMessage("E-posta ili lozinka nijesu tačni.");
-    setLoading(false);
-    return;
-  }
-
-  window.location.href = cleanNextPath(nextPath || null) || "/profil";
-}
-
-
-  
+    window.location.href = cleanNextPath(nextPath || null) || "/profil";
   }
 
   return (
