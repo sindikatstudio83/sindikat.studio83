@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { Session } from "@supabase/supabase-js";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { normalizeRole } from "@/lib/auth-role";
 import type { UserRole } from "@/types/domain";
@@ -58,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loadFromSession();
 
     // Osluškuj promjene auth state (login/logout)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
       if (!session) {
         setState({ role: "guest", userId: null, email: null, ready: true });
       } else {
