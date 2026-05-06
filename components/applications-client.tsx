@@ -26,7 +26,7 @@ export function ApplicationsClient() {
       setLoading(false);
     }
     load();
-  }, [supabase]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [supabase]);
 
   if (loading) return <div className="panel loading-panel"><p>Učitavanje prijava...</p></div>;
 

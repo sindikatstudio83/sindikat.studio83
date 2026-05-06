@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setState({ role: metaRole, userId: user.id, email: user.email || null, ready: true });
 
         // Provjeri DB u pozadini i ispravi ako treba
-        supabase.from("profiles").select("role").eq("id", user.id).maybeSingle().then(({ data }) => {
+        supabase.from("profiles").select("role").eq("id", user.id).maybeSingle().then(({ data }: { data: { role: string } | null }) => {
           const dbRole = normalizeRole(data?.role);
           if (dbRole !== "guest" && dbRole !== metaRole) {
             setState(s => ({ ...s, role: dbRole }));
