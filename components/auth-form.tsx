@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
-import { roleHomes } from "@/lib/labels";
-import type { UserRole } from "@/types/domain";
+
 
 function cleanNextPath(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
@@ -46,8 +45,7 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
 }
 
 
-    const role = (profile?.data?.role || "candidate") as Exclude<UserRole, "guest">;
-    window.location.href = cleanNextPath(nextPath || null) || roleHomes[role] || "/";
+  
   }
 
   return (
