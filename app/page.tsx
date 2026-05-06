@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CompanyCard } from "@/components/company-card";
 import { JobCard } from "@/components/job-card";
 import { Button, EmptyState, PageLabel } from "@/components/ui";
@@ -24,18 +25,19 @@ export default async function HomePage() {
       </div>
 
       <div className="live-paths">
-        <a className="live-path" href="/oglasi">
+        <Link className="live-path" href="/oglasi">
           <span>Kandidat</span>
           <h2>Pronađi posao</h2>
           <p>Otvori oglas, pročitaj uslove, dopuni biografiju i pošalji prijavu bez upload fajlova.</p>
           <strong>Otvori oglase</strong>
-        </a>
-        <a className="live-path" href="/registracija?role=company">
+        </Link>
+
+        <Link className="live-path" href="/registracija?role=company">
           <span>Firma</span>
           <h2>Objavi oglas</h2>
           <p>Napravi profil firme, pošalji oglas na pregled i vodi kandidate kroz selekciju.</p>
           <strong>Kreni kao firma</strong>
-        </a>
+                </Link>
       </div>
 
       <div className="live-section-head">
