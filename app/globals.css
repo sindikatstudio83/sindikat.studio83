@@ -5,7 +5,7 @@
   --blue:#2148ff;--lime:#c8ff3d;--pink:#ff4fa3;--orange:#ff8a2a;--green:#13b76d;--red:#e5484d;
   --shadow:0 4px 24px rgba(28,22,12,.10);--shadow2:0 8px 40px rgba(28,22,12,.14);
   --r:16px;--r2:24px;
-  --font:'Inter',system-ui,sans-serif;--display:'Space Grotesk',system-ui,sans-serif;
+  --font:var(--font-inter, 'Inter', system-ui, sans-serif);--display:var(--font-space, 'Space Grotesk', system-ui, sans-serif);
 }
 [data-theme="dark"]{
   --bg:#111;--ink:#ede8e0;--muted:#8a8480;--soft:#1c1c1c;--paper:#181818;

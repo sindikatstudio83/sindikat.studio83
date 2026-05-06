@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loadFromSession();
 
     // Osluškuj promjene auth state (login/logout)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session) => {
       if (!session) {
         setState({ role: "guest", userId: null, email: null, ready: true });
       } else {
