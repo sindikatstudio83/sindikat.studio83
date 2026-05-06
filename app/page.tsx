@@ -3,23 +3,29 @@ import { JobCard } from "@/components/job-card";
 import { Button, EmptyState, PageLabel } from "@/components/ui";
 import { getCompanies, getPublicJobs } from "@/lib/queries/public";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "imaposla.me — Poslovi u Crnoj Gori",
+  description: "Pronađi posao ili objavi oglas u Crnoj Gori. Kandidati, firme i oglasi na jednom mjestu."
+};
 
 export default async function HomePage() {
-  const [jobs, companies] = await Promise.all([getPublicJobs(3), getCompanies(4)]);
+  const [jobs, companies] = await Promise.all([getPublicJobs(6), getCompanies(4)]);
 
   return (
     <section className="live-home">
       <div className="live-hero">
         <PageLabel>imaposla.me</PageLabel>
-        <h1>Posao i zaposljavanje u Crnoj Gori, jasno od prvog klika.</h1>
-        <p>Kandidat pretrazuje oglase, pravi biografiju i salje prijavu. Firma objavljuje oglas, prati prijave i vodi selekciju. Javni prikaz prolazi provjeru.</p>
+        <h1>Posao i zapošljavanje u Crnoj Gori, jasno od prvog klika.</h1>
+        <p>Kandidat pretražuje oglase, pravi biografiju i šalje prijavu. Firma objavljuje oglas, prati prijave i vodi selekciju.</p>
         <form className="live-search" action="/oglasi">
-          <input className="field" name="q" placeholder="Naziv posla, firma ili vjestina" />
-          <button className="btn blue">Trazi posao</button>
+          <input className="field" name="q" placeholder="Naziv posla, firma ili vještina" />
+          <button className="btn blue">Traži posao</button>
         </form>
         <div className="live-actions">
-          <Button href="/oglasi" tone="lime">Trazim posao</Button>
-          <Button href="/registracija?role=company" tone="blue">Zaposljavam</Button>
+          <Button href="/oglasi" tone="lime">Tražim posao</Button>
+          <Button href="/registracija?role=company" tone="blue">Zapošljavam</Button>
           <Button href="/login" tone="ghost">Prijava</Button>
         </div>
       </div>
@@ -27,15 +33,15 @@ export default async function HomePage() {
       <div className="live-paths">
         <Link className="live-path" href="/oglasi">
           <span>Kandidat</span>
-          <h2>Pronadji posao</h2>
-          <p>Otvori oglas, procitaj uslove, dopuni biografiju i posalji prijavu bez upload fajlova.</p>
-          <strong>Otvori oglase</strong>
+          <h2>Pronađi posao</h2>
+          <p>Otvori oglas, pročitaj uslove, dopuni biografiju i pošalji prijavu bez upload fajlova.</p>
+          <strong>Otvori oglase →</strong>
         </Link>
         <Link className="live-path" href="/registracija?role=company">
           <span>Firma</span>
           <h2>Objavi oglas</h2>
-          <p>Napravi profil firme, posalji oglas na pregled i vodi kandidate kroz selekciju.</p>
-          <strong>Kreni kao firma</strong>
+          <p>Napravi profil firme, pošalji oglas na pregled i vodi kandidate kroz selekciju.</p>
+          <strong>Kreni kao firma →</strong>
         </Link>
       </div>
 
@@ -48,21 +54,25 @@ export default async function HomePage() {
         <Button href="/oglasi" size="sm">Svi oglasi</Button>
       </div>
       <div className="job-list">
-        {jobs.length ? jobs.map((job) => <JobCard job={job} key={job.id} />) : (
-          <EmptyState title="Jos nema aktivnih oglasa" text="Kada firma posalje oglas i bude odobren, pojavice se ovdje." action={<Button href="/oglasi" tone="blue">Pretraga oglasa</Button>} />
-        )}
+        {jobs.length
+          ? jobs.map((job) => <JobCard job={job} key={job.id} />)
+          : <EmptyState title="Još nema aktivnih oglasa" text="Kada firma pošalje oglas i bude odobren, pojaviće se ovdje." action={<Button href="/oglasi" tone="blue">Pretraga oglasa</Button>} />
+        }
       </div>
 
       <div className="live-section-head">
         <div>
           <span className="kicker">Firme</span>
           <h2>Odobreni poslodavci</h2>
-          <p>Spisak firmi koje imaju javni profil na platformi.</p>
+          <p>Firme koje imaju javni profil na platformi.</p>
         </div>
         <Button href="/firme" size="sm">Sve firme</Button>
       </div>
       <div className="grid two">
-        {companies.length ? companies.map((company) => <CompanyCard company={company} key={company.id} />) : <EmptyState title="Nema firmi" text="Firme se prikazuju nakon odobrenja." />}
+        {companies.length
+          ? companies.map((c) => <CompanyCard company={c} key={c.id} />)
+          : <EmptyState title="Nema firmi" text="Firme se prikazuju nakon odobrenja." />
+        }
       </div>
     </section>
   );
