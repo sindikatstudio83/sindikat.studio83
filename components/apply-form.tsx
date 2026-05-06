@@ -14,8 +14,9 @@ export function ApplyForm({ jobId }: { jobId: number }) {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.auth.getSession();
-      const user = data.session?.user;
+      const { data } = await supabase.auth.getUser();
+const user = data.user;
+
       if (!user) {
         setReady(true);
         return;
