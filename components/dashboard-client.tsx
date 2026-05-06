@@ -24,8 +24,8 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.auth.getUser();
-const user = data.user;
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
       if (!user) {
         window.location.href = "/login";
         return;

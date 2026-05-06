@@ -18,9 +18,8 @@ export function MobileNav() {
 
   useEffect(() => {
     async function loadRole() {
-      const { data } = await supabase.auth.getUser();
-const user = data.user;
-
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
       if (!user) return setRole("guest");
       const profile = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
       setRole((profile.data?.role as UserRole) || "guest");

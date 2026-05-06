@@ -13,9 +13,8 @@ export function CvBuilder() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.auth.getUser();
-const user = data.user;
-
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
       if (!user) {
         setStatus("Prijavi se da bi biografija bila sačuvana u profilu.");
         return;
@@ -42,9 +41,8 @@ const user = data.user;
   }
 
   async function save() {
-    const { data } = await supabase.auth.getUser();
-const user = data.user;
-
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
     if (!user) return setStatus("Prijavi se da bi sačuvao biografiju.");
     const { error } = await supabase.from("profiles").update({ cv_data: cv, full_name: cv.fullName || null, phone: cv.phone || null, city: cv.city || null, cv_updated_at: new Date().toISOString() }).eq("id", user.id);
     setStatus(error ? error.message : "Biografija je sačuvana u profilu.");

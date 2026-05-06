@@ -23,9 +23,8 @@ export function AdminClient({ view }: { view: AdminView }) {
   const supabase = createBrowserSupabase();
 
   async function guardAdmin() {
-    const { data } = await supabase.auth.getUser();
-const user = data.user;
-
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
     if (!user) {
       window.location.href = "/login?next=/admin";
       return false;
