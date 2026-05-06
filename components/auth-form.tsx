@@ -27,13 +27,24 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
       return;
     }
 
-    const { data } = await supabase.auth.getSession();
-    const user = data.session?.user;
-    const profile = user ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle() : null;
-    if (profile?.error) {
-      window.location.href = cleanNextPath(nextPath || null) || "/profil";
-      return;
-    }
+    async function submit(formData: FormData) {
+  setLoading(true);
+  setMessage("");
+
+  const email = String(formData.get("email") || "").trim();
+  const password = String(formData.get("password") || "");
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    setMessage("E-posta ili lozinka nijesu tačni.");
+    setLoading(false);
+    return;
+  }
+
+  window.location.href = cleanNextPath(nextPath || null) || "/profil";
+}
+
 
     const role = (profile?.data?.role || "candidate") as Exclude<UserRole, "guest">;
     window.location.href = cleanNextPath(nextPath || null) || roleHomes[role] || "/";
