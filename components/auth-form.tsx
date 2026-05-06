@@ -25,17 +25,20 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
       return;
     }
 
-    // Get role from profile to redirect correctly
-    const { data: prof } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-    const role = prof?.role;
-
+    // Role iz session metapodataka — bez dodatnog DB poziva
+    const metaRole = data.user.user_metadata?.role;
     let dest = "/profil";
     if (nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")) {
       dest = nextPath;
-    } else if (role === "company") {
+    } else if (metaRole === "company") {
       dest = "/firma";
-    } else if (role === "admin") {
+    } else if (metaRole === "admin") {
       dest = "/admin";
+    } else {
+      // Provjeri DB samo ako metadata nema rolu
+      const { data: prof } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+      if (prof?.role === "company") dest = "/firma";
+      else if (prof?.role === "admin") dest = "/admin";
     }
 
     window.location.href = dest;
@@ -54,7 +57,7 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
       <button className="btn blue" type="submit" disabled={loading}>
         {loading ? "Prijava..." : "Prijavi se"}
       </button>
-      {error && <p className="notice error">{error}</p>}
+      {error && <p className="notice error" style={{ marginTop: 4 }}>{error}</p>}
     </form>
   );
 }
@@ -103,7 +106,7 @@ export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "co
       <button className="btn blue" type="submit" disabled={loading}>
         {loading ? "Kreiranje..." : "Kreiraj nalog"}
       </button>
-      {message && <p className="notice">{message}</p>}
+      {message && <p className="notice" style={{ marginTop: 4 }}>{message}</p>}
     </form>
   );
 }

@@ -2,29 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { createBrowserSupabase } from "@/lib/supabase/client";
+import { useAuth } from "@/lib/auth-context";
 import { roleHomes, roleLabels } from "@/lib/labels";
-import { loadCurrentRole } from "@/lib/auth-role";
 import { desktopNavItems } from "@/lib/navigation";
-import type { UserRole } from "@/types/domain";
 
 export function Header() {
-  const [role, setRole] = useState<UserRole>("guest");
+  const { role } = useAuth();
   const [theme, setTheme] = useState("light");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [supabase] = useState(() => createBrowserSupabase());
   const mobileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("imaposlaTheme") || "light";
     setTheme(saved);
     document.documentElement.dataset.theme = saved;
-
-    async function loadRole() { setRole(await loadCurrentRole(supabase)); }
-    loadRole();
-    const { data } = supabase.auth.onAuthStateChange(() => loadRole());
-    return () => data.subscription.unsubscribe();
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     function close(e: MouseEvent) {
@@ -42,7 +34,7 @@ export function Header() {
   }
 
   const isLoggedIn = role !== "guest";
-  const dashHref = isLoggedIn ? roleHomes[role as Exclude<UserRole, "guest">] : "/login";
+  const dashHref = isLoggedIn ? roleHomes[role as Exclude<typeof role, "guest">] : "/login";
   const navItems = desktopNavItems[role];
 
   return (
@@ -53,7 +45,6 @@ export function Header() {
           <span>imaposla.me</span>
         </Link>
 
-        {/* Desktop nav — hidden via CSS on mobile */}
         <nav className="nav desktop-nav" aria-label="Navigacija">
           {navItems.map(item => <Link href={item.href} key={item.href}>{item.label}</Link>)}
         </nav>
@@ -74,7 +65,6 @@ export function Header() {
               <Link className="btn red" href="/logout">Odjava</Link>
             </>
           )}
-          {/* Hamburger — CSS shows only on mobile */}
           <button className="icon-btn hamb" type="button" onClick={() => setMobileOpen(o => !o)} aria-label="Meni">☰</button>
         </div>
       </div>
