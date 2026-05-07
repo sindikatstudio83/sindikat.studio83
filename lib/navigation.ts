@@ -1,70 +1,69 @@
 import type { UserRole } from "@/types/domain";
 
 export type NavItem = {
+  icon: string;
   label: string;
   href: string;
-  icon: string;
 };
 
-// Desktop header navigation — only what makes sense per role
 export const desktopNavItems: Record<UserRole, NavItem[]> = {
   guest: [
-    { icon: "oglasi", label: "Oglasi", href: "/oglasi" },
-    { icon: "gradovi", label: "Gradovi", href: "/gradovi" },
-    { icon: "kategorije", label: "Kategorije", href: "/kategorije" },
-    { icon: "firme", label: "Firme", href: "/firme" },
-    { icon: "za-firme", label: "Za firme", href: "/za-firme" }
+    { icon: "OO", label: "Oglasi", href: "/oglasi" },
+    { icon: "GR", label: "Gradovi", href: "/gradovi" },
+    { icon: "KA", label: "Kategorije", href: "/kategorije" },
+    { icon: "FI", label: "Firme", href: "/firme" },
+    { icon: "+", label: "Za firme", href: "/za-firme" }
   ],
   candidate: [
-    { icon: "oglasi", label: "Oglasi", href: "/oglasi" },
-    { icon: "profil", label: "Moj profil", href: "/profil" },
-    { icon: "biografija", label: "Biografija", href: "/profil/biografija" },
-    { icon: "prijave", label: "Moje prijave", href: "/profil/prijave" }
+    { icon: "OO", label: "Oglasi", href: "/oglasi" },
+    { icon: "PR", label: "Profil", href: "/profil" },
+    { icon: "CV", label: "Biografija", href: "/profil/biografija" },
+    { icon: "AP", label: "Prijave", href: "/profil/prijave" },
+    { icon: "FI", label: "Firme", href: "/firme" }
   ],
   company: [
-    { icon: "pregled", label: "Pregled", href: "/firma" },
-    { icon: "oglasi", label: "Moji oglasi", href: "/firma/oglasi" },
-    { icon: "novi", label: "Novi oglas", href: "/firma/novi-oglas" },
-    { icon: "selekcija", label: "Selekcija", href: "/firma/selekcija" },
-    { icon: "pretplata", label: "Pretplata", href: "/firma/pretplata" }
+    { icon: "PG", label: "Pregled", href: "/firma" },
+    { icon: "OG", label: "Oglasi", href: "/firma/oglasi" },
+    { icon: "+", label: "Novi oglas", href: "/firma/novi-oglas" },
+    { icon: "SE", label: "Selekcija", href: "/firma/selekcija" },
+    { icon: "UP", label: "Pretplata", href: "/firma/pretplata" }
   ],
   admin: [
-    { icon: "pregled", label: "Pregled", href: "/admin" },
-    { icon: "uplate", label: "Uplate", href: "/admin/uplate" },
-    { icon: "oglasi", label: "Oglasi", href: "/admin/oglasi" },
-    { icon: "firme", label: "Firme", href: "/admin/firme" },
-    { icon: "korisnici", label: "Korisnici", href: "/admin/korisnici" }
+    { icon: "AD", label: "Pregled", href: "/admin" },
+    { icon: "UP", label: "Uplate", href: "/admin/uplate" },
+    { icon: "OG", label: "Oglasi", href: "/admin/oglasi" },
+    { icon: "FI", label: "Firme", href: "/admin/firme" },
+    { icon: "KO", label: "Korisnici", href: "/admin/korisnici" }
   ]
 };
 
-// Mobile bottom nav — max 5 items, most important per role
 export const mobileNavItems: Record<UserRole, NavItem[]> = {
   guest: [
-    { icon: "home", label: "Početna", href: "/" },
-    { icon: "oglasi", label: "Oglasi", href: "/oglasi" },
-    { icon: "firme", label: "Firme", href: "/firme" },
-    { icon: "za-firme", label: "Za firme", href: "/za-firme" },
-    { icon: "login", label: "Prijava", href: "/login" }
+    { icon: "IP", label: "Pocetna", href: "/" },
+    { icon: "OO", label: "Oglasi", href: "/oglasi" },
+    { icon: "FI", label: "Firme", href: "/firme" },
+    { icon: "+", label: "Firma", href: "/registracija?role=company" },
+    { icon: "IN", label: "Prijava", href: "/login" }
   ],
   candidate: [
-    { icon: "oglasi", label: "Oglasi", href: "/oglasi" },
-    { icon: "prijave", label: "Prijave", href: "/profil/prijave" },
-    { icon: "profil", label: "Profil", href: "/profil" },
-    { icon: "biografija", label: "Biografija", href: "/profil/biografija" },
-    { icon: "odjava", label: "Odjava", href: "/logout" }
+    { icon: "IP", label: "Pocetna", href: "/" },
+    { icon: "OO", label: "Oglasi", href: "/oglasi" },
+    { icon: "CV", label: "Biografija", href: "/profil/biografija" },
+    { icon: "AP", label: "Prijave", href: "/profil/prijave" },
+    { icon: "OUT", label: "Odjava", href: "/auth/logout" }
   ],
   company: [
-    { icon: "pregled", label: "Pregled", href: "/firma" },
-    { icon: "novi", label: "Novi oglas", href: "/firma/novi-oglas" },
-    { icon: "selekcija", label: "Selekcija", href: "/firma/selekcija" },
-    { icon: "pretplata", label: "Pretplata", href: "/firma/pretplata" },
-    { icon: "odjava", label: "Odjava", href: "/logout" }
+    { icon: "PG", label: "Pregled", href: "/firma" },
+    { icon: "OG", label: "Oglasi", href: "/firma/oglasi" },
+    { icon: "+", label: "Novi", href: "/firma/novi-oglas" },
+    { icon: "UP", label: "Uplata", href: "/firma/pretplata" },
+    { icon: "OUT", label: "Odjava", href: "/auth/logout" }
   ],
   admin: [
-    { icon: "pregled", label: "Pregled", href: "/admin" },
-    { icon: "uplate", label: "Uplate", href: "/admin/uplate" },
-    { icon: "oglasi", label: "Oglasi", href: "/admin/oglasi" },
-    { icon: "firme", label: "Firme", href: "/admin/firme" },
-    { icon: "odjava", label: "Odjava", href: "/logout" }
+    { icon: "AD", label: "Pregled", href: "/admin" },
+    { icon: "UP", label: "Uplate", href: "/admin/uplate" },
+    { icon: "OG", label: "Oglasi", href: "/admin/oglasi" },
+    { icon: "FI", label: "Firme", href: "/admin/firme" },
+    { icon: "OUT", label: "Odjava", href: "/auth/logout" }
   ]
 };

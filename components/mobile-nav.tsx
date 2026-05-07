@@ -1,25 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
+import { useEffect, useState } from "react";
+import { createBrowserSupabase } from "@/lib/supabase/client";
+import { loadCurrentRole } from "@/lib/auth-role";
 import { mobileNavItems } from "@/lib/navigation";
+import type { UserRole } from "@/types/domain";
 
 export function MobileNav() {
-  const { role } = useAuth();
-  const pathname = usePathname();
-  const items = mobileNavItems[role];
+  const [role, setRole] = useState<UserRole>("guest");
+  const [supabase] = useState(() => createBrowserSupabase());
+
+  useEffect(() => {
+    async function loadRole() {
+      setRole(await loadCurrentRole(supabase));
+    }
+    loadRole();
+    const { data } = supabase.auth.onAuthStateChange(() => loadRole());
+    return () => data.subscription.unsubscribe();
+  }, [supabase]);
 
   return (
     <nav className="mobile-app-nav" aria-label="Mobilna navigacija">
-      {items.map(item => (
-        <Link
-          href={item.href}
-          key={item.href}
-          className={pathname === item.href ? "active" : ""}
-        >
-          <span className="nav-icon">{item.icon.slice(0, 2).toUpperCase()}</span>
-          <span>{item.label}</span>
+      {mobileNavItems[role].map((item) => (
+        <Link href={item.href} key={`${item.label}-${item.href}`}>
+          <span>{item.icon}</span>
+          {item.label}
         </Link>
       ))}
     </nav>

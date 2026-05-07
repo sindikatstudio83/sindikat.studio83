@@ -1,37 +1,43 @@
 import Link from "next/link";
 import { formatDate, initials, jobUrl } from "@/lib/format";
+import { jobStatusLabels } from "@/lib/labels";
 import type { Job } from "@/types/domain";
+import { Badge, Button } from "./ui";
 
-export function JobCard({ job, showStatus = false }: { job: Job; showStatus?: boolean }) {
-  const co = job.companies;
-  const url = jobUrl(job);
+export function JobCard({ job, admin = false }: { job: Job; admin?: boolean }) {
   return (
-    <article className={`job-card${job.featured ? " featured" : ""}`}>
-      {job.featured && <span className="featured-badge">★ Istaknuto</span>}
-      <div className="logo">{initials(co?.name)}</div>
+    <article className={`job-card ${job.featured ? "featured" : ""}`}>
+      <div className="logo">{initials(job.companies?.name)}</div>
       <div>
-        <div className="tags" style={{ marginBottom: 7 }}>
-          {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}
-          {job.contract_type && <span className="tag">{job.contract_type}</span>}
-          {showStatus && (
-            <span className={`badge ${job.status === "active" ? "green" : job.status === "pending_review" ? "orange" : "gray"}`}>
-              {job.status === "active" ? "Aktivan" : job.status === "pending_review" ? "Na pregledu" : job.status}
-            </span>
-          )}
+        <div className="tags">
+          {job.featured ? <Badge tone="orange">Istaknuto</Badge> : null}
+          <span className="tag">{job.categories?.name || "Ostalo"}</span>
+          <span className="tag">{job.contract_type || "Po dogovoru"}</span>
+          <Badge tone={job.status === "active" ? "green" : job.status === "pending_review" ? "orange" : "gray"}>
+            {jobStatusLabels[job.status]}
+          </Badge>
         </div>
-        <Link className="job-title" href={url}>{job.title}</Link>
-        <div className="meta" style={{ marginBottom: 6 }}>
-          {co?.name && <span>{co.name}</span>}
-          {job.cities?.name && <span>· {job.cities.name}</span>}
-          {job.salary_text && <span>· {job.salary_text}</span>}
+        <Link className="job-title" href={jobUrl(job)}>{job.title}</Link>
+        <div className="meta">
+          <span>{job.companies?.name || "Poslodavac"}</span>
+          <span>{job.cities?.name || "Crna Gora"}</span>
+          <span>{job.salary_text || "Po dogovoru"}</span>
+          <span>Rok {formatDate(job.deadline)}</span>
         </div>
-        {job.description && <p className="job-desc">{job.description.slice(0, 180)}{job.description.length > 180 ? "..." : ""}</p>}
+        <p className="job-desc">{job.description}</p>
       </div>
       <div className="job-actions">
-        <div className="deadline">Rok prijave<br /><strong style={{ color: "var(--ink)", fontSize: 13 }}>{formatDate(job.deadline)}</strong></div>
-        {job.salary_text && <span className="badge lime">{job.salary_text}</span>}
-        <Link className="btn blue sm" href={url}>Prijavi se</Link>
-        <Link className="btn ghost sm" href={url}>Detalji</Link>
+        {admin ? (
+          <>
+            <Button tone="lime" size="sm">Odobri</Button>
+            <Button tone="ghost" size="sm">Istakni</Button>
+          </>
+        ) : (
+          <>
+            <Button href={jobUrl(job)} tone="ghost" size="sm">Detalji</Button>
+            <Button href={jobUrl(job)} tone="blue" size="sm">Prijavi se</Button>
+          </>
+        )}
       </div>
     </article>
   );

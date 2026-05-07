@@ -1,10 +1,5 @@
-import type { Metadata } from "next";
-import { ApplicationsClient } from "@/components/applications-client";
+import { DashboardClient } from "@/components/dashboard-client";
 
-export const metadata: Metadata = {
-  title: "Moje prijave"
-};
-
-export default function ApplicationsPage() {
-  return <ApplicationsClient />;
+export default function CandidateApplicationsPage() {
+  return <DashboardClient expectedRole="candidate" title="Moje prijave" />;
 }
