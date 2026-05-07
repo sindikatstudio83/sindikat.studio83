@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
@@ -32,7 +31,6 @@ function SideNav({ email }: { email: string }) {
 }
 
 export function AdminClient({ view }: { view: AdminView }) {
-  const { role, userId, email: authEmail, ready } = useAuth();
   const [rows, setRows] = useState<Row[]>([]);
   const [stats, setStats] = useState({ jobs: 0, companies: 0, payments: 0, users: 0, revenue: 0 });
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -44,10 +42,11 @@ export function AdminClient({ view }: { view: AdminView }) {
   function setMsg(text: string, type: Notice["type"] = "info") { setNotice({ text, type }); }
 
   async function guard(): Promise<boolean> {
-    if (!ready) return false;
-    if (!userId || role === "guest") { window.location.href = "/login?next=/admin"; return false; }
-    if (role !== "admin") { window.location.href = "/"; return false; }
-    setEmail(authEmail || "");
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) { window.location.href = "/login?next=/admin"; return false; }
+    setEmail(data.user.email || "");
+    const { data: p } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+    if (p?.role !== "admin") { window.location.href = "/"; return false; }
     return true;
   }
 

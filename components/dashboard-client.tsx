@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { roleHomes, roleLabels, stageLabels } from "@/lib/labels";
-import { normalizeRole } from "@/lib/auth-role";
 import type { JobApplication, Profile, UserRole } from "@/types/domain";
 
 type AccountState = {
-  role: UserRole;
   profile: Profile | null;
   applications: JobApplication[];
 };
@@ -19,72 +18,71 @@ function homeForRole(role: UserRole) {
 }
 
 export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude<UserRole, "guest">; title: string }) {
-  const [account, setAccount] = useState<AccountState>({ role: "guest", profile: null, applications: [] });
+  const { role, userId, email, ready } = useAuth();
+  const [account, setAccount] = useState<AccountState>({ profile: null, applications: [] });
   const [loading, setLoading] = useState(true);
-  const [supabase] = useState(() => createBrowserSupabase());
 
   useEffect(() => {
+    if (!ready) return;
+
+    if (role === "guest" || !userId) {
+      window.location.href = "/login?next=/profil";
+      return;
+    }
+    if (role !== expectedRole && role !== "admin") {
+      window.location.href = homeForRole(role);
+      return;
+    }
+
+    const supabase = createBrowserSupabase();
+
     async function load() {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data.user) {
-        window.location.href = "/login";
-        return;
-      }
+      const promises: Promise<unknown>[] = [
+        supabase.from("profiles").select("*").eq("id", userId!).maybeSingle()
+      ];
 
-      const user = data.user;
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profileError) console.error("[DashboardClient:profile]", profileError.message);
-
-      // Role comes only from DB profile — never from user_metadata
-      const role = normalizeRole(profileData?.role);
-
-      if (role === "guest") {
-        window.location.href = "/login";
-        return;
-      }
-
-      if (role !== expectedRole && role !== "admin") {
-        window.location.href = homeForRole(role);
-        return;
-      }
-
-      let applicationsList: JobApplication[] = [];
       if (expectedRole === "candidate") {
-        const { data: appData, error: appError } = await supabase
-          .from("job_applications")
-          .select("*,jobs(title,companies(name))")
-          .eq("candidate_id", user.id)
-          .order("created_at", { ascending: false });
-        if (appError) console.error("[DashboardClient:applications]", appError.message);
-        applicationsList = (appData || []) as JobApplication[];
+        promises.push(
+          supabase
+            .from("job_applications")
+            .select("*,jobs(id,title,slug,company_id,companies(name,slug))")
+            .eq("candidate_id", userId!)
+            .order("created_at", { ascending: false })
+            .limit(20)
+        );
       }
 
-      const profileForState = (profileData || {
-        id: user.id,
+      const results = await Promise.all(promises);
+      const profileResult = results[0] as { data: Profile | null; error: { message: string } | null };
+      const appResult = results[1] as { data: JobApplication[] | null; error: { message: string } | null } | undefined;
+
+      if (profileResult.error) console.error("[DashboardClient:profile]", profileResult.error.message);
+
+      const profile = (profileResult.data || {
+        id: userId!,
         role,
         full_name: null,
-        email: user.email || null,
+        email: email || null,
         phone: null,
         city: null
       }) as Profile;
 
-      setAccount({ role, profile: profileForState, applications: applicationsList });
+      setAccount({
+        profile,
+        applications: (appResult?.data || []) as JobApplication[]
+      });
       setLoading(false);
     }
     load();
-  }, [expectedRole, supabase]);
+  }, [ready, role, userId, email, expectedRole]);
 
-  if (loading) return (
-    <div className="panel">
-      <h1>Učitavanje</h1>
-      <p className="lead">Spremamo podatke.</p>
-    </div>
-  );
+  if (!ready || loading) {
+    return (
+      <div className="panel loading-panel">
+        <p>Učitavanje...</p>
+      </div>
+    );
+  }
 
   const cvPercent = (() => {
     const cv = account.profile?.cv_data;
@@ -94,61 +92,94 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
     return Math.round((filled / fields.length) * 100);
   })();
 
+  const apps = account.applications;
+  const pending = apps.filter(a => a.stage === "applied").length;
+  const inProgress = apps.filter(a => ["review", "interview", "shortlist", "offer"].includes(a.stage)).length;
+  const hired = apps.filter(a => a.stage === "hired").length;
+
   return (
     <section>
       <div className="section-head">
         <div>
-          <span className="page-label">{title}</span>
+          <span className="page-label">{roleLabels[role]}</span>
           <h1>{title}</h1>
-          <p className="sub">{account.profile?.email}</p>
+          <p className="sub">{account.profile?.email || email}</p>
         </div>
         <div className="head-actions">
           {expectedRole === "candidate" && (
-            <Link className="btn blue" href="/profil/biografija">Uredi biografiju</Link>
+            <>
+              <Link className="btn ghost" href="/profil/biografija">Uredi biografiju</Link>
+              <Link className="btn blue" href="/oglasi">Pretraži oglase</Link>
+            </>
           )}
         </div>
       </div>
 
-      <div className="dash-grid">
-        <div className="metric"><strong>{account.applications.length}</strong><span>Prijave</span></div>
-        <div className="metric"><strong>{account.profile?.city || "—"}</strong><span>Grad</span></div>
-        <div className="metric"><strong>{cvPercent}%</strong><span>Biografija</span></div>
-        <div className="metric"><strong>{roleLabels[account.role]}</strong><span>Uloga</span></div>
-      </div>
-
-      {cvPercent < 60 && expectedRole === "candidate" && (
-        <div className="notice-card">
-          <strong>Biografija nije kompletna ({cvPercent}%)</strong>
-          <p>Dopuni biografiju da bi mogao slati prijave na oglase.</p>
-          <Link className="btn blue" href="/profil/biografija">Dopuni biografiju</Link>
+      {expectedRole === "candidate" && cvPercent < 60 && (
+        <div className="notice-card warn" style={{ marginBottom: 18 }}>
+          <strong>Biografija je popunjena {cvPercent}%</strong>
+          <p>Dopuni biografiju da bi mogao slati prijave i da te firma bolje upozna.</p>
+          <div>
+            <Link className="btn blue sm" href="/profil/biografija">Dopuni biografiju →</Link>
+          </div>
         </div>
       )}
 
-      {expectedRole === "candidate" ? (
-        <div className="table-card">
-          <div className="table-head">
-            <h2>Moje prijave</h2>
+      <div className="dash-grid">
+        <div className="metric"><strong>{apps.length}</strong><span>Prijava ukupno</span></div>
+        <div className="metric"><strong>{pending}</strong><span>Nove prijave</span></div>
+        <div className="metric"><strong>{inProgress}</strong><span>U toku</span></div>
+        <div className="metric"><strong>{hired || cvPercent + "%"}</strong><span>{hired ? "Zaposlen" : "Biografija"}</span></div>
+      </div>
+
+      {expectedRole === "candidate" && (
+        <>
+          <div className="quick-links">
+            <Link className="quick-link" href="/oglasi">
+              <strong>Pretraži oglase</strong>
+              <span>Filtriraj po gradu i kategoriji</span>
+            </Link>
+            <Link className="quick-link" href="/profil/biografija">
+              <strong>Moja biografija</strong>
+              <span>{cvPercent}% popunjeno</span>
+            </Link>
+            <Link className="quick-link" href="/profil/prijave">
+              <strong>Sve prijave</strong>
+              <span>{apps.length} prijava</span>
+            </Link>
           </div>
-          {account.applications.map((application) => (
-            <div className="table-row" key={application.id}>
-              <div>
-                <strong>{application.jobs?.title || "Prijava"}</strong>
-                <small>{application.reference_code}</small>
+
+          <div className="section-head compact-head">
+            <div>
+              <h2>Nedavne prijave</h2>
+            </div>
+            {apps.length > 5 && <Link className="btn ghost sm" href="/profil/prijave">Sve prijave →</Link>}
+          </div>
+
+          <div className="table-card">
+            {apps.slice(0, 5).map((app) => (
+              <div className="table-row" key={app.id}>
+                <div>
+                  <strong>{app.jobs?.title || "Prijava"}</strong>
+                  <small>{(app.jobs as unknown as { companies?: { name?: string } })?.companies?.name || ""}</small>
+                </div>
+                <div><span className={`status-badge stage-${app.stage}`}>{stageLabels[app.stage]}</span></div>
+                <div className="muted">{app.reference_code}</div>
+                <div className="muted">{new Date(app.created_at).toLocaleDateString("sr-ME")}</div>
               </div>
-              <div>{(application.jobs as any)?.companies?.name || ""}</div>
-              <div>{stageLabels[application.stage]}</div>
-              <div>{new Date(application.created_at).toLocaleDateString("sr-ME")}</div>
-            </div>
-          ))}
-          {!account.applications.length ? (
-            <div className="empty">
-              <strong>Nema prijava</strong>
-              <p>Prijave će se prikazati ovdje čim apliciraš.</p>
-              <Link className="btn blue" href="/oglasi">Otvori oglase</Link>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
+            ))}
+            {!apps.length && (
+              <div className="empty">
+                <strong>Još nema prijava</strong>
+                <p>Pošalji prvu prijavu i prati status iz dashboarda.</p>
+                <div className="actions">
+                  <Link className="btn blue sm" href="/oglasi">Otvori oglase →</Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </section>
   );
 }

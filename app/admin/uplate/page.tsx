@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { AdminClient } from "@/components/admin-client";
 
-export default function AdminPaymentsPage() {
+export const metadata: Metadata = { title: "Admin — Uplate" };
+
+export default function AdminUplatePage() {
   return <AdminClient view="payments" />;
 }

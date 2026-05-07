@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { CvBuilder } from "@/components/cv-builder";
 
-export default function CandidateCvPage() {
+export const metadata: Metadata = {
+  title: "Moja biografija"
+};
+
+export default function BiografijaPage() {
   return <CvBuilder />;
 }

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Prijavi se na imaposla.me."
 };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const params = await searchParams;
   return (
     <section className="auth-shell auth-two">

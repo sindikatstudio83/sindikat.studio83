@@ -1,6 +1,13 @@
 import Link from "next/link";
+import { getLookups } from "@/lib/queries/public";
 
-export function Footer() {
+export async function Footer() {
+  const { cities, categories } = await getLookups();
+
+  // Top 6 gradova i kategorija sa fallback ako baza prazna
+  const topCities = cities.slice(0, 6);
+  const topCategories = categories.slice(0, 6);
+
   return (
     <footer className="footer">
       <div className="wrap foot-grid">
@@ -10,21 +17,28 @@ export function Footer() {
             <span>imaposla.me</span>
           </Link>
           <p>Platforma za oglase, prijave i jednostavnije zapošljavanje u Crnoj Gori.</p>
+          <p style={{ marginTop: 12, fontSize: 12 }}>© 2026 imaposla.me</p>
         </div>
         <div>
-          <h4>Kandidati</h4>
-          <Link href="/oglasi">Pretraga oglasa</Link>
-          <Link href="/profil/biografija">Biografija</Link>
-          <Link href="/profil/prijave">Moje prijave</Link>
+          <h4>Gradovi</h4>
+          {topCities.length
+            ? topCities.map(c => <Link key={c.id} href={`/gradovi/${c.slug || encodeURIComponent(c.name.toLowerCase())}`}>{c.name}</Link>)
+            : <Link href="/gradovi">Pregled gradova</Link>
+          }
         </div>
         <div>
-          <h4>Firme</h4>
+          <h4>Kategorije</h4>
+          {topCategories.length
+            ? topCategories.map(c => <Link key={c.id} href={`/kategorije/${c.slug || encodeURIComponent(c.name.toLowerCase())}`}>{c.name}</Link>)
+            : <Link href="/kategorije">Pregled kategorija</Link>
+          }
+        </div>
+        <div>
+          <h4>Firma</h4>
           <Link href="/za-firme">Za firme</Link>
-          <Link href="/firma/novi-oglas">Novi oglas</Link>
-          <Link href="/firma/selekcija">Selekcija prijava</Link>
-        </div>
-        <div>
-          <h4>Pravno</h4>
+          <Link href="/registracija?role=company">Registruj firmu</Link>
+          <Link href="/login">Prijava</Link>
+          <h4 style={{ marginTop: 16 }}>Pravno</h4>
           <Link href="/privatnost">Privatnost</Link>
           <Link href="/uslovi-koriscenja">Uslovi korišćenja</Link>
           <Link href="/mapa-sajta">Mapa sajta</Link>

@@ -1,33 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { createBrowserSupabase } from "@/lib/supabase/client";
-import { loadCurrentRole } from "@/lib/auth-role";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import { mobileNavItems } from "@/lib/navigation";
-import type { UserRole } from "@/types/domain";
 
 export function MobileNav() {
-  const [role, setRole] = useState<UserRole>("guest");
-  const [supabase] = useState(() => createBrowserSupabase());
-
-  useEffect(() => {
-    async function loadRole() {
-      setRole(await loadCurrentRole(supabase));
-    }
-    loadRole();
-    const { data } = supabase.auth.onAuthStateChange(() => loadRole());
-    return () => data.subscription.unsubscribe();
-  }, [supabase]);
+  const { role } = useAuth();
+  const pathname = usePathname();
+  const items = mobileNavItems[role];
 
   return (
     <nav className="mobile-app-nav" aria-label="Mobilna navigacija">
-      {mobileNavItems[role].map((item) => (
-        <Link href={item.href} key={`${item.label}-${item.href}`}>
-          <span>{item.icon}</span>
-          {item.label}
-        </Link>
-      ))}
+      {items.map(item => {
+        const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+        return (
+          <Link
+            href={item.href}
+            key={item.href}
+            className={isActive ? "active" : ""}
+          >
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

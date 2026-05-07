@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { LogoutClient } from "@/components/logout-client";
 
 export default function LogoutPage() {
-  redirect("/auth/logout");
+  return <LogoutClient />;
 }

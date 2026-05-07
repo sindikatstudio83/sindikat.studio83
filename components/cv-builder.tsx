@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import type { CvData } from "@/types/domain";
 
@@ -13,42 +15,53 @@ const emptyCv: CvData = {
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 export function CvBuilder() {
+  const { userId, email, ready, role } = useAuth();
   const [cv, setCv] = useState<CvData>(emptyCv);
   const [loadStatus, setLoadStatus] = useState("Učitavanje biografije...");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveMessage, setSaveMessage] = useState("");
-  const [supabase] = useState(() => createBrowserSupabase());
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (!ready) return;
+
+    if (!userId || role === "guest") {
+      window.location.href = "/login?next=/profil/biografija";
+      return;
+    }
+
+    const supabase = createBrowserSupabase();
+
     async function load() {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data.user) {
-        setLoadStatus("Prijavi se da bi biografija bila sačuvana u profilu.");
-        return;
-      }
-      const user = data.user;
-      const { data: profileData, error: profileError } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("cv_data,full_name,phone,city,email")
-        .eq("id", user.id)
+        .eq("id", userId!)
         .maybeSingle();
 
-      if (profileError) console.error("[CvBuilder:load]", profileError.message);
+      if (error) {
+        console.error("[CvBuilder:load]", error.message);
+        setLoadStatus("Nije moguće učitati biografiju iz baze.");
+        return;
+      }
 
-      const remote = profileData;
+      const remote = data;
       setCv({
         ...emptyCv,
         ...(remote?.cv_data || {}),
         fullName: remote?.cv_data?.fullName || remote?.full_name || "",
         phone: remote?.cv_data?.phone || remote?.phone || "",
         city: remote?.cv_data?.city || remote?.city || "",
-        email: remote?.cv_data?.email || remote?.email || user.email || ""
+        email: remote?.cv_data?.email || remote?.email || email || ""
       });
-      setLoadStatus("Biografija je učitana iz profila.");
+      setLoadStatus("Promjene se automatski čuvaju.");
     }
     load();
-  }, [supabase]);
+
+    return () => {
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    };
+  }, [ready, userId, email, role]);
 
   const skills = useMemo(
     () => (cv.skills || "").split(",").map((s) => s.trim()).filter(Boolean),
@@ -58,20 +71,20 @@ export function CvBuilder() {
   function update(name: keyof CvData, value: string) {
     setCv((current) => ({ ...current, [name]: value.slice(0, 6000) }));
     setSaveStatus("idle");
-    // Auto-save after 2s of inactivity
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
-    autoSaveTimer.current = setTimeout(() => save(), 2000);
+    autoSaveTimer.current = setTimeout(() => save(), 1500);
   }
 
   async function save() {
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
-    const { data, error: authError } = await supabase.auth.getUser();
-    if (authError || !data.user) {
+    if (!userId) {
       setSaveStatus("error");
-      setSaveMessage("Prijavi se da bi sačuvao biografiju.");
+      setSaveMessage("Sesija je istekla. Prijavi se ponovo.");
       return;
     }
+
     setSaveStatus("saving");
+    const supabase = createBrowserSupabase();
     const { error } = await supabase
       .from("profiles")
       .update({
@@ -81,7 +94,7 @@ export function CvBuilder() {
         city: cv.city || null,
         cv_updated_at: new Date().toISOString()
       })
-      .eq("id", data.user.id);
+      .eq("id", userId);
 
     if (error) {
       console.error("[CvBuilder:save]", error.message);
@@ -89,7 +102,7 @@ export function CvBuilder() {
       setSaveMessage(error.message);
     } else {
       setSaveStatus("saved");
-      setSaveMessage("Biografija je sačuvana.");
+      setSaveMessage("");
     }
   }
 
@@ -107,27 +120,52 @@ export function CvBuilder() {
 
   const saveLabel = saveStatus === "saving" ? "Čuvanje..." : saveStatus === "saved" ? "Sačuvano ✓" : "Sačuvaj";
 
+  if (!ready) {
+    return <div className="panel loading-panel"><p>Učitavanje...</p></div>;
+  }
+
+  // Računanje popunjenosti
+  const filledFields = ["fullName", "title", "city", "phone", "email", "summary", "skills", "experience", "education"]
+    .filter(f => Boolean((cv as Record<string, string | undefined>)[f])).length;
+  const totalFields = 9;
+  const percent = Math.round((filledFields / totalFields) * 100);
+
   return (
     <section className="cv-builder-page">
       <div className="cv-builder-head">
         <div>
           <span className="page-label">Biografija</span>
-          <h1>Napravi radnu biografiju bez slanja fajlova.</h1>
-          <p>Popuni podatke jednom, pregledaj kako izgleda i skini PDF direktno iz sajta.</p>
-          <p className="notice">{loadStatus}</p>
+          <h1>Napravi biografiju bez slanja fajlova.</h1>
+          <p>Popuni podatke jednom — koristiš ih za sve prijave. Skini PDF direktno iz sajta.</p>
+          <p className="hint" style={{ marginTop: 10 }}>{loadStatus}</p>
         </div>
         <div className="cv-head-actions">
-          <button className="btn blue" onClick={printCv} type="button">Skini PDF</button>
-          <button className="btn lime" onClick={save} type="button" disabled={saveStatus === "saving"}>{saveLabel}</button>
+          <Link className="btn ghost" href="/profil">← Nazad</Link>
+          <button className="btn ghost" onClick={printCv} type="button">Štampa / PDF</button>
+          <button className="btn blue" onClick={save} type="button" disabled={saveStatus === "saving"}>
+            {saveLabel}
+          </button>
         </div>
       </div>
 
-      {saveStatus === "error" && <p className="notice error">{saveMessage}</p>}
+      <div className="form-card" style={{ marginBottom: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+          <strong>Popunjeno {percent}% — {filledFields} od {totalFields} polja</strong>
+          {percent < 60 && <span className="badge orange">Dopuni za prijave</span>}
+          {percent >= 60 && percent < 100 && <span className="badge blue">Možeš slati prijave</span>}
+          {percent === 100 && <span className="badge green">Kompletno</span>}
+        </div>
+        <div className="pbar" style={{ height: 8, background: "var(--line)", borderRadius: 999, overflow: "hidden" }}>
+          <div style={{ height: "100%", background: percent < 60 ? "var(--orange)" : percent < 100 ? "var(--blue)" : "var(--green)", width: `${percent}%`, transition: "width .3s" }} />
+        </div>
+      </div>
+
+      {saveStatus === "error" && saveMessage && <p className="notice error" role="alert">{saveMessage}</p>}
 
       <div className="cv-builder-grid">
         <form className="cv-builder-form" onSubmit={(e) => { e.preventDefault(); save(); }}>
           <div className="form-grid">
-            {field("fullName", "Ime i prezime", "npr. Marko Marković")}
+            {field("fullName", "Ime i prezime *", "npr. Marko Marković")}
             {field("title", "Zanimanje", "npr. Konobar, recepcioner")}
           </div>
           <div className="form-grid">
@@ -139,13 +177,13 @@ export function CvBuilder() {
           {field("skills", "Vještine", "Odvoji zarezom: rad sa gostima, engleski, kasa...", true)}
           {field("experience", "Radno iskustvo", "Firma, pozicija, period i odgovornosti.", true)}
           {field("education", "Obrazovanje", "Škola, kurs, fakultet ili praktična obuka.", true)}
-          {field("languages", "Jezici", "npr. srpski maternji, engleski B2...", true)}
+          {field("languages", "Jezici", "npr. crnogorski C2, engleski B2...", true)}
           {field("certificates", "Sertifikati i obuke", "Kursevi, licence, obuke.", true)}
-          {field("availability", "Dostupnost", "Od kada možeš da počneš, smjene, sezona...", true)}
+          {field("availability", "Dostupnost", "Od kada možeš početi, smjene, sezona...", true)}
           <button className="btn lime" type="submit" disabled={saveStatus === "saving"}>{saveLabel}</button>
         </form>
 
-        <article className="cv-preview">
+        <article className="cv-preview" aria-label="Pregled biografije">
           <header>
             <div>
               <span>Biografija</span>

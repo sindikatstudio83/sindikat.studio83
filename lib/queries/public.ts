@@ -1,9 +1,7 @@
 import { createPublicSupabase } from "@/lib/supabase/server";
 import type { Company, Job, Plan } from "@/types/domain";
 
-const jobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug),categories(id,name),cities(id,name)";
-const cityJobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug),categories(id,name),cities!inner(id,name)";
-const categoryJobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug),categories!inner(id,name),cities(id,name)";
+const jobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug),categories(id,name,slug),cities(id,name,slug)";
 
 export async function getPublicJobs(limit?: number): Promise<Job[]> {
   const db = createPublicSupabase();
@@ -14,26 +12,46 @@ export async function getPublicJobs(limit?: number): Promise<Job[]> {
   return (data || []) as unknown as Job[];
 }
 
-export async function getPublicJobsByCity(cityName: string): Promise<Job[]> {
+// Filter po gradu — koristi city_id preko cities lookup tabele
+export async function getPublicJobsByCity(cityIdentifier: string): Promise<Job[]> {
   const db = createPublicSupabase();
+  // Prvo pronađi grad po slug ili imenu (case insensitive)
+  const { data: cityData } = await db
+    .from("cities")
+    .select("id")
+    .or(`slug.eq.${cityIdentifier.toLowerCase()},name.ilike.${cityIdentifier}`)
+    .maybeSingle();
+
+  if (!cityData?.id) return [];
+
   const { data, error } = await db
     .from("jobs")
-    .select(cityJobSelect)
+    .select(jobSelect)
     .eq("status", "active")
-    .eq("cities.name", cityName)
+    .eq("city_id", cityData.id)
     .order("created_at", { ascending: false });
+
   if (error) console.error("[getPublicJobsByCity]", error.message);
   return (data || []) as unknown as Job[];
 }
 
-export async function getPublicJobsByCategory(categoryName: string): Promise<Job[]> {
+export async function getPublicJobsByCategory(categoryIdentifier: string): Promise<Job[]> {
   const db = createPublicSupabase();
+  const { data: categoryData } = await db
+    .from("categories")
+    .select("id")
+    .or(`slug.eq.${categoryIdentifier.toLowerCase()},name.ilike.${categoryIdentifier}`)
+    .maybeSingle();
+
+  if (!categoryData?.id) return [];
+
   const { data, error } = await db
     .from("jobs")
-    .select(categoryJobSelect)
+    .select(jobSelect)
     .eq("status", "active")
-    .eq("categories.name", categoryName)
+    .eq("category_id", categoryData.id)
     .order("created_at", { ascending: false });
+
   if (error) console.error("[getPublicJobsByCategory]", error.message);
   return (data || []) as unknown as Job[];
 }

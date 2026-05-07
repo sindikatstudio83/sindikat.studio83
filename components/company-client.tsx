@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
@@ -43,7 +42,6 @@ function SideNav({ email }: { email: string }) {
 }
 
 export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job" | "selection" | "billing" }) {
-  const { role, userId, email: authEmail, ready } = useAuth();
   const [company, setCompany] = useState<Company | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<(JobApplication & CandidateExtra)[]>([]);
@@ -59,11 +57,13 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   const [supabase] = useState(() => createBrowserSupabase());
 
   async function load() {
-    if (!ready) return;
-    if (!userId || role === "guest") { window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`; return; }
-    if (role !== "company" && role !== "admin") { window.location.href = "/profil"; return; }
-    const user = { id: userId };
-    setEmail(authEmail || "");
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) { window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`; return; }
+    const user = data.user;
+    setEmail(user.email || "");
+
+    const { data: profileData } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if (profileData?.role !== "company" && profileData?.role !== "admin") { window.location.href = "/profil"; return; }
 
     const [cityRows, categoryRows, planRows, companyResult] = await Promise.all([
       supabase.from("cities").select("id,name,slug").order("name"),
@@ -91,20 +91,20 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     setLoading(false);
   }
 
-  useEffect(() => { if (ready) load(); }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function setMsg(text: string, type: "info" | "error" | "success" = "info") { setNotice({ text, type }); }
 
   async function saveCompany(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setSaving(true); setNotice(null);
-    if (!userId) { setSaving(false); return; }
+    const { data } = await supabase.auth.getUser(); if (!data.user) { setSaving(false); return; }
     const fd = new FormData(e.currentTarget);
     const name = String(fd.get("name") || "").trim();
     if (!name) { setMsg("Upiši naziv firme.", "error"); setSaving(false); return; }
     const row = {
-      owner_id: userId,
+      owner_id: data.user.id,
       name,
-      slug: company?.slug || `${slugify(name)}-${userId!.slice(0, 8)}`,
+      slug: company?.slug || `${slugify(name)}-${data.user.id.slice(0, 8)}`,
       city: String(fd.get("city") || "").trim(),
       industry: String(fd.get("industry") || "").trim(),
       description: String(fd.get("description") || "").trim()

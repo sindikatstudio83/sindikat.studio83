@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { CompanyClient } from "@/components/company-client";
 
-export default function CompanySelectionPage() {
+export const metadata: Metadata = { title: "Selekcija prijava" };
+
+export default function SelekcijaPage() {
   return <CompanyClient view="selection" />;
 }
