@@ -104,7 +104,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     const row = {
       owner_id: userId,
       name,
-      slug: company?.slug || `${slugify(name)}-${data.user.id.slice(0, 8)}`,
+      slug: company?.slug || `${slugify(name)}-${userId!.slice(0, 8)}`,
       city: String(fd.get("city") || "").trim(),
       industry: String(fd.get("industry") || "").trim(),
       description: String(fd.get("description") || "").trim()
