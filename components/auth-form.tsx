@@ -1,4 +1,3 @@
-daj mi cijeli ovaj kod prradjen 
 "use client";
 
 import { useState } from "react";
