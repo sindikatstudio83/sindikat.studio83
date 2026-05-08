@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { safeMessage, logError } from "@/lib/errors";
 
 type ApplyState = "loading" | "guest" | "wrong-role" | "duplicate" | "no-cv" | "ready" | "submitting" | "done" | "error";
 
@@ -96,8 +97,8 @@ export function ApplyForm({ jobId }: { jobId: number }) {
     });
 
     if (error) {
-      console.error("[ApplyForm:submit]", error.message);
-      setMessage(error.message);
+      logError("ApplyForm.submit", error);
+      setMessage(safeMessage(error, "submit"));
       setState("error");
       return;
     }

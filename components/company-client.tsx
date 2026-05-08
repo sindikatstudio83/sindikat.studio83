@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { safeMessage, logError } from "@/lib/errors";
 import { slugify, initials } from "@/lib/format";
 import { stageLabels, stageOrder, roleLabels } from "@/lib/labels";
 import { desktopNavItems } from "@/lib/navigation";
@@ -110,7 +111,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
       description: String(fd.get("description") || "").trim()
     };
     const result = company ? await supabase.from("companies").update(row).eq("id", company.id) : await supabase.from("companies").insert(row);
-    if (result.error) { setMsg(result.error.message, "error"); } else { setMsg(company ? "Profil firme je sačuvan." : "Profil firme je kreiran i čeka odobrenje.", "success"); }
+    if (result.error) { logError("CompanyClient.save", result.error); setMsg(safeMessage(result.error, "save"), "error"); } else { setMsg(company ? "Profil firme je sačuvan." : "Profil firme je kreiran i čeka odobrenje.", "success"); }
     setSaving(false); await load();
   }
 
@@ -134,13 +135,13 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
       status: "pending_review", featured: false
     };
     const { error } = await supabase.from("jobs").insert(row);
-    if (error) { setMsg(error.message, "error"); } else { setMsg("Oglas je poslat na odobrenje.", "success"); (e.target as HTMLFormElement).reset(); }
+    if (error) { logError("CompanyClient.createJob", error); setMsg(safeMessage(error, "submit"), "error"); } else { setMsg("Oglas je poslat na odobrenje.", "success"); (e.target as HTMLFormElement).reset(); }
     setSaving(false); await load();
   }
 
   async function moveStage(id: number, next: string) {
     const { error } = await supabase.from("job_applications").update({ stage: next }).eq("id", id);
-    if (error) { setMsg(error.message, "error"); } else { setMsg("Status promijenjen.", "success"); }
+    if (error) { logError("CompanyClient.updateApp", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg("Status promijenjen.", "success"); }
     await load();
   }
 
@@ -156,14 +157,14 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
       company_id: company.id, plan_id: plan.id, status: "pending", amount_eur: plan.price_eur,
       payment_reference: `IP-${Date.now()}`
     }).select("id,payment_reference").single();
-    if (orderError || !orderData) { setMsg(orderError?.message || "Narudžba nije kreirana.", "error"); setSaving(false); return; }
+    if (orderError || !orderData) { logError("CompanyClient.order", orderError); setMsg(safeMessage(orderError, "submit"), "error"); setSaving(false); return; }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
     const filePath = `${company.id}/${orderData.id}-${Date.now()}-${safeName}`;
     const { error: uploadError } = await supabase.storage.from("payment-proofs").upload(filePath, file, { upsert: false });
     if (uploadError) {
       await supabase.from("orders").delete().eq("id", orderData.id);
-      setMsg(`Dokaz nije poslat: ${uploadError.message}`, "error"); setSaving(false); return;
+      logError("CompanyClient.upload", uploadError); setMsg(safeMessage(uploadError, "submit"), "error"); setSaving(false); return;
     }
     await supabase.from("payment_proofs").insert({
       order_id: orderData.id, company_id: company.id, amount_eur: plan.price_eur,

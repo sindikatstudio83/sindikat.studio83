@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { safeMessage, logError } from "@/lib/errors";
 import { desktopNavItems } from "@/lib/navigation";
 import { initials } from "@/lib/format";
 
@@ -78,7 +79,7 @@ export function AdminClient({ view }: { view: AdminView }) {
     }
 
     setRows(result?.data || []);
-    if (result?.error) { console.error("[AdminClient]", result.error.message); setMsg(result.error.message, "error"); }
+    if (result?.error) { logError("AdminClient", result.error); setMsg(safeMessage(result.error, "load"), "error"); }
     setLoading(false);
   }
 
@@ -87,14 +88,14 @@ export function AdminClient({ view }: { view: AdminView }) {
   async function updateJob(id: number, patch: Record<string, unknown>) {
     setActing(id);
     const { error } = await supabase.from("jobs").update(patch).eq("id", id);
-    if (error) { setMsg(error.message, "error"); } else { setMsg("Oglas ažuriran.", "success"); }
+    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg("Oglas ažuriran.", "success"); }
     setActing(null); await load();
   }
 
   async function updateCompany(id: number, approved: boolean) {
     setActing(id);
     const { error } = await supabase.from("companies").update({ approved }).eq("id", id);
-    if (error) { setMsg(error.message, "error"); } else { setMsg(approved ? "Firma odobrena." : "Firma sakrivena.", "success"); }
+    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg(approved ? "Firma odobrena." : "Firma sakrivena.", "success"); }
     setActing(null); await load();
   }
 
@@ -102,7 +103,7 @@ export function AdminClient({ view }: { view: AdminView }) {
     if (row.status !== "pending") { setMsg("Dokaz je već obrađen.", "error"); return; }
     setActing(row.id);
     const { data, error } = await supabase.rpc("confirm_payment_proof", { proof_id: row.id });
-    if (error) { setMsg(error.message, "error"); } else {
+    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else {
       const code = Array.isArray(data) ? data[0]?.activation_code : data?.activation_code;
       setMsg(`Uplata potvrđena! Kod: ${code || "kreiran"}`, "success");
     }
@@ -112,13 +113,13 @@ export function AdminClient({ view }: { view: AdminView }) {
   async function rejectProof(id: number) {
     setActing(id);
     const { error } = await supabase.from("payment_proofs").update({ status: "rejected", reviewed_at: new Date().toISOString() }).eq("id", id).eq("status", "pending");
-    if (error) { setMsg(error.message, "error"); } else { setMsg("Dokaz odbijen.", "info"); }
+    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg("Dokaz odbijen.", "info"); }
     setActing(null); await load();
   }
 
   async function openProof(filePath: string) {
     const { data, error } = await supabase.storage.from("payment-proofs").createSignedUrl(filePath, 300);
-    if (error || !data?.signedUrl) { setMsg(error?.message || "Dokaz nije dostupan.", "error"); return; }
+    if (error || !data?.signedUrl) { logError("AdminClient.signedUrl", error); setMsg(safeMessage(error, "load"), "error"); return; }
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { safeMessage, logError } from "@/lib/errors";
 import { PageLabel } from "@/components/ui";
 
 export default function ZaboravljenaLozinkaPage() {
@@ -24,7 +25,8 @@ export default function ZaboravljenaLozinkaPage() {
     });
 
     if (err) {
-      setError(err.message);
+      logError("auth.reset", err);
+      setError(safeMessage(err, "auth"));
       setLoading(false);
       return;
     }

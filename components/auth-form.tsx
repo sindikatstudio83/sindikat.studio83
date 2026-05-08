@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { safeMessage, logError } from "@/lib/errors";
 
 export function LoginForm({ nextPath }: { nextPath?: string | null }) {
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,8 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
     const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError || !data.session) {
-      setError("E-poštа ili lozinka nijesu tačni.");
+      logError("auth.signIn", authError);
+      setError(safeMessage(authError, "auth"));
       setLoading(false);
       return;
     }
@@ -122,12 +124,8 @@ export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "co
     });
 
     if (error) {
-      const msg = error.message.toLowerCase();
-      if (msg.includes("already") || msg.includes("registered") || msg.includes("exists")) {
-        setMessage("Nalog sa ovom e-poštom već postoji. Prijavi se ili zatraži novu lozinku.");
-      } else {
-        setMessage(error.message);
-      }
+      logError("auth.signUp", error);
+      setMessage(safeMessage(error, "auth"));
       setLoading(false);
       return;
     }

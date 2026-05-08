@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { safeMessage, logError } from "@/lib/errors";
 import type { CvData } from "@/types/domain";
 
 const emptyCv: CvData = {
@@ -40,8 +41,8 @@ export function CvBuilder() {
         .maybeSingle();
 
       if (error) {
-        console.error("[CvBuilder:load]", error.message);
-        setLoadStatus("Nije moguće učitati biografiju iz baze.");
+        logError("CvBuilder.load", error);
+        setLoadStatus("Učitavanje nije uspjelo. Osvježi stranicu.");
         return;
       }
 
@@ -97,9 +98,9 @@ export function CvBuilder() {
       .eq("id", userId);
 
     if (error) {
-      console.error("[CvBuilder:save]", error.message);
+      logError("CvBuilder.save", error);
       setSaveStatus("error");
-      setSaveMessage(error.message);
+      setSaveMessage(safeMessage(error, "save"));
     } else {
       setSaveStatus("saved");
       setSaveMessage("");
