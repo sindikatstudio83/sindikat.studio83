@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { roleHomes, roleLabels } from "@/lib/labels";
 import { desktopNavItems } from "@/lib/navigation";
+import { NotificationBell } from "@/components/notification-bell";
+import { NotificationCenter } from "@/components/notification-center";
 
 export function Header() {
   const { role } = useAuth();
@@ -50,7 +52,9 @@ export function Header() {
         </nav>
 
         <div className="top-actions">
+          {isLoggedIn && <NotificationBell />}
           {isLoggedIn && <span className="role-pill">{roleLabels[role]}</span>}
+          {isLoggedIn && <NotificationCenter />}
           <button className="icon-btn" type="button" onClick={toggleTheme} aria-label="Tema">
             {theme === "dark" ? "☀" : "🌙"}
           </button>

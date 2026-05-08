@@ -197,3 +197,51 @@ export type CompanyActivePlan = {
   active_until: string | null;
   is_active: boolean;
 };
+
+export type BannerPlacement =
+  | "homepage_top"
+  | "homepage_middle"
+  | "homepage_bottom"
+  | "jobs_list_top"
+  | "jobs_list_middle"
+  | "jobs_list_bottom"
+  | "job_detail_top"
+  | "job_detail_bottom"
+  | "company_pages_top"
+  | "company_pages_bottom"
+  | "city_page_top"
+  | "category_page_top"
+  | "footer_banner";
+
+export type BannerFormat =
+  | "leaderboard_728x90"
+  | "large_leaderboard_970x90"
+  | "billboard_970x250"
+  | "medium_rectangle_300x250"
+  | "half_page_300x600"
+  | "wide_inline_1200x250"
+  | "mobile_banner_320x50"
+  | "mobile_large_320x100"
+  | "mobile_inline_responsive";
+
+export type BannerAudience = "all" | "candidates" | "companies";
+export type BannerDevice = "all" | "desktop" | "mobile";
+
+export type Banner = {
+  id: number;
+  title: string;
+  image_path: string | null;
+  target_url: string | null;
+  placement: BannerPlacement | string;
+  format: BannerFormat | string | null;
+  target_audience: BannerAudience;
+  device: BannerDevice;
+  approved: boolean;
+  priority: number;
+  start_date: string | null;
+  end_date: string | null;
+  impressions: number;
+  clicks: number;
+  created_at: string;
+  updated_at: string;
+};

@@ -8,7 +8,7 @@ import { supabaseUrl } from "@/lib/supabase/config";
 export function Avatar({
   bucket, path, fallback, size = 40, shape = "circle"
 }: {
-  bucket: "avatars" | "company-logos";
+  bucket: "avatars" | "company-logos" | "banners";
   path: string | null | undefined;
   fallback: string;
   size?: number;

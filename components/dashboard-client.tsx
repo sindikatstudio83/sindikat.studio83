@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { getSavedJobs } from "@/lib/queries/account";
 import { roleHomes, roleLabels, stageLabels } from "@/lib/labels";
-import type { JobApplication, Profile, UserRole } from "@/types/domain";
+import type { JobApplication, Profile, UserRole, SavedJob } from "@/types/domain";
 
 type AccountState = {
   profile: Profile | null;
   applications: JobApplication[];
+  saved: SavedJob[];
 };
 
 function homeForRole(role: UserRole) {
@@ -19,7 +21,7 @@ function homeForRole(role: UserRole) {
 
 export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude<UserRole, "guest">; title: string }) {
   const { role, userId, email, ready } = useAuth();
-  const [account, setAccount] = useState<AccountState>({ profile: null, applications: [] });
+  const [account, setAccount] = useState<AccountState>({ profile: null, applications: [], saved: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,11 +52,13 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
             .order("created_at", { ascending: false })
             .limit(20)
         );
+        promises.push(getSavedJobs(userId!));
       }
 
       const results = await Promise.all(promises);
       const profileResult = results[0] as { data: Profile | null; error: { message: string } | null };
       const appResult = results[1] as { data: JobApplication[] | null; error: { message: string } | null } | undefined;
+      const savedResult = results[2] as SavedJob[] | undefined;
 
       if (profileResult.error) console.error("[DashboardClient:profile]", profileResult.error.message);
 
@@ -69,7 +73,8 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
 
       setAccount({
         profile,
-        applications: (appResult?.data || []) as JobApplication[]
+        applications: (appResult?.data || []) as JobApplication[],
+        saved: savedResult || []
       });
       setLoading(false);
     }
@@ -146,6 +151,10 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
             <Link className="quick-link" href="/profil/prijave">
               <strong>Sve prijave</strong>
               <span>{apps.length} prijava</span>
+            </Link>
+            <Link className="quick-link" href="/profil/sacuvani">
+              <strong>Sačuvani oglasi</strong>
+              <span>{account.saved.length} {account.saved.length === 1 ? "oglas" : "oglasa"}</span>
             </Link>
           </div>
 

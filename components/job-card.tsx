@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatDate, jobUrl } from "@/lib/format";
 import { Avatar } from "@/components/avatar";
+import { SaveJobButton } from "@/components/save-job-button";
 import type { Job } from "@/types/domain";
 
 export function JobCard({ job, showStatus = false }: { job: Job; showStatus?: boolean }) {
@@ -33,6 +34,7 @@ export function JobCard({ job, showStatus = false }: { job: Job; showStatus?: bo
         {job.salary_text && <span className="badge lime">{job.salary_text}</span>}
         <Link className="btn blue sm" href={url}>Prijavi se</Link>
         <Link className="btn ghost sm" href={url}>Detalji</Link>
+        <SaveJobButton jobId={job.id} size="sm" />
       </div>
     </article>
   );

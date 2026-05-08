@@ -10,7 +10,7 @@ const MAX_BYTES = 2 * 1024 * 1024; // 2MB
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
 
 type Props = {
-  bucket: "avatars" | "company-logos";
+  bucket: "avatars" | "company-logos" | "banners";
   ownerUserId: string;
   currentPath: string | null;
   fallbackText: string;
@@ -146,7 +146,7 @@ export function ImageUpload({
 export function AvatarImage({
   bucket, path, fallback, size = 40, shape = "circle"
 }: {
-  bucket: "avatars" | "company-logos";
+  bucket: "avatars" | "company-logos" | "banners";
   path: string | null | undefined;
   fallback: string;
   size?: number;

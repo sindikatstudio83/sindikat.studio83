@@ -3,6 +3,7 @@ import Link from "next/link";
 import { JobCard } from "@/components/job-card";
 import { CompanyCard } from "@/components/company-card";
 import { Button, EmptyState, PageLabel } from "@/components/ui";
+import { BannerSlot } from "@/components/banner-slot";
 import { getCompanies, getLookups, getPublicJobs } from "@/lib/queries/public";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default async function HomePage() {
   ]);
 
   return (
+    <>
     <section className="live-home">
       {/* HERO */}
       <div className="live-hero">
@@ -99,5 +101,7 @@ export default async function HomePage() {
         </div>
       </div>
     </section>
+      <BannerSlot placement="homepage_top" />
+    </>
   );
 }

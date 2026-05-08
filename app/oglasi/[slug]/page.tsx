@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplyForm } from "@/components/apply-form";
+import { JobViewTracker } from "@/components/job-view-tracker";
+import { BannerSlot } from "@/components/banner-slot";
 import { formatDate, initials, jobUrl, parseIdFromSlug } from "@/lib/format";
 import { getJobById, getPublicJobs } from "@/lib/queries/public";
 import { JobCard } from "@/components/job-card";
@@ -81,10 +83,13 @@ export default async function JobDetailPage({ params }: Props) {
           </div>
           <div className="card">
             <h2 style={{ fontSize: 22, marginBottom: 14 }}>Prijavi se</h2>
-            <ApplyForm jobId={job.id} />
+            <JobViewTracker jobId={job.id} />
+      <BannerSlot placement="job_detail_top" />
+      <ApplyForm jobId={job.id} />
           </div>
         </aside>
-      </section>
+      <BannerSlot placement="job_detail_bottom" />
+    </section>
     </>
   );
 }

@@ -833,6 +833,166 @@ h3{font-size:20px}
 [data-theme="dark"] .comment-item{background:var(--soft);border-color:var(--line)}
 [data-theme="dark"] .comment-meta{color:var(--muted)}
 
+
+/* ── NOTIFICATION BELL ── */
+.notification-bell{position:relative}
+.bell-badge{
+  position:absolute;top:-2px;right:-2px;
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:900;
+  border-radius:999px;padding:2px 5px;
+  border:2px solid var(--bg);
+  min-width:16px;text-align:center;
+  line-height:1;
+}
+.notification-panel{
+  position:absolute;top:calc(100% + 8px);right:0;
+  width:340px;max-width:calc(100vw - 24px);
+  background:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:18px;
+  box-shadow:var(--shadow2);
+  z-index:100;
+  overflow:hidden;
+}
+.notification-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px;
+  border-bottom:1.5px solid var(--line);
+}
+.notification-list{max-height:420px;overflow-y:auto}
+.notification-item{
+  display:block;
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  text-decoration:none;
+  color:inherit;
+  transition:.12s;
+}
+.notification-item:last-child{border-bottom:0}
+.notification-item:hover{background:var(--soft)}
+.notification-item.unread{background:color-mix(in srgb,var(--blue) 8%,transparent);border-left:3px solid var(--blue)}
+.notification-item strong{display:block;font-size:13px;color:var(--ink);margin-bottom:2px}
+.notification-item p{margin:0 0 4px;font-size:12px;color:var(--muted);line-height:1.4}
+.notification-item small{font-size:10px;color:var(--muted);font-weight:700}
+.empty-text{padding:24px;text-align:center;color:var(--muted);font-size:13px}
+
+[data-theme="dark"] .notification-panel{background:var(--paper);border-color:var(--line)}
+[data-theme="dark"] .notification-item{border-color:var(--line)}
+[data-theme="dark"] .notification-item:hover{background:var(--soft)}
+[data-theme="dark"] .notification-item.unread{background:color-mix(in srgb,var(--blue) 14%,transparent)}
+[data-theme="dark"] .bell-badge{border-color:var(--paper)}
+
+/* ── PLAN STATUS BANNER ── */
+.plan-status-banner{
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+  background:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:16px;padding:14px 16px;
+  box-shadow:var(--shadow);
+  flex-wrap:wrap;
+}
+.plan-status-banner strong{display:block;font-size:15px;margin-bottom:3px}
+.plan-status-banner p{margin:0;color:var(--muted);font-size:13px}
+.plan-status-banner.active{border-color:var(--green);background:color-mix(in srgb,var(--green) 6%,var(--paper))}
+.plan-status-banner.none{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 8%,var(--paper))}
+[data-theme="dark"] .plan-status-banner{background:var(--paper);border-color:var(--line)}
+[data-theme="dark"] .plan-status-banner.active{border-color:var(--green);background:rgba(63,185,80,.08)}
+[data-theme="dark"] .plan-status-banner.none{border-color:var(--orange);background:rgba(255,154,69,.08)}
+
+@media(max-width:560px){
+  .plan-status-banner{flex-direction:column;align-items:stretch}
+  .plan-status-banner .btn{width:100%;justify-content:center}
+  .notification-panel{width:calc(100vw - 24px);right:-12px}
+}
+
+
+/* ── AD BANNERS ── */
+.ad-banner{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:24px auto;
+  max-width:100%;
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--soft);
+  border:1.5px solid var(--line);
+}
+.ad-banner-link{display:block;line-height:0;width:100%}
+.ad-banner-img{display:block;max-width:100%;height:auto;object-fit:cover;width:100%}
+.ad-label{
+  position:absolute;top:6px;right:8px;
+  font-size:9px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  background:var(--bg);
+  padding:2px 6px;border-radius:4px;
+  z-index:2;
+  border:1px solid var(--line);
+}
+
+/* Format-specific aspect ratios — koristimo aspect-ratio za responsivnost */
+.ad-format-leaderboard_728x90{aspect-ratio:728/90;max-width:728px}
+.ad-format-large_leaderboard_970x90{aspect-ratio:970/90;max-width:970px}
+.ad-format-billboard_970x250{aspect-ratio:970/250;max-width:970px}
+.ad-format-medium_rectangle_300x250{aspect-ratio:300/250;max-width:300px}
+.ad-format-half_page_300x600{aspect-ratio:300/600;max-width:300px}
+.ad-format-wide_inline_1200x250{aspect-ratio:1200/250;max-width:1200px}
+.ad-format-mobile_banner_320x50{aspect-ratio:320/50;max-width:320px}
+.ad-format-mobile_large_320x100{aspect-ratio:320/100;max-width:320px}
+.ad-format-mobile_inline_responsive{aspect-ratio:5/1;max-width:100%}
+
+/* Device visibility */
+.ad-desktop{display:flex}
+.ad-mobile{display:flex}
+@media(max-width:860px){
+  .ad-desktop{display:none!important}
+}
+@media(min-width:861px){
+  .ad-mobile{display:none!important}
+}
+
+[data-theme="dark"] .ad-banner{background:var(--soft);border-color:var(--line)}
+[data-theme="dark"] .ad-label{background:var(--paper);border-color:var(--line)}
+
+
+/* ── ADMIN BANNERS TABLE ── */
+.banner-row{
+  display:grid;
+  grid-template-columns:120px 1fr auto;
+  gap:14px;align-items:center;
+  padding:14px;
+  border-bottom:1.5px solid var(--line);
+}
+.banner-row:last-child{border-bottom:0}
+.banner-thumb{
+  width:120px;height:60px;
+  border-radius:10px;overflow:hidden;
+  background:var(--soft);
+  border:1.5px solid var(--line2);
+  display:grid;place-items:center;
+}
+.banner-thumb img{width:100%;height:100%;object-fit:cover}
+.banner-thumb span{font-size:24px;color:var(--muted);font-weight:900}
+.banner-info{min-width:0}
+.banner-info strong{display:block;font-size:14px;color:var(--ink);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.banner-info small{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.banner-tags{display:flex;gap:5px;flex-wrap:wrap}
+.banner-tags .tag{font-size:10px;padding:2px 7px}
+.banner-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.banner-actions .status-badge{font-size:11px}
+
+@media(max-width:860px){
+  .banner-row{grid-template-columns:1fr;text-align:left}
+  .banner-thumb{width:100%;height:120px}
+  .banner-actions{justify-content:flex-start}
+}
+
+[data-theme="dark"] .banner-row{border-color:var(--line)}
+[data-theme="dark"] .banner-thumb{background:var(--soft);border-color:var(--line)}
+
 /* ── RESPONSIVE ── */
 @media(max-width:860px){
   body{padding-bottom:72px}

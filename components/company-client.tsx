@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
 import { ImageUpload } from "@/components/image-upload";
+import { getCompanyActivePlan } from "@/lib/queries/account";
 import { slugify, initials } from "@/lib/format";
 import { stageLabels, stageOrder, roleLabels } from "@/lib/labels";
 import { desktopNavItems } from "@/lib/navigation";
@@ -53,6 +54,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   const [cities, setCities] = useState<LookupItem[]>([]);
   const [categories, setCategories] = useState<LookupItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [activePlan, setActivePlan] = useState<{ plan_name: string; active_jobs_limit: number; active_until: string | null; is_active: boolean } | null>(null);
   const [email, setEmail] = useState("");
   const [notice, setNotice] = useState<{ text: string; type: "info" | "error" | "success" } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -557,6 +559,17 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
         <div className="section-head">
           <div><span className="page-label">Pretplata</span><h1>Planovi i uplata</h1><p className="sub">Bankovni transfer → admin potvrđuje → plan aktivan.</p></div>
         </div>
+        {company?.id && (
+          <div className={`plan-status-banner ${activePlan?.is_active ? "active" : "none"}`} style={{ marginBottom: 18 }}>
+            <div>
+              <strong>{activePlan?.is_active ? `Aktivan plan: ${activePlan.plan_name}` : "Nemaš aktivan plan"}</strong>
+              <p>{activePlan?.is_active
+                ? `Limit aktivnih oglasa: ${activePlan.active_jobs_limit}.${activePlan.active_until ? ` Važi do ${new Date(activePlan.active_until).toLocaleDateString("sr-ME")}.` : ""}`
+                : "Aktiviraj plan da bi mogao objavljivati oglase. Potvrda uplate je obavezna."
+              }</p>
+            </div>
+          </div>
+        )}
         <div className="notice-card" style={{ marginBottom: 20 }}>
           <strong>Podaci za uplatu</strong>
           <div className="bk-box">

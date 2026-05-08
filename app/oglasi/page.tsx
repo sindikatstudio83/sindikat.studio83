@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JobCard } from "@/components/job-card";
+import { BannerSlot } from "@/components/banner-slot";
 import { EmptyState, SectionHead } from "@/components/ui";
 import { getLookups, getPublicJobs } from "@/lib/queries/public";
 
