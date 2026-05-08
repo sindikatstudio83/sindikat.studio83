@@ -114,3 +114,86 @@ export type PaymentProof = {
   orders?: Order | null;
   companies?: Pick<Company, "name"> | null;
 };
+
+
+export type SavedJob = {
+  id: number;
+  candidate_id: string;
+  job_id: number;
+  created_at: string;
+  jobs?: Job | null;
+};
+
+export type JobAlert = {
+  id: number;
+  candidate_id: string;
+  city_id: number | null;
+  category_id: number | null;
+  contract_type: string | null;
+  keywords: string | null;
+  active: boolean;
+  created_at: string;
+  cities?: { id: number; name: string } | null;
+  categories?: { id: number; name: string } | null;
+};
+
+export type NotificationType =
+  | "application_received" | "application_sent" | "stage_changed"
+  | "company_approved" | "company_rejected"
+  | "job_approved" | "job_rejected"
+  | "payment_confirmed" | "payment_rejected"
+  | "system";
+
+export type Notification = {
+  id: number;
+  recipient_id: string;
+  title: string;
+  message: string;
+  notification_type: NotificationType;
+  link: string | null;
+  read: boolean;
+  created_at: string;
+};
+
+export type ApplicationComment = {
+  id: number;
+  application_id: number;
+  author_id: string;
+  text: string;
+  created_at: string;
+  profiles?: { full_name: string | null; email: string | null } | null;
+};
+
+export type ApplicationLabel = {
+  application_id: number;
+  label: "top" | "interview" | "rejected" | "followup" | "star";
+  created_at: string;
+};
+
+export type ApplicationEvent = {
+  id: number;
+  application_id: number;
+  actor_id: string | null;
+  from_stage: ApplicationStage | null;
+  to_stage: ApplicationStage | null;
+  created_at: string;
+};
+
+export type Subscription = {
+  id: number;
+  plan_id: number;
+  plan_name: string;
+  active_jobs: number;
+  unlock_credits_remaining: number;
+  active_until: string | null;
+  status: "active" | "expired";
+};
+
+export type CompanyActivePlan = {
+  subscription_id: number;
+  plan_id: number;
+  plan_name: string;
+  active_jobs_limit: number;
+  active_until: string | null;
+  is_active: boolean;
+};
