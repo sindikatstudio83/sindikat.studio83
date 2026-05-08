@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { formatDate, initials, jobUrl } from "@/lib/format";
+import { formatDate, jobUrl } from "@/lib/format";
+import { Avatar } from "@/components/avatar";
 import type { Job } from "@/types/domain";
 
 export function JobCard({ job, showStatus = false }: { job: Job; showStatus?: boolean }) {
@@ -8,7 +9,7 @@ export function JobCard({ job, showStatus = false }: { job: Job; showStatus?: bo
   return (
     <article className={`job-card${job.featured ? " featured" : ""}`}>
       {job.featured && <span className="featured-badge">★ Istaknuto</span>}
-      <div className="logo">{initials(co?.name)}</div>
+      <div className="logo"><Avatar bucket="company-logos" path={co?.logo_path} fallback={co?.name || ""} size={56} shape="rounded" /></div>
       <div>
         <div className="tags" style={{ marginBottom: 7 }}>
           {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}

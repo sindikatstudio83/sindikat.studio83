@@ -12,6 +12,18 @@
 -- ╚══════════════════════════════════════════════════════════════════════╝
 
 -- ──────────────────────────────────────────────────────────────────────
+-- 0. DROP STARIH FUNKCIJA (ako postoje sa drugim signature-om)
+-- ──────────────────────────────────────────────────────────────────────
+
+drop function if exists public.is_admin() cascade;
+drop function if exists public.current_user_role() cascade;
+drop function if exists public.is_company_owner(bigint) cascade;
+drop function if exists public.is_company_owner_of_application(bigint) cascade;
+drop function if exists public.handle_new_user() cascade;
+drop function if exists public.prevent_role_escalation() cascade;
+drop function if exists public.confirm_payment_proof(bigint) cascade;
+
+-- ──────────────────────────────────────────────────────────────────────
 -- 1. HELPER FUNKCIJE (SECURITY DEFINER — obilaze RLS, razbijaju petlju)
 -- ──────────────────────────────────────────────────────────────────────
 

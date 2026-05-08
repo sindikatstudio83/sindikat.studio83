@@ -1,7 +1,7 @@
 import { createPublicSupabase } from "@/lib/supabase/server";
 import type { Company, Job, Plan } from "@/types/domain";
 
-const jobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug),categories(id,name,slug),cities(id,name,slug)";
+const jobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug,logo_path),categories(id,name,slug),cities(id,name,slug)";
 
 export async function getPublicJobs(limit?: number): Promise<Job[]> {
   const db = createPublicSupabase();

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LoginForm } from "@/components/auth-form";
+import { RedirectIfAuthed } from "@/components/redirect-if-authed";
 import { PageLabel } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const params = await searchParams;
   return (
-    <section className="auth-shell auth-two">
+    <><RedirectIfAuthed /><section className="auth-shell auth-two">
       <div>
         <PageLabel>Prijava</PageLabel>
         <h1>Uđi na svoj nalog.</h1>
@@ -22,6 +23,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
       </div>
       <LoginForm nextPath={params.next || null} />
-    </section>
+    </section></>
   );
 }

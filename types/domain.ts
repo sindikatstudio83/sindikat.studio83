@@ -11,6 +11,7 @@ export type Profile = {
   email: string | null;
   phone: string | null;
   city: string | null;
+  avatar_path: string | null;
   cv_data?: CvData | null;
   cv_updated_at?: string | null;
 };
@@ -38,6 +39,8 @@ export type Company = {
   city: string | null;
   industry: string | null;
   description: string | null;
+  logo_path: string | null;
+  website: string | null;
   approved: boolean;
 };
 
@@ -58,7 +61,7 @@ export type Job = {
   status: JobStatus;
   featured: boolean;
   company_id: number;
-  companies?: Pick<Company, "id" | "name" | "slug"> | null;
+  companies?: Pick<Company, "id" | "name" | "slug" | "logo_path"> | null;
   categories?: { id: number; name: string } | null;
   cities?: { id: number; name: string } | null;
 };

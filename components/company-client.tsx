@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
+import { ImageUpload } from "@/components/image-upload";
 import { slugify, initials } from "@/lib/format";
 import { stageLabels, stageOrder, roleLabels } from "@/lib/labels";
 import { desktopNavItems } from "@/lib/navigation";
@@ -43,6 +45,7 @@ function SideNav({ email }: { email: string }) {
 }
 
 export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job" | "selection" | "billing" }) {
+  const { role, userId, email: authEmail, ready } = useAuth();
   const [company, setCompany] = useState<Company | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<(JobApplication & CandidateExtra)[]>([]);
@@ -58,13 +61,11 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   const [supabase] = useState(() => createBrowserSupabase());
 
   async function load() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) { window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`; return; }
-    const user = data.user;
-    setEmail(user.email || "");
-
-    const { data: profileData } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-    if (profileData?.role !== "company" && profileData?.role !== "admin") { window.location.href = "/profil"; return; }
+    if (!ready) return;
+    if (!userId || role === "guest") { window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`; return; }
+    if (role !== "company" && role !== "admin") { window.location.href = "/profil"; return; }
+    const user = { id: userId, email: authEmail || "" };
+    setEmail(authEmail || "");
 
     const [cityRows, categoryRows, planRows, companyResult] = await Promise.all([
       supabase.from("cities").select("id,name,slug").order("name"),
@@ -92,22 +93,38 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (ready) load(); }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function setMsg(text: string, type: "info" | "error" | "success" = "info") { setNotice({ text, type }); }
 
+  async function updateLogo(newPath: string) {
+    if (!company?.id) {
+      throw new Error("Logo se može upload-ovati nakon kreiranja profila firme.");
+    }
+    const { error } = await supabase
+      .from("companies")
+      .update({ logo_path: newPath || null })
+      .eq("id", company.id);
+    if (error) {
+      logError("CompanyClient.updateLogo", error);
+      throw error;
+    }
+    setCompany(c => c ? { ...c, logo_path: newPath || null } : c);
+  }
+
   async function saveCompany(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setSaving(true); setNotice(null);
-    const { data } = await supabase.auth.getUser(); if (!data.user) { setSaving(false); return; }
+    if (!userId) { setSaving(false); return; }
     const fd = new FormData(e.currentTarget);
     const name = String(fd.get("name") || "").trim();
     if (!name) { setMsg("Upiši naziv firme.", "error"); setSaving(false); return; }
     const row = {
-      owner_id: data.user.id,
+      owner_id: userId,
       name,
-      slug: company?.slug || `${slugify(name)}-${data.user.id.slice(0, 8)}`,
+      slug: company?.slug || `${slugify(name)}-${userId!.slice(0, 8)}`,
       city: String(fd.get("city") || "").trim(),
       industry: String(fd.get("industry") || "").trim(),
+      website: String(fd.get("website") || "").trim() || null,
       description: String(fd.get("description") || "").trim()
     };
     const result = company ? await supabase.from("companies").update(row).eq("id", company.id) : await supabase.from("companies").insert(row);
@@ -217,11 +234,26 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
         ) : null}
         <form className="form-card" onSubmit={saveCompany}>
           <div className="kicker" style={{ marginBottom: 4 }}>Profil firme</div>
+          {company?.id && userId && (
+            <div style={{ marginBottom: 8 }}>
+              <span className="label">Logo firme</span>
+              <ImageUpload
+                bucket="company-logos"
+                ownerUserId={userId}
+                currentPath={company.logo_path || null}
+                fallbackText={company.name || "Firma"}
+                shape="rounded"
+                size={88}
+                onUploaded={updateLogo}
+              />
+            </div>
+          )}
           <label><span className="label">Naziv firme</span><input className="field" name="name" defaultValue={company?.name || ""} required /></label>
           <div className="form-grid">
             <label><span className="label">Grad</span><input className="field" name="city" defaultValue={company?.city || ""} /></label>
             <label><span className="label">Djelatnost</span><input className="field" name="industry" defaultValue={company?.industry || ""} /></label>
           </div>
+          <label><span className="label">Website (opciono)</span><input className="field" name="website" type="url" placeholder="https://" defaultValue={company?.website || ""} /></label>
           <label><span className="label">Opis firme</span><textarea className="textarea" name="description" defaultValue={company?.description || ""} /></label>
           <button className="btn blue" disabled={saving}>{saving ? "Čuvanje..." : "Sačuvaj profil firme"}</button>
           {noticeEl}
@@ -322,7 +354,73 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
           ) : (
             <div className="ats-layout">
               <div>
-                <div className="kanban-wrap">
+                {/* Mobile-only stacked cards by stage */}
+                <div className="ats-mobile mobile-only">
+                  {stageOrder2.map(stage => {
+                    const stageApps = applications.filter(a => a.stage === stage);
+                    if (!stageApps.length) return null;
+                    return (
+                      <div className="ats-mobile-section" key={stage}>
+                        <div className="ats-mobile-head">
+                          <h4>{stageLabels[stage as keyof typeof stageLabels]}</h4>
+                          <span className={`badge ${stageColors[stage] || "gray"}`}>{stageApps.length}</span>
+                        </div>
+                        {stageApps.map(app => {
+                          const prof = (app as { profiles?: { full_name?: string; email?: string; phone?: string; city?: string } }).profiles;
+                          const name = prof?.full_name || prof?.email || "Kandidat";
+                          const isOpen = selectedCand === app.id;
+                          return (
+                            <div className={`ats-mobile-card${isOpen ? " open" : ""}`} key={app.id}>
+                              <button
+                                type="button"
+                                className="ats-mobile-toggle"
+                                onClick={() => setSelectedCand(isOpen ? null : app.id)}
+                                aria-expanded={isOpen}
+                              >
+                                <div className="ats-mobile-card-head">
+                                  <div className="cand-av" style={{ background: "var(--lime)", color: "var(--bg)" }}>{initials(name)}</div>
+                                  <div className="ats-mobile-card-info">
+                                    <strong>{name}</strong>
+                                    <small>{prof?.city || "—"}</small>
+                                  </div>
+                                  <span className="ats-mobile-arrow">{isOpen ? "▲" : "▼"}</span>
+                                </div>
+                              </button>
+                              {isOpen && (
+                                <div className="ats-mobile-body">
+                                  {prof?.email && <div className="ats-mobile-line"><span>E-pošta</span><a href={`mailto:${prof.email}`}>{prof.email}</a></div>}
+                                  {prof?.phone && <div className="ats-mobile-line"><span>Telefon</span><a href={`tel:${prof.phone}`}>{prof.phone}</a></div>}
+                                  {app.cover_letter && (
+                                    <div className="ats-mobile-cover">
+                                      <span className="label">Propratni tekst</span>
+                                      <p>{app.cover_letter}</p>
+                                    </div>
+                                  )}
+                                  <div className="ats-mobile-stage-actions">
+                                    <button
+                                      type="button"
+                                      className="btn ghost sm"
+                                      onClick={() => { const idx = stageOrder2.indexOf(stage); if (idx > 0) moveStage(app.id, stageOrder2[idx - 1]); }}
+                                      disabled={stageOrder2.indexOf(stage) === 0}
+                                    >← Nazad</button>
+                                    <button
+                                      type="button"
+                                      className="btn blue sm"
+                                      onClick={() => { const idx = stageOrder2.indexOf(stage); if (idx < stageOrder2.length - 1) moveStage(app.id, stageOrder2[idx + 1]); }}
+                                      disabled={stageOrder2.indexOf(stage) === stageOrder2.length - 1}
+                                    >Dalje →</button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Desktop kanban */}
+                <div className="kanban-wrap desktop-only">
                   <div className="kanban">
                     {stageOrder2.map(stage => {
                       const stageApps = applications.filter(a => a.stage === stage);

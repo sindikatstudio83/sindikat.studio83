@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
+import { ImageUpload } from "@/components/image-upload";
 import type { CvData } from "@/types/domain";
 
 const emptyCv: CvData = {
@@ -18,6 +19,7 @@ type SaveStatus = "idle" | "saving" | "saved" | "error";
 export function CvBuilder() {
   const { userId, email, ready, role } = useAuth();
   const [cv, setCv] = useState<CvData>(emptyCv);
+  const [avatarPath, setAvatarPath] = useState<string | null>(null);
   const [loadStatus, setLoadStatus] = useState("Učitavanje biografije...");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveMessage, setSaveMessage] = useState("");
@@ -36,7 +38,7 @@ export function CvBuilder() {
     async function load() {
       const { data, error } = await supabase
         .from("profiles")
-        .select("cv_data,full_name,phone,city,email")
+        .select("cv_data,full_name,phone,city,email,avatar_path")
         .eq("id", userId!)
         .maybeSingle();
 
@@ -55,6 +57,7 @@ export function CvBuilder() {
         city: remote?.cv_data?.city || remote?.city || "",
         email: remote?.cv_data?.email || remote?.email || email || ""
       });
+      setAvatarPath(remote?.avatar_path || null);
       setLoadStatus("Promjene se automatski čuvaju.");
     }
     load();
@@ -108,6 +111,21 @@ export function CvBuilder() {
   }
 
   function printCv() { window.print(); }
+
+  async function updateAvatar(newPath: string) {
+    if (!userId) return;
+    const supabase = createBrowserSupabase();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_path: newPath || null })
+      .eq("id", userId);
+    if (error) {
+      logError("CvBuilder.updateAvatar", error);
+      throw error;
+    }
+    setAvatarPath(newPath || null);
+  }
+
 
   const field = (name: keyof CvData, label: string, placeholder: string, textarea = false) => (
     <label key={name}>
@@ -165,6 +183,20 @@ export function CvBuilder() {
 
       <div className="cv-builder-grid">
         <form className="cv-builder-form" onSubmit={(e) => { e.preventDefault(); save(); }}>
+          {userId && (
+            <div className="form-card" style={{ marginBottom: 14 }}>
+              <span className="label">Profilna slika</span>
+              <ImageUpload
+                bucket="avatars"
+                ownerUserId={userId}
+                currentPath={avatarPath}
+                fallbackText={cv.fullName || email || "?"}
+                shape="circle"
+                size={88}
+                onUploaded={updateAvatar}
+              />
+            </div>
+          )}
           <div className="form-grid">
             {field("fullName", "Ime i prezime *", "npr. Marko Marković")}
             {field("title", "Zanimanje", "npr. Konobar, recepcioner")}

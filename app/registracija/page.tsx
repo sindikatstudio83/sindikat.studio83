@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RegisterForm } from "@/components/auth-form";
+import { RedirectIfAuthed } from "@/components/redirect-if-authed";
 import { PageLabel } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
   const role = params.role === "company" ? "company" : "candidate";
 
   return (
-    <section className="auth-shell auth-two">
+    <><RedirectIfAuthed /><section className="auth-shell auth-two">
       <div>
         <PageLabel>Registracija</PageLabel>
         <h1>Napravi nalog.</h1>
@@ -42,6 +43,6 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
         </div>
       </div>
       <RegisterForm selectedRole={role} />
-    </section>
+    </section></>
   );
 }
