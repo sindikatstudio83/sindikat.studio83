@@ -88,19 +88,35 @@ export function ApplyForm({ jobId }: { jobId: number }) {
     setMessage("");
 
     const supabase = createBrowserSupabase();
-    const { error } = await supabase.from("job_applications").insert({
-      job_id: jobId,
-      candidate_id: userId,
-      cover_letter: trimmed,
-      cv_path: null,
-      reference_code: `IP-${Date.now()}`
-    });
+    const { data: insertData, error } = await supabase
+      .from("job_applications")
+      .insert({
+        job_id: jobId,
+        candidate_id: userId,
+        cover_letter: trimmed,
+        cv_path: null,
+        reference_code: `IP-${Date.now()}`
+      })
+      .select("id")
+      .single();
 
     if (error) {
       logError("ApplyForm.submit", error);
       setMessage(safeMessage(error, "submit"));
       setState("error");
       return;
+    }
+
+    // Best-effort: insert notification for candidate (allowed by RLS)
+    // Company notification is handled by DB trigger (see supabase-banners-notifications-fix.sql)
+    if (insertData?.id) {
+      supabase.from("notifications").insert({
+        recipient_id: userId,
+        title: "Prijava poslata",
+        message: "Tvoja prijava je uspješno primljena. Prati status u Mojim prijavama.",
+        notification_type: "application_sent",
+        link: "/profil/prijave"
+      }).then(() => {}); // fire and forget
     }
 
     setState("done");
@@ -120,12 +136,7 @@ export function ApplyForm({ jobId }: { jobId: number }) {
     </div>
   );
 
-  if (state === "wrong-role") return (
-    <div className="empty">
-      <strong>Samo kandidat može slati prijavu</strong>
-      <p>Trenutno koristiš nalog koji nije kandidatski. Oglas možeš samo pregledati.</p>
-    </div>
-  );
+  if (state === "wrong-role") return null;
 
   if (state === "duplicate") return (
     <p className="notice success">

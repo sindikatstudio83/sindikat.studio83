@@ -98,6 +98,10 @@ export function JobAlertsClient() {
         <Link className="btn ghost" href="/profil">← Dashboard</Link>
       </div>
 
+      <div className="notice" style={{ marginBottom: 16 }}>
+        ⏳ <strong>Uskoro:</strong> Email obavještenja su u pripremi. Upozorenja možeš kreirati već sada — notifikacije aktiviramo u narednoj verziji.
+      </div>
+
       <form className="form-card" onSubmit={create} style={{ marginBottom: 18 }}>
         <div className="kicker" style={{ marginBottom: 8 }}>Novo upozorenje</div>
         <div className="form-grid">

@@ -33,7 +33,8 @@ export const desktopNavItems: Record<UserRole, NavItem[]> = {
     { icon: "uplate", label: "Uplate", href: "/admin/uplate" },
     { icon: "oglasi", label: "Oglasi", href: "/admin/oglasi" },
     { icon: "firme", label: "Firme", href: "/admin/firme" },
-    { icon: "korisnici", label: "Korisnici", href: "/admin/korisnici" }
+    { icon: "korisnici", label: "Korisnici", href: "/admin/korisnici" },
+    { icon: "baneri", label: "Baneri", href: "/admin/baneri" }
   ]
 };
 
@@ -47,11 +48,11 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "login", label: "Prijava", href: "/login" }
   ],
   candidate: [
-    { icon: "oglasi", label: "Oglasi", href: "/oglasi" },
-    { icon: "prijave", label: "Prijave", href: "/profil/prijave" },
-    { icon: "profil", label: "Profil", href: "/profil" },
-    { icon: "biografija", label: "Biografija", href: "/profil/biografija" },
-    { icon: "odjava", label: "Odjava", href: "/logout" }
+    { icon: "oglasi",     label: "Oglasi",     href: "/oglasi" },
+    { icon: "prijave",    label: "Prijave",    href: "/profil/prijave" },
+    { icon: "sacuvani",   label: "Sačuvano",   href: "/profil/sacuvani" },
+    { icon: "profil",     label: "Profil",     href: "/profil" },
+    { icon: "upozorenja", label: "Alertovi",   href: "/profil/upozorenja" }
   ],
   company: [
     { icon: "pregled", label: "Pregled", href: "/firma" },
@@ -61,10 +62,10 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "odjava", label: "Odjava", href: "/logout" }
   ],
   admin: [
-    { icon: "pregled", label: "Pregled", href: "/admin" },
+    { icon: "home", label: "Pregled", href: "/admin" },
     { icon: "uplate", label: "Uplate", href: "/admin/uplate" },
     { icon: "oglasi", label: "Oglasi", href: "/admin/oglasi" },
     { icon: "firme", label: "Firme", href: "/admin/firme" },
-    { icon: "odjava", label: "Odjava", href: "/logout" }
+    { icon: "baneri", label: "Baneri", href: "/admin/baneri" }
   ]
 };

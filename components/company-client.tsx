@@ -327,7 +327,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
             <label><span className="label">Tip ugovora</span><input className="field" name="contract_type" placeholder="Stalni, sezonski, ugovor..." /></label>
             <label><span className="label">Plata / naknada</span><input className="field" name="salary_text" placeholder="800–1200€ / po dogovoru" /></label>
           </div>
-          <label><span className="label">Rok prijave</span><input className="field" type="date" name="deadline" /></label>
+          <label><span className="label">Rok prijave</span><input className="field" type="date" name="deadline" min={new Date().toISOString().split("T")[0]} /></label>
           <label><span className="label">Opis oglasa *</span><textarea className="textarea" name="description" placeholder="Opis uloge, zahtjevi, šta nudite..." required /></label>
           <button className="btn blue" disabled={saving || !company?.approved}>{saving ? "Slanje..." : "Pošalji na odobrenje →"}</button>
           {noticeEl}

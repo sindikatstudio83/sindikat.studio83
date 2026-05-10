@@ -5,11 +5,9 @@ import { MobileNav } from "@/components/mobile-nav";
 import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
-// Note: Google Fonts are loaded via CSS @import in globals.css as a production fallback.
-// For next/font/google, uncomment below when running with network access to googleapis.com:
-// import { Inter, Space_Grotesk } from "next/font/google";
-// const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-// const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space", display: "swap" });
+// Fontovi se učitavaju kroz CSS @import u globals.css (browser-side).
+// next/font/google zahtijeva mrežni pristup u build fazi — ne radi u svim CI okruženjima.
+// Na Vercel-u (produkcija) fontovi se učitavaju normalno putem Google Fonts CDN-a.
 
 export const metadata: Metadata = {
   title: { default: "imaposla.me — Poslovi u Crnoj Gori", template: "%s | imaposla.me" },
