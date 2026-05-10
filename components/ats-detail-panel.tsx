@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { logError, safeMessage } from "@/lib/errors";
+import { initials } from "@/lib/format";
 import { stageLabels } from "@/lib/labels";
 import type { ApplicationComment, ApplicationLabel, ApplicationEvent, JobApplication } from "@/types/domain";
 
@@ -90,22 +91,18 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
   const name = prof?.full_name || prof?.email || "Kandidat";
 
   return (
-    <div className="ats-detail">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 12 }}>
-        <div>
-          <div style={{ fontWeight: 850, fontSize: 16 }}>{name}</div>
-          {prof?.city && <div className="sub">{prof.city}</div>}
-          <span className={`status-badge stage-${application.stage}`} style={{ marginTop: 6 }}>
-            {stageLabels[application.stage]}
-          </span>
-        </div>
-        <button className="btn ghost sm" onClick={onClose} type="button">Zatvori</button>
-      </div>
-
+    <div className="ats-detail-panel-body">
       <div className="soft-card" style={{ marginBottom: 12, fontSize: 13, lineHeight: 1.8 }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10 }}>
+          <div className="cand-av" style={{ width: 40, height: 40, borderRadius: 12, background: "var(--lime)", color: "var(--bg)", fontSize: 15, border: "none", flexShrink: 0 }}>{initials(name)}</div>
+          <div>
+            <div style={{ fontWeight: 850, fontSize: 15 }}>{name}</div>
+            {prof?.city && <div className="sub" style={{ fontSize: 12 }}>{prof.city}</div>}
+          </div>
+        </div>
         {prof?.email && <div>📧 <a href={`mailto:${prof.email}`}>{prof.email}</a></div>}
         {prof?.phone && <div>📞 <a href={`tel:${prof.phone}`}>{prof.phone}</a></div>}
-        {prof?.cv_data?.summary && <div style={{ marginTop: 8, color: "var(--muted)", lineHeight: 1.55 }}>{prof.cv_data.summary}</div>}
+        {prof?.cv_data?.summary && <div style={{ marginTop: 8, color: "var(--muted)", lineHeight: 1.55, fontSize: 12 }}>{prof.cv_data.summary}</div>}
       </div>
 
       {application.cover_letter && (
