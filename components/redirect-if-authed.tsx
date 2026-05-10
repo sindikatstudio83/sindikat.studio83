@@ -5,10 +5,12 @@ import { useAuth } from "@/lib/auth-context";
 import { roleHomes } from "@/lib/labels";
 
 /**
- * Klijent komponenta koja preusmjerava ulogovanog korisnika sa /login ili /registracija
+ * Klijent komponenta koja preusmjerava već ulogovanog korisnika sa /login ili /registracija
  * na njegov dashboard. Ne dira gostove — oni vide formu.
  *
- * Koristi se u <body> /login i /registracija stranica.
+ * VAŽNO: Ne smije se aktivirati kada je Login forma upravo završila prijavu i
+ * sama vrši redirect. Koristimo sessionStorage flag 'ip_login_redirecting' da
+ * razlikujemo ova dva slučaja i spriječimo dvostruki redirect (koji uzrokuje flicker).
  */
 export function RedirectIfAuthed() {
   const { role, ready } = useAuth();
@@ -17,9 +19,14 @@ export function RedirectIfAuthed() {
     if (!ready) return;
     if (role === "guest") return;
 
-    const dest = roleHomes[role];
-    // replace umjesto href — da se ne popuni history sa login stranicom
-    window.location.replace(dest);
+    // Ako LoginForm upravo završava i redirect-uje, ne dodajemo još jedan redirect
+    try {
+      if (sessionStorage.getItem("ip_login_redirecting") === "1") return;
+    } catch {
+      // sessionStorage nije dostupan (private mode edge case) — nastavi normalno
+    }
+
+    window.location.replace(roleHomes[role as Exclude<typeof role, "guest">]);
   }, [ready, role]);
 
   return null;

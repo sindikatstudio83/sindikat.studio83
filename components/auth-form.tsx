@@ -34,30 +34,37 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
       return;
     }
 
-    // Redirect koristi role iz user_metadata (brzo) ili DB (fallback)
+    // Postavimo flag ODMAH — sprječava RedirectIfAuthed da pravi race condition redirect
+    try { sessionStorage.setItem("ip_login_redirecting", "1"); } catch { /* ignore */ }
+
+    // UVIJEK provjeravamo DB role — ne oslanjamo se na user_metadata
+    // (metadata može biti zastarjela ili ne-postavljena za starije korisnike)
     let dest = "/profil";
     const safeNext = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : null;
 
     if (safeNext) {
       dest = safeNext;
     } else {
-      const metaRole = data.user.user_metadata?.role;
-      if (metaRole === "company") dest = "/firma";
-      else if (metaRole === "admin") dest = "/admin";
-      else if (metaRole !== "candidate") {
-        // Bez metapodataka — provjeri DB
+      try {
         const { data: prof } = await supabase
           .from("profiles")
           .select("role")
           .eq("id", data.user.id)
           .maybeSingle();
+
         if (prof?.role === "company") dest = "/firma";
         else if (prof?.role === "admin") dest = "/admin";
+        else dest = "/profil"; // candidate ili fallback
+      } catch {
+        // Fallback na metadata ako DB nije dostupan
+        const metaRole = data.user.user_metadata?.role;
+        if (metaRole === "company") dest = "/firma";
+        else if (metaRole === "admin") dest = "/admin";
       }
     }
 
-    // Hard redirect — osigurava da AuthContext ponovo učita sesiju
-    window.location.href = dest;
+    // Jedan, pouzdan redirect — replace() ne dodaje u history
+    window.location.replace(dest);
   }
 
   return (
