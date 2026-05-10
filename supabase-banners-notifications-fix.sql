@@ -189,3 +189,62 @@ $$;
 
 -- Done. Run: SELECT 'Migration OK' as status;
 select 'supabase-banners-notifications-fix.sql: OK' as migration_status;
+
+
+-- ──────────────────────────────────────────────────────────────
+-- SECTION 6: DB TRIGGER — Notifikacija firmama na novu prijavu
+-- Automatski kreira notifikaciju vlasniku firme kada kandidat aplicira.
+-- Ovo je server-side rješenje jer klijent ne može insertovati
+-- notifikacije za druge korisnike bez service role keya.
+-- ──────────────────────────────────────────────────────────────
+
+create or replace function public.notify_on_application()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_company_owner_id uuid;
+  v_job_title text;
+  v_candidate_name text;
+begin
+  -- Nađi vlasnika firme putem oglasa
+  select c.owner_id, j.title
+  into v_company_owner_id, v_job_title
+  from jobs j
+  join companies c on c.id = j.company_id
+  where j.id = NEW.job_id;
+
+  -- Ime kandidata
+  select coalesce(full_name, email, 'Kandidat')
+  into v_candidate_name
+  from profiles where id = NEW.candidate_id;
+
+  -- Notifikacija firmi
+  if v_company_owner_id is not null then
+    insert into public.notifications
+      (recipient_id, title, message, notification_type, link)
+    values
+      (v_company_owner_id,
+       'Nova prijava na oglas',
+       v_candidate_name || ' je aplicirao/la na oglas: ' || coalesce(v_job_title, 'Nepoznat oglas'),
+       'application_received',
+       '/firma/selekcija');
+  end if;
+
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_application on public.job_applications;
+create trigger trg_notify_on_application
+  after insert on public.job_applications
+  for each row execute function public.notify_on_application();
+
+-- Allow insert policy for notifications (for candidate self-notification from client)
+drop policy if exists "notif_insert_own" on public.notifications;
+create policy "notif_insert_own" on public.notifications
+  for insert with check (recipient_id = auth.uid());
+
+select 'Trigger trg_notify_on_application: OK' as trigger_status;

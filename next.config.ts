@@ -1,19 +1,31 @@
 import type { NextConfig } from "next";
 
+const securityHeaders = [
+  { key: "X-Frame-Options",           value: "DENY" },
+  { key: "X-Content-Type-Options",    value: "nosniff" },
+  { key: "Referrer-Policy",           value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy",        value: "camera=(), microphone=(), geolocation=()" },
+  { key: "X-DNS-Prefetch-Control",    value: "on" },
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
-  // Agresivno keširanje statičnih stranica
   experimental: {
     staleTimes: {
-      dynamic: 30,   // dinamičke rute keširati 30s
-      static: 180,   // statičke 3 minute
+      dynamic: 30,
+      static: 180,
     }
   },
 
-  // HTTP headers za cache
   async headers() {
     return [
+      // Security headers on all routes
+      {
+        source: "/(.*)",
+        headers: securityHeaders
+      },
+      // Cache headers for public content
       {
         source: "/(oglasi|firme|gradovi|kategorije)(.*)",
         headers: [
@@ -31,3 +43,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
