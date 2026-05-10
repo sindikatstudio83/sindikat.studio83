@@ -49,6 +49,8 @@ export default async function HomePage() {
         </div>
       </div>
 
+      <BannerSlot placement="homepage_top" />
+
       {/* PATHS */}
       <div className="live-paths">
         <Link className="live-path" href="/oglasi">
@@ -83,6 +85,8 @@ export default async function HomePage() {
         </div>
       </div>
 
+      <BannerSlot placement="homepage_middle" />
+
       {/* COMPANIES */}
       <div>
         <div className="live-section-head">
@@ -100,8 +104,9 @@ export default async function HomePage() {
           }
         </div>
       </div>
+
+      <BannerSlot placement="homepage_bottom" />
     </section>
-      <BannerSlot placement="homepage_top" />
     </>
   );
 }

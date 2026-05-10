@@ -50,17 +50,17 @@ export async function getJobAlerts(userId: string): Promise<JobAlert[]> {
   const supabase = createBrowserSupabase();
   const { data, error } = await supabase
     .from("job_alerts")
-    .select("*")
-    .eq("user_id", userId)
+    .select("*,cities(id,name),categories(id,name)")
+    .eq("candidate_id", userId)
     .order("created_at", { ascending: false });
   if (error) { logError("getJobAlerts", error); return []; }
-  return (data || []) as JobAlert[];
+  return (data || []) as unknown as JobAlert[];
 }
 
 export async function createJobAlert(userId: string, alert: Partial<JobAlert>) {
   const supabase = createBrowserSupabase();
   const { error } = await supabase.from("job_alerts").insert({
-    user_id: userId,
+    candidate_id: userId,
     city_id: alert.city_id || null,
     category_id: alert.category_id || null,
     contract_type: alert.contract_type || null,

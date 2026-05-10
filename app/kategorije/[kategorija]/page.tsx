@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JobCard } from "@/components/job-card";
+import { BannerSlot } from "@/components/banner-slot";
 import { EmptyState, SectionHead } from "@/components/ui";
 import { getPublicJobsByCategory } from "@/lib/queries/public";
 
@@ -20,6 +21,7 @@ export default async function CategoryJobsPage({ params }: Props) {
   const jobs = await getPublicJobsByCategory(category);
   return (
     <>
+      <BannerSlot placement="category_page_top" />
       <SectionHead label="Kategorija" title={`Poslovi: ${category}`} text="Aktivni oglasi iz izabrane kategorije." />
       <div className="job-list">
         {jobs.map((job) => <JobCard job={job} key={job.id} />)}

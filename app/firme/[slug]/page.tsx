@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JobCard } from "@/components/job-card";
 import { Badge, Button, EmptyState, SectionHead } from "@/components/ui";
+import { BannerSlot } from "@/components/banner-slot";
 import { parseIdFromSlug } from "@/lib/format";
 import { getCompanyById, getPublicJobsByCompany } from "@/lib/queries/public";
 
@@ -28,6 +29,7 @@ export default async function CompanyDetailPage({ params }: Props) {
 
   return (
     <>
+      <BannerSlot placement="company_pages_top" />
       <Button href="/firme" size="sm">Nazad na firme</Button>
       <div className="panel with-top-space">
         <span className="eyebrow">Profil firme</span>
@@ -43,6 +45,7 @@ export default async function CompanyDetailPage({ params }: Props) {
         {companyJobs.map((job) => <JobCard job={job} key={job.id} />)}
         {!companyJobs.length ? <EmptyState title="Nema aktivnih oglasa" text="Ova firma trenutno nema javno aktivnih oglasa." /> : null}
       </div>
+      <BannerSlot placement="company_pages_bottom" />
     </>
   );
 }

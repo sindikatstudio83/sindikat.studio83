@@ -20,6 +20,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
 
   return (
     <>
+      <BannerSlot placement="jobs_list_top" />
       <SectionHead label="Oglasi" title="Oglasi za posao" text="Filtriraj oglase po poziciji, gradu i kategoriji." />
       <form className="search-panel">
         <input name="q" placeholder="Pozicija, firma ili vještina" defaultValue={params.q || ""} />
@@ -37,6 +38,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
         {list.map((job) => <JobCard job={job} key={job.id} />)}
         {!list.length ? <EmptyState title="Nema oglasa" text="Promijeni filtere ili se vrati kasnije." /> : null}
       </div>
+      <BannerSlot placement="jobs_list_bottom" />
     </>
   );
 }

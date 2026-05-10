@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { MobileNav } from "@/components/mobile-nav";
 import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space", display: "swap" });
+// Note: Google Fonts are loaded via CSS @import in globals.css as a production fallback.
+// For next/font/google, uncomment below when running with network access to googleapis.com:
+// import { Inter, Space_Grotesk } from "next/font/google";
+// const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+// const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "imaposla.me — Poslovi u Crnoj Gori", template: "%s | imaposla.me" },
@@ -19,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="sr-ME" data-theme="light" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="sr-ME" data-theme="light">
       <body>
         <AuthProvider>
           <Header />

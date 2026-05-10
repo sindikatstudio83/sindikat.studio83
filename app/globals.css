@@ -1,3 +1,6 @@
+/* ── GOOGLE FONTS (loaded via CSS — works without next/font/google at build time) ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 /* ── TOKENS ── */
 :root{
   --bg:#f5f1e8;--ink:#171717;--muted:#6d665f;--soft:#fff7e8;--paper:#fffdf8;
@@ -5,7 +8,7 @@
   --blue:#2148ff;--lime:#c8ff3d;--pink:#ff4fa3;--orange:#ff8a2a;--green:#13b76d;--red:#e5484d;
   --shadow:0 4px 24px rgba(28,22,12,.10);--shadow2:0 8px 40px rgba(28,22,12,.14);
   --r:16px;--r2:24px;
-  --font:var(--font-inter, 'Inter', system-ui, sans-serif);--display:var(--font-space, 'Space Grotesk', system-ui, sans-serif);
+  --font:var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);--display:var(--font-space, 'Space Grotesk', 'Inter', system-ui, sans-serif);
 }
 [data-theme="dark"]{
   /* ─────────────────────────────────────────────────
@@ -834,7 +837,7 @@ h3{font-size:20px}
 [data-theme="dark"] .comment-meta{color:var(--muted)}
 
 
-/* ── NOTIFICATION BELL ── */
+/* ── NOTIFICATION BELL (legacy, kept for reference) ── */
 .notification-bell{position:relative}
 .bell-badge{
   position:absolute;top:-2px;right:-2px;
@@ -883,6 +886,76 @@ h3{font-size:20px}
 [data-theme="dark"] .notification-item.unread{background:color-mix(in srgb,var(--blue) 14%,transparent)}
 [data-theme="dark"] .bell-badge{border-color:var(--paper)}
 
+/* ── NOTIFICATION CENTER ── */
+.notif-wrap{position:relative;display:inline-block}
+.notif-btn{position:relative}
+.notif-dot{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:900;line-height:1;
+  border-radius:999px;padding:2px 5px;min-width:16px;
+  text-align:center;
+  border:2px solid var(--bg);
+  pointer-events:none;
+}
+.notif-panel{
+  position:absolute;top:calc(100% + 10px);right:0;
+  width:360px;max-width:calc(100vw - 24px);
+  background:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:18px;
+  box-shadow:0 8px 40px rgba(0,0,0,.14),0 2px 8px rgba(0,0,0,.08);
+  z-index:200;
+  overflow:hidden;
+  animation:notifIn .14s cubic-bezier(.22,.68,0,1.2);
+}
+@keyframes notifIn{
+  from{opacity:0;transform:translateY(-8px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+.notif-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:14px 16px;
+  border-bottom:1.5px solid var(--line2);
+  position:sticky;top:0;background:var(--paper);z-index:1;
+}
+.notif-head strong{font-size:14px;font-weight:800;color:var(--ink)}
+.notif-empty{
+  padding:32px 24px;text-align:center;
+  display:flex;flex-direction:column;gap:6px;
+}
+.notif-empty strong{font-size:14px;color:var(--ink)}
+.notif-empty p{font-size:13px;color:var(--muted);margin:0}
+.notif-item{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line2);
+  cursor:pointer;
+  transition:background .12s;
+}
+.notif-item:last-child{border-bottom:0}
+.notif-item:hover{background:var(--soft)}
+.notif-item.unread{
+  background:color-mix(in srgb,var(--blue) 7%,transparent);
+  border-left:3px solid var(--blue);
+  padding-left:13px;
+}
+.notif-item-head{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+  margin-bottom:4px;
+}
+.notif-item-head strong{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3}
+.notif-item-head span{font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;margin-top:1px}
+.notif-item p{margin:0;font-size:12px;color:var(--muted);line-height:1.45;word-break:break-word}
+.notif-link{display:block;text-decoration:none;color:inherit}
+.notif-link:hover .notif-item{background:var(--soft)}
+
+[data-theme="dark"] .notif-panel{background:var(--paper);border-color:var(--line)}
+[data-theme="dark"] .notif-head{background:var(--paper);border-color:var(--line)}
+[data-theme="dark"] .notif-item{border-color:var(--line)}
+[data-theme="dark"] .notif-item:hover{background:var(--soft)}
+[data-theme="dark"] .notif-item.unread{background:color-mix(in srgb,var(--blue) 12%,transparent)}
+[data-theme="dark"] .notif-dot{border-color:var(--paper)}
+
 /* ── PLAN STATUS BANNER ── */
 .plan-status-banner{
   display:flex;justify-content:space-between;align-items:center;gap:14px;
@@ -904,6 +977,7 @@ h3{font-size:20px}
   .plan-status-banner{flex-direction:column;align-items:stretch}
   .plan-status-banner .btn{width:100%;justify-content:center}
   .notification-panel{width:calc(100vw - 24px);right:-12px}
+  .notif-panel{width:calc(100vw - 24px);right:-12px;max-height:80vh;overflow-y:auto}
 }
 
 
@@ -956,6 +1030,39 @@ h3{font-size:20px}
 
 [data-theme="dark"] .ad-banner{background:var(--soft);border-color:var(--line)}
 [data-theme="dark"] .ad-label{background:var(--paper);border-color:var(--line)}
+
+/* Mock / placeholder banner */
+.ad-mock{
+  position:relative;
+  flex-direction:column;
+  min-height:60px;
+  background:repeating-linear-gradient(
+    -45deg,
+    var(--soft),
+    var(--soft) 10px,
+    var(--bg) 10px,
+    var(--bg) 20px
+  );
+  border-style:dashed;
+}
+.ad-mock .ad-banner-img{opacity:.55;border-radius:10px}
+.ad-placeholder-label{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,.45);
+  padding:5px 12px;
+  border-radius:0 0 12px 12px;
+  pointer-events:none;
+}
+.ad-placeholder-text{font-size:11px;font-weight:700;color:#fff;letter-spacing:.04em}
+.ad-placeholder-dim{font-size:10px;color:rgba(255,255,255,.65);font-family:monospace}
+[data-theme="dark"] .ad-mock{background:repeating-linear-gradient(
+  -45deg,
+  var(--soft),
+  var(--soft) 10px,
+  rgba(255,255,255,.02) 10px,
+  rgba(255,255,255,.02) 20px
+)}
 
 
 /* ── ADMIN BANNERS TABLE ── */

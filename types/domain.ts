@@ -118,7 +118,7 @@ export type PaymentProof = {
 
 export type SavedJob = {
   id: number;
-  candidate_id: string;
+  user_id: string;        // DB column is user_id (not candidate_id)
   job_id: number;
   created_at: string;
   jobs?: Job | null;
@@ -126,7 +126,7 @@ export type SavedJob = {
 
 export type JobAlert = {
   id: number;
-  candidate_id: string;
+  candidate_id: string;   // DB column is candidate_id
   city_id: number | null;
   category_id: number | null;
   contract_type: string | null;
