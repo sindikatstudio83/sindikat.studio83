@@ -148,6 +148,7 @@ export function AdminClient({ view }: { view: AdminView }) {
               <Link className="quick-link" href="/admin/firme"><strong>Firme ({stats.companies})</strong><span>Odobri poslodavce</span></Link>
               <Link className="quick-link" href="/admin/korisnici"><strong>Korisnici ({stats.users})</strong><span>Pregled svih korisnika</span></Link>
               <Link className="quick-link" href="/admin/baneri"><strong>Baneri</strong><span>Upravljanje reklamama</span></Link>
+              <Link className="quick-link" href="/admin/paketi"><strong>Paketi pretplate</strong><span>Kreiraj i uredi pakete</span></Link>
             </div>
             <div className="section-head compact-head"><div><h2>Uplate koje čekaju potvrdu</h2></div></div>
           </>

@@ -236,19 +236,40 @@ h3{font-size:20px}
 .auth-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 
 /* ── APP SHELL (dashboard) ── */
+/* ── DASHBOARD SHELL ── */
 .app-shell{display:grid;grid-template-columns:220px 1fr;gap:14px;padding:14px 0 40px}
-.side{position:sticky;top:78px;align-self:start;background:var(--ink);color:var(--soft);border-radius:22px;padding:10px;box-shadow:var(--shadow2)}
-.side-head{padding:8px 8px 12px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:6px}
+/* Sidebar uses a fixed dark surface — intentionally does NOT use var(--ink) because
+   that token inverts in dark mode (#e8eef5 = light), which destroys sidebar contrast.
+   We use --side-bg / --side-text custom tokens defined per-theme below. */
+.side{
+  position:sticky;top:78px;align-self:start;
+  background:var(--side-bg, #1a1f2e);
+  color:var(--side-text, #f0f4ff);
+  border-radius:22px;padding:10px;
+  box-shadow:var(--shadow2);
+}
+.side-head{padding:8px 8px 12px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:6px}
 .side-avatar{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:900;font-family:var(--display);background:var(--lime);color:#111;overflow:hidden;margin-bottom:7px;font-size:14px}
-.side-head strong{font-family:var(--display);font-size:15px;display:block}
-.side-head small{display:block;color:rgba(255,255,255,.45);margin-top:2px;font-size:11px}
+.side-head strong{font-family:var(--display);font-size:15px;display:block;color:var(--side-text, #f0f4ff)}
+.side-head small{display:block;color:rgba(255,255,255,.5);margin-top:2px;font-size:11px}
 .side-nav{display:flex;flex-direction:column;gap:1px}
-.side-nav a{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.6);font-weight:750;font-size:13px;transition:.12s}
-.side-nav a:hover{background:rgba(255,255,255,.08);color:#fff}
-.side-nav a.active{background:var(--lime)!important;color:#111!important;font-weight:900}
-.side-logout{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.4);font-weight:750;font-size:13px;transition:.12s;margin-top:4px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px;width:100%;text-align:left;cursor:pointer}
-.side-logout:hover{color:var(--red)}
+.side-nav a{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.72);font-weight:750;font-size:13px;transition:.12s}
+.side-nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+.side-nav a.active{background:var(--lime)!important;color:#111!important;font-weight:900;box-shadow:0 2px 8px rgba(192,255,61,.25)}
+.side-logout{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.5);font-weight:750;font-size:13px;transition:.12s;margin-top:4px;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;width:100%;text-align:left;cursor:pointer}
+.side-logout:hover{color:var(--red);background:rgba(229,72,77,.1)}
 .app-main{min-width:0}
+
+/* Sidebar tokens — light theme: near-black surface works on any page bg */
+:root{
+  --side-bg:#1a1f2e;
+  --side-text:#f0f4ff;
+}
+/* Dark theme: slightly lighter navy so sidebar lifts from the page background */
+[data-theme="dark"]{
+  --side-bg:#1e2840;
+  --side-text:#e8eef5;
+}
 
 /* ── DASH METRICS ── */
 .dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
@@ -509,10 +530,13 @@ h3{font-size:20px}
 [data-theme="dark"] .ats-detail{background:var(--paper);border-color:var(--line)}
 
 /* ── BILLING ── */
-.plan-card{background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:18px;box-shadow:var(--shadow);transition:.12s}
+.plan-card{background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:18px;box-shadow:var(--shadow);transition:.12s;position:relative}
 .plan-card:hover{transform:translateY(-2px);box-shadow:5px 5px 0 var(--ink)}
 .plan-card.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.plan-name{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.plan-desc{font-size:12px;color:var(--muted);line-height:1.5;margin:6px 0 10px}
 .plan-price{font-family:var(--display);font-size:36px;font-weight:950;letter-spacing:-.06em;margin:8px 0}
+.plan-price span{font-size:14px;font-weight:700;color:var(--muted);margin-left:2px}
 .plan-features{list-style:none;font-size:12px;color:var(--muted);display:grid;gap:5px;margin-bottom:14px}
 .plan-features li:before{content:"✓ ";color:var(--green);font-weight:900}
 .plan-card.active .plan-features{color:rgba(255,255,255,.75)}
@@ -617,129 +641,6 @@ h3{font-size:20px}
 .mini-link{display:inline-block;color:var(--muted);font-size:12px;font-weight:800;text-align:center;width:100%;text-decoration:underline;margin-top:6px;transition:.12s}
 .mini-link:hover{color:var(--blue)}
 
-
-
-/* ─────────────────────────────────────────────────────────────
-   DARK THEME — see main block below ("KOMPLETNI OVERRIDE")
-   Rules below are superseded by the later block — kept for reference
-   ───────────────────────────────────────────────────────────── */
-
-/* Mark logo — light energy on dark */
-[data-theme="dark"] .mark{background:var(--lime);color:#0a0e14;box-shadow:3px 3px 0 var(--blue)}
-
-/* Cards — soft elevation */
-[data-theme="dark"] .card,
-[data-theme="dark"] .panel,
-[data-theme="dark"] .form-card,
-[data-theme="dark"] .table-card{
-  background:var(--paper);
-  border-color:var(--line);
-}
-
-/* Hover state on link cards */
-[data-theme="dark"] .link-card{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .link-card:hover{border-color:var(--blue);box-shadow:5px 5px 0 rgba(79,124,255,.2)}
-
-/* Buttons — ghost stays subtle, blue stands out */
-[data-theme="dark"] .btn.ghost{background:var(--paper);border-color:var(--line);color:var(--ink)}
-[data-theme="dark"] .btn.ghost:hover{background:var(--soft);border-color:var(--line2)}
-[data-theme="dark"] .btn.blue{background:var(--blue);color:#fff;border-color:var(--blue)}
-[data-theme="dark"] .btn.blue:hover{background:#5d8aff;box-shadow:3px 3px 0 var(--lime)}
-[data-theme="dark"] .btn.lime{background:var(--lime);color:#0d1117;border-color:var(--lime)}
-[data-theme="dark"] .btn.red{background:transparent;border-color:var(--red);color:var(--red)}
-[data-theme="dark"] .btn.red:hover{background:var(--red);color:#fff}
-[data-theme="dark"] .btn:disabled{opacity:.5;cursor:not-allowed}
-
-/* Dashboard metrics — clear */
-[data-theme="dark"] .metric{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .metric strong{color:var(--ink)}
-[data-theme="dark"] .metric span{color:var(--muted)}
-
-/* Quick links */
-[data-theme="dark"] .quick-link{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .quick-link:hover{border-color:var(--blue);background:var(--soft)}
-
-/* Table rows */
-[data-theme="dark"] .table-row{border-bottom-color:var(--line)}
-[data-theme="dark"] .table-row:hover{background:var(--soft)}
-
-/* Status badges — clear semantic colors with proper contrast on dark */
-[data-theme="dark"] .status-badge.stage-applied{background:var(--blue);color:#fff;border-color:var(--blue)}
-[data-theme="dark"] .status-badge.stage-review{background:var(--soft);color:var(--ink);border-color:var(--line2)}
-[data-theme="dark"] .status-badge.stage-interview{background:var(--orange);color:#0d1117;border-color:var(--orange)}
-[data-theme="dark"] .status-badge.stage-shortlist,
-[data-theme="dark"] .status-badge.stage-offer{background:#a371f7;color:#fff;border-color:#a371f7}
-[data-theme="dark"] .status-badge.stage-hired{background:var(--green);color:#0d1117;border-color:var(--green)}
-[data-theme="dark"] .status-badge.stage-rejected{background:var(--red);color:#fff;border-color:var(--red)}
-
-/* Notices */
-[data-theme="dark"] .notice{background:var(--soft);border-color:var(--line);color:var(--muted)}
-[data-theme="dark"] .notice.error{background:rgba(248,81,73,.1);border-color:var(--red);color:#ff8a83}
-[data-theme="dark"] .notice.success{background:rgba(63,185,80,.1);border-color:var(--green);color:#56d364}
-[data-theme="dark"] .notice-card.warn{background:rgba(210,153,34,.1);border-color:var(--yellow);color:#e3b341}
-
-/* Filter tabs */
-[data-theme="dark"] .filter-tabs .tab{background:var(--paper);border-color:var(--line);color:var(--muted)}
-[data-theme="dark"] .filter-tabs .tab:hover{border-color:var(--line2);color:var(--ink)}
-[data-theme="dark"] .filter-tabs .tab.active{background:var(--ink);color:#0d1117;border-color:var(--ink)}
-
-/* Page label / kicker — keep brand pop */
-[data-theme="dark"] .page-label,
-[data-theme="dark"] .kicker{background:var(--lime);color:#0d1117;border-color:transparent}
-
-/* Role pill */
-[data-theme="dark"] .role-pill{background:var(--lime);color:#0d1117;border-color:transparent}
-
-/* Mobile nav */
-[data-theme="dark"] .mobile-app-nav{background:var(--paper);border-top-color:var(--line)}
-[data-theme="dark"] .mobile-app-nav a{color:var(--muted)}
-[data-theme="dark"] .mobile-app-nav a.active{background:var(--lime);color:#0d1117}
-
-/* Footer */
-[data-theme="dark"] .footer{background:var(--paper);border-top-color:var(--line)}
-[data-theme="dark"] .footer h4{color:var(--ink)}
-[data-theme="dark"] .footer a{color:var(--muted)}
-[data-theme="dark"] .footer a:hover{color:var(--ink)}
-
-/* Empty state */
-[data-theme="dark"] .empty{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .empty strong{color:var(--ink)}
-[data-theme="dark"] .empty p{color:var(--muted)}
-
-/* Mini link */
-[data-theme="dark"] .mini-link{color:var(--muted)}
-[data-theme="dark"] .mini-link:hover{color:var(--blue)}
-
-/* Job card */
-[data-theme="dark"] .job-card{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .job-card:hover{border-color:var(--blue)}
-[data-theme="dark"] .job-card .meta{color:var(--muted)}
-
-/* Company card */
-[data-theme="dark"] .company-card{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .company-card:hover{border-color:var(--blue)}
-
-/* Hero & live home */
-[data-theme="dark"] .live-hero{background:var(--paper);border-color:var(--line)}
-
-/* Tags / badges base */
-[data-theme="dark"] .tag,
-[data-theme="dark"] .badge{background:var(--soft);border-color:var(--line2);color:var(--ink)}
-[data-theme="dark"] .badge.orange{background:rgba(255,154,69,.15);border-color:var(--orange);color:var(--orange)}
-[data-theme="dark"] .badge.blue{background:rgba(79,124,255,.15);border-color:var(--blue);color:var(--blue)}
-[data-theme="dark"] .badge.green{background:rgba(63,185,80,.15);border-color:var(--green);color:var(--green)}
-
-/* Scrollbar */
-[data-theme="dark"] *::-webkit-scrollbar{width:10px;height:10px}
-[data-theme="dark"] *::-webkit-scrollbar-track{background:var(--bg)}
-[data-theme="dark"] *::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px;border:2px solid var(--bg)}
-[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#484f58}
-
-/* Selection */
-[data-theme="dark"] ::selection{background:rgba(79,124,255,.4);color:#fff}
-
-/* Live info pages */
-[data-theme="dark"] .live-info-page{color:var(--ink)}
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -883,7 +784,7 @@ h3{font-size:20px}
 [data-theme="dark"] .metric span{color:var(--muted)}
 [data-theme="dark"] .filter-tabs .tab{background:var(--soft);color:var(--muted);border-color:var(--line)}
 [data-theme="dark"] .filter-tabs .tab:hover{background:var(--elev);color:var(--ink)}
-[data-theme="dark"] .filter-tabs .tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+[data-theme="dark"] .filter-tabs .tab.active{background:var(--blue);color:#fff;border-color:transparent}
 
 /* ── PROGRESS BAR ── */
 [data-theme="dark"] .pbar{background:var(--soft)!important}

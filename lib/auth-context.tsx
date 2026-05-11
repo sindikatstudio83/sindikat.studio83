@@ -90,8 +90,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
       if (event === "SIGNED_OUT" || !session) {
         if (mounted) setState({ role: "guest", userId: null, email: null, ready: true });
-      } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        loadFromSession();
+      } else if (event === "SIGNED_IN") {
+        // Only reload if userId changed (new login) — avoid loop on token refresh
+        setState(prev => {
+          if (prev.userId !== session.user.id) {
+            loadFromSession();
+          }
+          return prev;
+        });
+      } else if (event === "TOKEN_REFRESHED") {
+        // Silently keep current state — token refresh doesn't change role
       }
     });
 

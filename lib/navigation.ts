@@ -34,7 +34,8 @@ export const desktopNavItems: Record<UserRole, NavItem[]> = {
     { icon: "oglasi", label: "Oglasi", href: "/admin/oglasi" },
     { icon: "firme", label: "Firme", href: "/admin/firme" },
     { icon: "korisnici", label: "Korisnici", href: "/admin/korisnici" },
-    { icon: "baneri", label: "Baneri", href: "/admin/baneri" }
+    { icon: "baneri", label: "Baneri", href: "/admin/baneri" },
+    { icon: "paketi", label: "Paketi", href: "/admin/paketi" }
   ]
 };
 
@@ -66,6 +67,6 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "uplate", label: "Uplate", href: "/admin/uplate" },
     { icon: "oglasi", label: "Oglasi", href: "/admin/oglasi" },
     { icon: "firme", label: "Firme", href: "/admin/firme" },
-    { icon: "baneri", label: "Baneri", href: "/admin/baneri" }
+    { icon: "paketi", label: "Paketi", href: "/admin/paketi" }
   ]
 };

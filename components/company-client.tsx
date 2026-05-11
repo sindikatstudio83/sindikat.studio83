@@ -64,16 +64,26 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
 
   async function load() {
     if (!ready) return;
-    if (!userId || role === "guest") { window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`; return; }
-    if (role !== "company" && role !== "admin") { window.location.href = "/profil"; return; }
-    const user = { id: userId, email: authEmail || "" };
+    if (!userId || role === "guest") {
+      // Guard: only redirect if not already on login page
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.replace(`/login?next=${encodeURIComponent(window.location.pathname)}`);
+      }
+      return;
+    }
+    if (role !== "company" && role !== "admin") {
+      if (!window.location.pathname.startsWith("/profil")) {
+        window.location.replace("/profil");
+      }
+      return;
+    }
     setEmail(authEmail || "");
 
     const [cityRows, categoryRows, planRows, companyResult] = await Promise.all([
       supabase.from("cities").select("id,name,slug").order("name"),
       supabase.from("categories").select("id,name,slug").order("name"),
       supabase.from("plans").select("*").order("price_eur"),
-      supabase.from("companies").select("*").eq("owner_id", user.id).maybeSingle()
+      supabase.from("companies").select("*").eq("owner_id", userId).maybeSingle()
     ]);
 
     const myCompany = companyResult.data as Company | null;
@@ -95,7 +105,9 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     setLoading(false);
   }
 
-  useEffect(() => { if (ready) load(); }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (ready) load();
+  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function setMsg(text: string, type: "info" | "error" | "success" = "info") { setNotice({ text, type }); }
 
