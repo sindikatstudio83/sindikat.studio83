@@ -10,6 +10,7 @@ type AuthState = {
   role: UserRole;
   userId: string | null;
   email: string | null;
+  /** true only after role is fully resolved (DB confirmed or definitively failed) */
   ready: boolean;
 };
 
@@ -28,6 +29,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createBrowserSupabase();
     let mounted = true;
 
+    /**
+     * FIX: Previously, ready:true was set twice — first with metadata role,
+     * then updated with DB role. This caused CompanyClient to redirect to /profil
+     * before the correct "company" role was loaded from the DB.
+     *
+     * New behaviour: ready:true is only set AFTER the DB role check is complete
+     * (or definitively failed). This ensures all guards/redirects fire with the
+     * correct, authoritative role.
+     */
     async function loadFromSession() {
       const { data: { session } } = await supabase.auth.getSession();
 
@@ -37,20 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const user = session.user;
-      const metaRole = normalizeRole(user.user_metadata?.role);
-      // Fallback: ako nema role ni u metadata, default je candidate
-      const initialRole: UserRole = metaRole !== "guest" ? metaRole : "candidate";
 
-      if (mounted) {
-        setState({
-          role: initialRole,
-          userId: user.id,
-          email: user.email || null,
-          ready: true
-        });
-      }
-
-      // Validacija role kroz DB u pozadini — ne blokira UI
+      // Step 1: Try DB role first — this is authoritative
       try {
         const { data, error } = await supabase
           .from("profiles")
@@ -58,30 +56,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .eq("id", user.id)
           .maybeSingle();
 
-        // Ako profil ne postoji uopšte (RLS prošlo, ali nema reda), pokušaj ga kreirati
-        // (handle_new_user trigger bi trebao ovo automatski uraditi, ali fallback)
-        if (!error && !data && mounted) {
+        if (!error && data?.role) {
+          const dbRole = normalizeRole(data.role);
+          if (mounted) {
+            setState({
+              role: dbRole !== "guest" ? dbRole : "candidate",
+              userId: user.id,
+              email: user.email || null,
+              ready: true,
+            });
+          }
+          return;
+        }
+
+        // Profile row missing — upsert with metadata role as fallback
+        if (!error && !data) {
+          const metaRole = normalizeRole(user.user_metadata?.role);
+          const fallbackRole: UserRole = metaRole !== "guest" ? metaRole : "candidate";
           await supabase.from("profiles").upsert({
             id: user.id,
             email: user.email,
-            role: initialRole
+            role: fallbackRole,
           }, { onConflict: "id" });
+          if (mounted) {
+            setState({ role: fallbackRole, userId: user.id, email: user.email || null, ready: true });
+          }
           return;
-        }
-
-        if (error) {
-          // RLS rekurzija, network, ili sl. — zadržavamo metadata role
-          // NE logujemo korisnika out, samo nastavljamo sa metapodatkom
-          console.warn("[auth-context] profile fetch failed, using metadata role");
-          return;
-        }
-
-        const dbRole = normalizeRole(data?.role);
-        if (mounted && dbRole !== "guest" && dbRole !== initialRole) {
-          setState(s => s.userId === user.id ? { ...s, role: dbRole } : s);
         }
       } catch {
-        // Tihi fail — zadržavamo metadata role
+        // Network or RLS error — fall through to metadata
+      }
+
+      // Step 2: Fallback to metadata role if DB failed
+      const metaRole = normalizeRole(user.user_metadata?.role);
+      const safeRole: UserRole = metaRole !== "guest" ? metaRole : "candidate";
+      if (mounted) {
+        setState({ role: safeRole, userId: user.id, email: user.email || null, ready: true });
       }
     }
 
@@ -91,16 +101,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event === "SIGNED_OUT" || !session) {
         if (mounted) setState({ role: "guest", userId: null, email: null, ready: true });
       } else if (event === "SIGNED_IN") {
-        // Only reload if userId changed (new login) — avoid loop on token refresh
+        // Only reload if this is actually a different user session
         setState(prev => {
           if (prev.userId !== session.user.id) {
-            loadFromSession();
+            // Reset to not-ready while we fetch the new user's role
+            if (mounted) {
+              setState({ role: "guest", userId: null, email: null, ready: false });
+              loadFromSession();
+            }
           }
           return prev;
         });
-      } else if (event === "TOKEN_REFRESHED") {
-        // Silently keep current state — token refresh doesn't change role
       }
+      // TOKEN_REFRESHED: silently keep current state
     });
 
     return () => {

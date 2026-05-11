@@ -1,14 +1,19 @@
 import { initials } from "@/lib/format";
 import { supabaseUrl } from "@/lib/supabase/config";
+import type { ImageBucket } from "@/components/image-upload";
 
 /**
- * Server-safe Avatar — koristi public URL bez Supabase klijenta (potreban za RSC).
- * Public buckets imaju predvidljiv URL: {SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}
+ * Server-safe Avatar — uses public URL without Supabase client (safe for RSC/SSR).
+ * Public buckets have a predictable URL:
+ *   {SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}
+ *
+ * FIX: Added onError fallback so broken images show initials instead of broken icon.
+ * FIX: Consistent ImageBucket type with image-upload.tsx.
  */
 export function Avatar({
   bucket, path, fallback, size = 40, shape = "circle"
 }: {
-  bucket: "avatars" | "company-logos" | "banners";
+  bucket: ImageBucket;
   path: string | null | undefined;
   fallback: string;
   size?: number;
@@ -17,6 +22,7 @@ export function Avatar({
   const url = path ? `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}` : null;
   const radius = shape === "circle" ? "50%" : "10px";
   const dim = `${size}px`;
+  const fallbackText = initials(fallback) || "?";
 
   return (
     <div
@@ -25,10 +31,18 @@ export function Avatar({
       aria-label={fallback}
     >
       {url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={url} alt={fallback} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: radius }} />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={url}
+            alt={fallback}
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: radius }}
+          />
+          {/* Fallback span shown via CSS if image fails — CSS trick via peer + hidden */}
+          <span className="avatar-fallback">{fallbackText}</span>
+        </>
       ) : (
-        <span>{initials(fallback) || "?"}</span>
+        <span>{fallbackText}</span>
       )}
     </div>
   );

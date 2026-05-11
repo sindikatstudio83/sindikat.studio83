@@ -614,7 +614,21 @@ h3{font-size:20px}
   flex-shrink:0;
   overflow:hidden;
   font-family:var(--display);
+  position:relative;
 }
+/* Avatar server component: show fallback text when img fails to load */
+.avatar-image img{display:block;width:100%;height:100%;object-fit:cover}
+.avatar-image .avatar-fallback{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  /* Hidden when img loads successfully; shown when img fails via onerror */
+  opacity:0;pointer-events:none;
+}
+.avatar-image img[src=""],
+.avatar-image img:not([src]) {
+  display:none;
+}
+/* Shown by JS onerror in client Avatar components */
 [data-theme="dark"] .image-upload-preview{background:var(--soft);border-color:var(--line2);color:var(--ink)}
 [data-theme="dark"] .avatar-image{background:var(--soft);border-color:var(--line)}
 

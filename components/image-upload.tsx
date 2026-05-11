@@ -3,14 +3,30 @@
 
 import { useState, useRef } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { supabaseUrl } from "@/lib/supabase/config";
 import { safeMessage, logError } from "@/lib/errors";
 import { initials } from "@/lib/format";
 
-const MAX_BYTES = 2 * 1024 * 1024; // 2MB
+const MAX_BYTES_DEFAULT = 2 * 1024 * 1024; // 2MB
+const MAX_BYTES_BANNERS = 5 * 1024 * 1024; // 5MB
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
 
+// All valid Supabase Storage buckets used in this project
+export type ImageBucket = "avatars" | "company-logos" | "banners";
+
+/**
+ * Generates a public Supabase Storage URL without needing the Supabase client.
+ * This is hydration-safe and works in both server and client components.
+ * Path convention: {bucket}/{ownerUserId}/{timestamp}.ext
+ */
+export function getPublicStorageUrl(bucket: ImageBucket, path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (path.startsWith("http")) return path; // already a full URL
+  return `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}`;
+}
+
 type Props = {
-  bucket: "avatars" | "company-logos" | "banners";
+  bucket: ImageBucket;
   ownerUserId: string;
   currentPath: string | null;
   fallbackText: string;
@@ -20,9 +36,12 @@ type Props = {
 };
 
 /**
- * Reusable image upload sa preview, validacijom, loading state i errorima.
- * Path konvencija: {bucket}/{ownerUserId}/{timestamp}.ext
- * Vlasnik može upisati samo pod svoj user folder (RLS).
+ * Reusable image upload with preview, validation, loading state and errors.
+ * Path convention: {bucket}/{ownerUserId}/{timestamp}.ext
+ * RLS: owner can only write under their own user folder.
+ *
+ * FIX: Uses getPublicStorageUrl() instead of supabase.storage.getPublicUrl()
+ * to avoid needing a Supabase client for URL generation (hydration-safe).
  */
 export function ImageUpload({
   bucket, ownerUserId, currentPath, fallbackText,
@@ -32,10 +51,8 @@ export function ImageUpload({
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const supabase = createBrowserSupabase();
-  const publicUrl = currentPath
-    ? supabase.storage.from(bucket).getPublicUrl(currentPath).data.publicUrl
-    : null;
+  const maxBytes = bucket === "banners" ? MAX_BYTES_BANNERS : MAX_BYTES_DEFAULT;
+  const publicUrl = getPublicStorageUrl(bucket, currentPath);
 
   async function handleFile(file: File) {
     setError("");
@@ -44,15 +61,17 @@ export function ImageUpload({
       setError("Dozvoljeni formati: JPG, PNG, WebP, GIF, SVG.");
       return;
     }
-    if (file.size > MAX_BYTES) {
-      setError("Slika je prevelika. Maksimalno 2 MB.");
+    if (file.size > maxBytes) {
+      setError(`Slika je prevelika. Maksimalno ${bucket === "banners" ? "5" : "2"} MB.`);
       return;
     }
 
     setUploading(true);
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    // FIX: Always use ownerUserId as the first path segment so RLS passes
     const path = `${ownerUserId}/${Date.now()}.${ext}`;
 
+    const supabase = createBrowserSupabase();
     const { error: uploadError } = await supabase.storage
       .from(bucket)
       .upload(path, file, { upsert: false, cacheControl: "3600" });
@@ -64,7 +83,7 @@ export function ImageUpload({
       return;
     }
 
-    // Ako postoji stari, obriši ga (best-effort)
+    // Best-effort: delete old image if it differs
     if (currentPath && currentPath !== path) {
       supabase.storage.from(bucket).remove([currentPath]).catch(() => {});
     }
@@ -73,7 +92,7 @@ export function ImageUpload({
       await onUploaded(path);
     } catch (e) {
       logError(`ImageUpload.${bucket}.onUploaded`, e as { message?: string });
-      setError("Slika je upload-ovana ali nije sačuvana u profilu. Osvježi stranicu.");
+      setError("Slika je upload-ovana ali nije sačuvana. Osvježi stranicu.");
     }
 
     setUploading(false);
@@ -90,7 +109,12 @@ export function ImageUpload({
         aria-label={publicUrl ? "Trenutna slika" : "Inicijali"}
       >
         {publicUrl ? (
-          <img src={publicUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: radius }} />
+          <img
+            src={publicUrl}
+            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: radius }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+          />
         ) : (
           <span>{initials(fallbackText) || "?"}</span>
         )}
@@ -121,9 +145,13 @@ export function ImageUpload({
           <button
             type="button"
             className="btn ghost sm"
+            style={{ color: "var(--red)" }}
             onClick={async () => {
               setUploading(true);
-              await supabase.storage.from(bucket).remove([currentPath!]).catch(() => {});
+              const supabase = createBrowserSupabase();
+              if (currentPath) {
+                await supabase.storage.from(bucket).remove([currentPath]).catch(() => {});
+              }
               await onUploaded("");
               setUploading(false);
             }}
@@ -133,27 +161,28 @@ export function ImageUpload({
         )}
       </div>
 
-      <p className="hint" style={{ margin: 0 }}>JPG, PNG, WebP. Max 2 MB.</p>
+      <p className="hint" style={{ margin: 0 }}>
+        {bucket === "banners" ? "JPG, PNG, WebP, SVG. Max 5 MB." : "JPG, PNG, WebP. Max 2 MB."}
+      </p>
       {error && <p className="notice error" role="alert" style={{ marginTop: 6 }}>{error}</p>}
     </div>
   );
 }
 
 /**
- * Pomoćni helper za prikaz avatar slike — koristi se u kartama i listama.
- * Pošto su bucket-i public, koristimo public URL bez auth-a.
+ * Client-side avatar/logo display — hydration-safe, uses getPublicStorageUrl.
+ * Use this in client components.
  */
 export function AvatarImage({
   bucket, path, fallback, size = 40, shape = "circle"
 }: {
-  bucket: "avatars" | "company-logos" | "banners";
+  bucket: ImageBucket;
   path: string | null | undefined;
   fallback: string;
   size?: number;
   shape?: "circle" | "rounded";
 }) {
-  const supabase = createBrowserSupabase();
-  const url = path ? supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl : null;
+  const url = getPublicStorageUrl(bucket, path);
   const radius = shape === "circle" ? "50%" : "10px";
   const dim = `${size}px`;
 
@@ -164,10 +193,25 @@ export function AvatarImage({
       aria-label={fallback}
     >
       {url ? (
-        <img src={url} alt={fallback} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: radius }} />
+        <img
+          src={url}
+          alt={fallback}
+          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: radius }}
+          onError={(e) => {
+            // On error, hide broken image and show initials fallback
+            const parent = (e.target as HTMLImageElement).parentElement;
+            if (parent) {
+              (e.target as HTMLImageElement).style.display = "none";
+              const span = document.createElement("span");
+              span.textContent = initials(fallback) || "?";
+              parent.appendChild(span);
+            }
+          }}
+        />
       ) : (
         <span>{initials(fallback) || "?"}</span>
       )}
     </div>
   );
 }
+
