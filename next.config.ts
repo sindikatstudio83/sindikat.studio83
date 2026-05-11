@@ -11,6 +11,24 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // Allow <img> tags from Supabase Storage (already using plain <img>, not next/image)
+  // These patterns are needed if next/image is ever used
+  images: {
+    remotePatterns: [
+      {
+        // Supabase Storage — matches any Supabase project URL
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        // Picsum for mock banners
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+    ],
+  },
+
   experimental: {
     staleTimes: {
       dynamic: 30,
@@ -20,12 +38,10 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
-      // Security headers on all routes
       {
         source: "/(.*)",
         headers: securityHeaders
       },
-      // Cache headers for public content
       {
         source: "/(oglasi|firme|gradovi|kategorije)(.*)",
         headers: [
