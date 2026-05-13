@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAnonKey, supabaseUrl } from "@/lib/supabase/config";
 
 function cleanNextPath(value: FormDataEntryValue | null) {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return "/profil";
+  // FIX: Default was "/profil" which sent company/admin users to the wrong dashboard.
+  // Changed to "/" — the client-side LoginForm already handles role-based redirect.
+  // The server route is a fallback for JS-disabled flows only.
+  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return "/";
   return value;
 }
 
