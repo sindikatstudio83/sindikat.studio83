@@ -7,6 +7,8 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  // Ignore compiled Next.js output
+  { ignores: [".next/**", "node_modules/**"] },
   ...compat.config({
     extends: ["next/core-web-vitals"]
   })
