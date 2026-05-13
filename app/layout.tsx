@@ -13,7 +13,25 @@ export const metadata: Metadata = {
   title: { default: "imaposla.me — Poslovi u Crnoj Gori", template: "%s | imaposla.me" },
   description: "Oglasi za posao, kandidati i poslodavci u Crnoj Gori. Pronađi posao ili objavi oglas.",
   metadataBase: new URL("https://imaposla.me"),
-  openGraph: { siteName: "imaposla.me", locale: "sr_ME", type: "website" },
+  openGraph: {
+    siteName: "imaposla.me",
+    locale: "sr_ME",
+    type: "website",
+    images: [
+      {
+        url: "/og-image?title=imaposla.me&subtitle=Poslovi+u+Crnoj+Gori",
+        width: 1200,
+        height: 630,
+        alt: "imaposla.me — Poslovi u Crnoj Gori"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "imaposla.me — Poslovi u Crnoj Gori",
+    description: "Oglasi za posao, kandidati i poslodavci u Crnoj Gori.",
+    images: ["/og-image?title=imaposla.me&subtitle=Poslovi+u+Crnoj+Gori"]
+  },
   robots: { index: true, follow: true }
 };
 

@@ -9,22 +9,22 @@ import { safeMessage, logError } from "@/lib/errors";
 import { ImageUpload } from "@/components/image-upload";
 import { getCompanyActivePlan } from "@/lib/queries/account";
 import { slugify, initials } from "@/lib/format";
-import { roleLabels } from "@/lib/labels";
+import { roleLabels, jobStatusLabels } from "@/lib/labels";
 import { desktopNavItems } from "@/lib/navigation";
 import type { Company, Job, JobApplication, LookupItem, Order, Plan } from "@/types/domain";
 
 
 
 
-function SideNav({ email }: { email: string }) {
+function SideNav({ email, companyName }: { email: string; companyName?: string | null }) {
   const pathname = usePathname();
   const nav = desktopNavItems["company"];
-  const name = email.split("@")[0];
+  const displayName = companyName || email.split("@")[0];
   return (
     <aside className="side">
       <div className="side-head">
-        <div className="side-avatar">{initials(name)}</div>
-        <strong>{name}</strong>
+        <div className="side-avatar">{companyName ? companyName.slice(0, 2).toUpperCase() : initials(email.split("@")[0])}</div>
+        <strong>{displayName}</strong>
         <small>FIRMA · {email}</small>
       </div>
       <nav className="side-nav">
@@ -51,6 +51,10 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   const [notice, setNotice] = useState<{ text: string; type: "info" | "error" | "success" } | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  // ── Job edit/delete state ───────────────────────────────────────────
+  const [editJob, setEditJob] = useState<Job | null>(null);
+  const [editSaving, setEditSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [supabase] = useState(() => createBrowserSupabase());
 
   async function load() {
@@ -164,6 +168,82 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   }
 
 
+  // ── UPDATE JOB ─────────────────────────────────────────────────────
+  async function updateJob(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!editJob) return;
+    setEditSaving(true);
+    setNotice(null);
+
+    const fd = new FormData(e.currentTarget);
+    const title = String(fd.get("title") || "").trim();
+    const categoryId = Number(fd.get("category_id"));
+    const cityId = Number(fd.get("city_id"));
+    const description = String(fd.get("description") || "").trim();
+    const contract_type = String(fd.get("contract_type") || "").trim() || null;
+    const salary_text = String(fd.get("salary_text") || "").trim() || null;
+    const deadline = String(fd.get("deadline") || "") || null;
+
+    if (!title) { setMsg("Upiši naziv pozicije.", "error"); setEditSaving(false); return; }
+    if (!categoryId || !cityId) { setMsg("Izaberi grad i kategoriju.", "error"); setEditSaving(false); return; }
+    if (!description) { setMsg("Upiši opis oglasa.", "error"); setEditSaving(false); return; }
+
+    const { error } = await supabase.from("jobs").update({
+      title,
+      category_id: categoryId,
+      city_id: cityId,
+      description,
+      contract_type,
+      salary_text,
+      deadline,
+      // Oglas ide nazad na pregled ako je bio aktivan i korisnik ga izmijeni
+      status: editJob.status === "active" ? "pending_review" : editJob.status
+    }).eq("id", editJob.id);
+
+    if (error) {
+      logError("CompanyClient.updateJob", error);
+      setMsg(safeMessage(error, "save"), "error");
+    } else {
+      setMsg(
+        editJob.status === "active"
+          ? "Oglas je ažuriran i poslat na ponovni pregled."
+          : "Oglas je ažuriran.",
+        "success"
+      );
+      setEditJob(null);
+      await load();
+    }
+    setEditSaving(false);
+  }
+
+  // ── TOGGLE JOB STATUS (active ↔ paused) ────────────────────────────
+  async function toggleJobStatus(job: Job) {
+    const newStatus = job.status === "active" ? "paused" : "active";
+    const { error } = await supabase.from("jobs").update({ status: newStatus }).eq("id", job.id);
+    if (error) {
+      logError("CompanyClient.toggleStatus", error);
+      setMsg(safeMessage(error, "save"), "error");
+    } else {
+      setMsg(newStatus === "active" ? "Oglas je aktiviran." : "Oglas je pauziran.", "success");
+      await load();
+    }
+  }
+
+  // ── DELETE JOB ──────────────────────────────────────────────────────
+  async function deleteJob(jobId: number) {
+    if (!window.confirm("Da li si siguran/na da želiš obrisati ovaj oglas? Ova akcija se ne može poništiti.")) return;
+    setDeletingId(jobId);
+    const { error } = await supabase.from("jobs").delete().eq("id", jobId);
+    if (error) {
+      logError("CompanyClient.deleteJob", error);
+      setMsg(safeMessage(error, "save"), "error");
+    } else {
+      setMsg("Oglas je obrisan.", "success");
+      await load();
+    }
+    setDeletingId(null);
+  }
+
   async function orderPlan(plan: Plan, e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); if (!company) return;
     setSaving(true); setNotice(null);
@@ -205,7 +285,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   // DASHBOARD
   if (view === "dashboard") return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <SideNav email={email} companyName={company?.name} />
       <main className="app-main">
         <div className="section-head">
           <div><span className="page-label">Firma</span><h1>{company?.name || "Pregled firme"}</h1><p className="sub">Profil firme, oglasi i prijave.</p></div>
@@ -269,32 +349,156 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   // JOBS
   if (view === "jobs") return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <SideNav email={email} companyName={company?.name} />
       <main className="app-main">
         <div className="section-head">
-          <div><span className="page-label">Firma</span><h1>Moji oglasi</h1></div>
+          <div><span className="page-label">Firma</span><h1>Moji oglasi</h1><p className="sub">{jobs.length} {jobs.length === 1 ? "oglas" : "oglasa"} ukupno</p></div>
           <Link className="btn blue" href="/firma/novi-oglas">+ Novi oglas</Link>
         </div>
+
+        {noticeEl}
+
+        {/* ── EDIT FORM (prikazuje se kada se klikne "Uredi") ── */}
+        {editJob && (
+          <div className="table-card" style={{ marginBottom: 20, padding: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h2 style={{ fontSize: 20, margin: 0 }}>Uredi oglas: <em style={{ fontWeight: 400 }}>{editJob.title}</em></h2>
+              <button type="button" className="btn ghost sm" onClick={() => { setEditJob(null); setNotice(null); }}>× Zatvori</button>
+            </div>
+            {editJob.status === "active" && (
+              <div className="notice" style={{ marginBottom: 14 }}>
+                ⚠️ Izmjena aktivnog oglasa šalje ga na ponovni pregled admina.
+              </div>
+            )}
+            <form onSubmit={updateJob} style={{ display: "grid", gap: 12 }}>
+              <label>
+                <span className="label">Naziv pozicije *</span>
+                <input className="field" name="title" defaultValue={editJob.title} required />
+              </label>
+              <div className="form-grid">
+                <label>
+                  <span className="label">Grad *</span>
+                  <select className="select" name="city_id" defaultValue={String((editJob as unknown as { city_id?: number }).city_id || "")} required>
+                    <option value="">Izaberi grad</option>
+                    {cities.map(c => <option value={c.id} key={c.id}>{c.name}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <span className="label">Kategorija *</span>
+                  <select className="select" name="category_id" defaultValue={String((editJob as unknown as { category_id?: number }).category_id || "")} required>
+                    <option value="">Izaberi kategoriju</option>
+                    {categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>)}
+                  </select>
+                </label>
+              </div>
+              <div className="form-grid">
+                <label>
+                  <span className="label">Tip ugovora</span>
+                  <input className="field" name="contract_type" defaultValue={editJob.contract_type || ""} placeholder="Stalni, sezonski, ugovor..." />
+                </label>
+                <label>
+                  <span className="label">Plata / naknada</span>
+                  <input className="field" name="salary_text" defaultValue={editJob.salary_text || ""} placeholder="800–1200€ / po dogovoru" />
+                </label>
+              </div>
+              <label>
+                <span className="label">Rok prijave</span>
+                <input className="field" type="date" name="deadline" defaultValue={editJob.deadline || ""} min={new Date().toISOString().split("T")[0]} />
+              </label>
+              <label>
+                <span className="label">Opis oglasa *</span>
+                <textarea className="textarea" name="description" defaultValue={editJob.description} required style={{ minHeight: 120 }} />
+              </label>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button className="btn blue" type="submit" disabled={editSaving}>
+                  {editSaving ? "Čuvanje..." : "Sačuvaj izmjene"}
+                </button>
+                <button type="button" className="btn ghost" onClick={() => { setEditJob(null); setNotice(null); }}>Otkaži</button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ── JOB LIST ── */}
         <div className="job-list">
-          {jobs.map(job => (
-            <article className="job-card" key={job.id} style={{ position: "relative" }}>
-              <div className="logo">{job.companies ? initials(job.companies.name) : "FI"}</div>
-              <div>
-                <div className="tags" style={{ marginBottom: 7 }}>
-                  {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}
-                  <span className={`badge ${job.status === "active" ? "green" : job.status === "pending_review" ? "orange" : "gray"}`}>
-                    {job.status === "active" ? "Aktivan" : job.status === "pending_review" ? "Na pregledu" : job.status}
-                  </span>
+          {jobs.map(job => {
+            const isDeleting = deletingId === job.id;
+            const canPause = job.status === "active";
+            const canActivate = job.status === "paused";
+            return (
+              <article className="job-card" key={job.id} style={{ position: "relative", opacity: isDeleting ? 0.5 : 1 }}>
+                <div className="logo" style={{ background: "var(--soft)", border: "2px solid var(--line)", display: "grid", placeItems: "center", fontWeight: 900, fontSize: 12, borderRadius: 12 }}>
+                  {initials(company?.name || "F")}
                 </div>
-                <span className="job-title">{job.title}</span>
-                <div className="meta">{job.cities?.name && <span>· {job.cities.name}</span>}</div>
-              </div>
-              <div className="job-actions">
-                <Link className="btn lime sm" href="/firma/selekcija">ATS →</Link>
-              </div>
-            </article>
-          ))}
-          {!jobs.length && <div className="empty"><strong>Nema oglasa</strong><p>Pošalji prvi oglas na odobrenje.</p><Link className="btn blue sm" href="/firma/novi-oglas">Novi oglas →</Link></div>}
+                <div>
+                  <div className="tags" style={{ marginBottom: 7 }}>
+                    {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}
+                    <span className={`badge ${job.status === "active" ? "green" : job.status === "pending_review" ? "orange" : job.status === "paused" ? "gray" : "red"}`}>
+                      {jobStatusLabels[job.status] || job.status}
+                    </span>
+                    {job.featured && <span className="badge orange">★ Istaknuto</span>}
+                  </div>
+                  <span className="job-title">{job.title}</span>
+                  <div className="meta">
+                    {job.cities?.name && <span>· {job.cities.name}</span>}
+                    {job.deadline && <span>· Rok: {new Date(job.deadline).toLocaleDateString("sr-ME")}</span>}
+                    {job.salary_text && <span>· {job.salary_text}</span>}
+                  </div>
+                </div>
+                <div className="job-actions">
+                  {/* ATS — uvijek vidljiv */}
+                  <Link className="btn lime sm" href="/firma/selekcija">ATS →</Link>
+                  {/* Edit — na svim statusima sem archived/expired */}
+                  {job.status !== "expired" && (
+                    <button
+                      type="button"
+                      className="btn ghost sm"
+                      onClick={() => {
+                        setEditJob(editJob?.id === job.id ? null : job);
+                        setNotice(null);
+                        // Scroll to form
+                        setTimeout(() => {
+                          document.querySelector(".app-main")?.scrollTo({ top: 0, behavior: "smooth" });
+                        }, 50);
+                      }}
+                      disabled={isDeleting}
+                    >
+                      {editJob?.id === job.id ? "Zatvori" : "Uredi"}
+                    </button>
+                  )}
+                  {/* Pause / Aktiviraj */}
+                  {(canPause || canActivate) && (
+                    <button
+                      type="button"
+                      className={`btn ${canActivate ? "blue" : "ghost"} sm`}
+                      onClick={() => toggleJobStatus(job)}
+                      disabled={isDeleting}
+                    >
+                      {canPause ? "Pauziraj" : "Aktiviraj"}
+                    </button>
+                  )}
+                  {/* Delete — samo draft, rejected ili paused */}
+                  {["draft", "paused", "rejected", "expired"].includes(job.status) && (
+                    <button
+                      type="button"
+                      className="btn red sm"
+                      onClick={() => deleteJob(job.id)}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? "Brisanje..." : "Briši"}
+                    </button>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+          {!jobs.length && (
+            <div className="empty">
+              <strong>Nema oglasa</strong>
+              <p>Pošalji prvi oglas na odobrenje. Oglas će biti vidljiv nakon što ga admin odobri.</p>
+              <Link className="btn blue sm" href="/firma/novi-oglas">Novi oglas →</Link>
+            </div>
+          )}
         </div>
       </main>
     </div>
@@ -303,7 +507,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   // NEW JOB
   if (view === "new-job") return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <SideNav email={email} companyName={company?.name} />
       <main className="app-main">
         <div className="section-head">
           <div><span className="page-label">Firma</span><h1>Novi oglas</h1><p className="sub">Oglas ide na pregled prije javnog prikaza.</p></div>
@@ -341,7 +545,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
   // BILLING
   return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <SideNav email={email} companyName={company?.name} />
       <main className="app-main">
         <div className="section-head">
           <div><span className="page-label">Pretplata</span><h1>Planovi i uplata</h1><p className="sub">Bankovni transfer → admin potvrđuje → plan aktivan.</p></div>

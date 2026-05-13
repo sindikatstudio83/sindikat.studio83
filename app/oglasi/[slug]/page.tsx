@@ -16,9 +16,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!id) return { title: "Oglas nije pronađen" };
   const job = await getJobById(id);
   if (!job) return { title: "Oglas nije pronađen" };
+
+  const title = `${job.title}${job.companies?.name ? ` — ${job.companies.name}` : ""}`;
+  const description = job.description?.slice(0, 160);
+
   return {
-    title: `${job.title}${job.companies?.name ? ` — ${job.companies.name}` : ""}`,
-    description: job.description?.slice(0, 160)
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: [
+        {
+          url: `/og-image?title=${encodeURIComponent(job.title)}&subtitle=${encodeURIComponent(job.companies?.name || "imaposla.me")}`,
+          width: 1200,
+          height: 630,
+          alt: title
+        }
+      ]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description
+    }
   };
 }
 

@@ -14,9 +14,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!id) return { title: "Firma nije pronađena" };
   const company = await getCompanyById(id);
   if (!company) return { title: "Firma nije pronađena" };
+
+  const description = company.description?.slice(0, 160) || `Profil firme ${company.name} na imaposla.me.`;
+
   return {
     title: company.name,
-    description: company.description?.slice(0, 160) || `Profil firme ${company.name} na imaposla.me.`
+    description,
+    openGraph: {
+      title: company.name,
+      description,
+      images: [
+        {
+          url: `/og-image?title=${encodeURIComponent(company.name)}&subtitle=${encodeURIComponent(company.city || "Crna Gora")}`,
+          width: 1200,
+          height: 630,
+          alt: company.name
+        }
+      ]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: company.name,
+      description
+    }
   };
 }
 

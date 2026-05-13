@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getLookups } from "@/lib/queries/public";
+import { BannerSlot } from "@/components/banner-slot";
 
 export async function Footer() {
   const { cities, categories } = await getLookups();
@@ -10,6 +11,8 @@ export async function Footer() {
 
   return (
     <footer className="footer">
+      {/* Footer banner — iznad footer sadržaja */}
+      <BannerSlot placement="footer_banner" className="footer-banner-slot" />
       <div className="wrap foot-grid">
         <div>
           <Link className="brand footer-brand" href="/">

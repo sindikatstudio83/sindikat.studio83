@@ -565,6 +565,9 @@ h3{font-size:20px}
 
 /* ── FOOTER ── */
 .footer{margin-top:36px;background:var(--ink);color:var(--soft);border-radius:28px 28px 0 0;padding:28px 0}
+.footer-banner-slot{border-radius:0;margin:0;padding:0;width:100%;overflow:hidden}
+/* Edit job notice — inline inside table-card */
+.edit-job-notice{background:color-mix(in srgb,var(--orange) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--orange) 40%,var(--line));color:var(--ink);border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:12px}
 .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:18px}
 .footer-brand{margin-bottom:8px}
 .footer h4{font-family:var(--display);font-size:16px;margin-bottom:8px;color:#fff}
