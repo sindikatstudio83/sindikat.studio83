@@ -3,10 +3,55 @@ import type { Company, Job, Plan } from "@/types/domain";
 
 const jobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug,logo_path),categories(id,name,slug),cities(id,name,slug)";
 
-export async function getPublicJobs(limit = 100): Promise<Job[]> {
+export type JobFilters = {
+  q?: string;
+  city?: string;
+  category?: string;
+  limit?: number;
+};
+
+export async function getPublicJobs(filters?: JobFilters): Promise<Job[]> {
   const db = createPublicSupabase();
-  const { data, error } = await db.from("jobs").select(jobSelect).eq("status", "active").order("featured", { ascending: false }).order("created_at", { ascending: false }).limit(limit);
-  if (error) console.error("[getPublicJobs]", error.message);
+  let query = db.from("jobs").select(jobSelect).eq("status", "active");
+
+  // DB-side filters — ne filtriramo u browseru!
+  if (filters?.city) {
+    // Filtriraj po nazivu grada (case insensitive)
+    const { data: cityData } = await db.from("cities").select("id").ilike("name", filters.city).maybeSingle();
+    if (cityData?.id) query = query.eq("city_id", cityData.id);
+    else return []; // Grad ne postoji
+  }
+
+  if (filters?.category) {
+    const { data: catData } = await db.from("categories").select("id").ilike("name", filters.category).maybeSingle();
+    if (catData?.id) query = query.eq("category_id", catData.id);
+    else return [];
+  }
+
+  if (filters?.q) {
+    // Full-text search koristeći GIN index
+    const searchTerm = filters.q.replace(/['"\\]/g, " ").trim();
+    query = query.textSearch("fts", searchTerm, {
+      type: "plain",
+      config: "simple",
+    });
+  }
+
+  query = query
+    .order("featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(filters?.limit || 100);
+
+  const { data, error } = await query;
+  if (error) {
+    // Fallback: ako FTS padne (npr. nema fts kolone), vrati bez text filtera
+    if (error.code === "42703" || error.message?.includes("fts")) {
+      const { data: fallback } = await db.from("jobs").select(jobSelect).eq("status", "active")
+        .order("featured", { ascending: false }).order("created_at", { ascending: false }).limit(100);
+      return (fallback || []) as unknown as Job[];
+    }
+    console.error("[getPublicJobs]", error.message);
+  }
   return (data || []) as unknown as Job[];
 }
 
@@ -105,7 +150,7 @@ export async function getLookups() {
 
 export async function getPlans(): Promise<Plan[]> {
   const db = createPublicSupabase();
-  const { data, error } = await db.from("plans").select("*").order("price_eur");
+  const { data, error } = await db.from("plans").select("*").eq("is_active", true).order("price_eur");
   if (error) console.error("[getPlans]", error.message);
   return (data || []) as Plan[];
 }

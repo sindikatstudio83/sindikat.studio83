@@ -69,10 +69,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Profile row missing — upsert with metadata role as fallback
+        // Profile row missing — kreiraj sa candidate role (ne uzimati iz metadata!)
         if (!error && !data) {
-          const metaRole = normalizeRole(user.user_metadata?.role);
-          const fallbackRole: UserRole = metaRole !== "guest" ? metaRole : "candidate";
+          const fallbackRole: UserRole = "candidate";
           await supabase.from("profiles").upsert({
             id: user.id,
             email: user.email,
@@ -87,11 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Network or RLS error — fall through to metadata
       }
 
-      // Step 2: Fallback to metadata role if DB failed
-      const metaRole = normalizeRole(user.user_metadata?.role);
-      const safeRole: UserRole = metaRole !== "guest" ? metaRole : "candidate";
+      // Step 2: Fallback kada DB query padne — uvijek candidate, nikad iz metadata
+      // (metadata se može zloupotrijebiti; role se ne uzima iz user_metadata)
       if (mounted) {
-        setState({ role: safeRole, userId: user.id, email: user.email || null, ready: true });
+        setState({ role: "candidate", userId: user.id, email: user.email || null, ready: true });
       }
     }
 

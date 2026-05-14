@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [jobs, companies, lookups] = await Promise.all([
-    getPublicJobs(6),
+    getPublicJobs({ limit: 6 }),
     getCompanies(4),
     getLookups()
   ]);

@@ -206,10 +206,10 @@ export function AdminClient({ view }: { view: AdminView }) {
   async function confirmProof(row: Row) {
     if (row.status !== "pending") { setMsg("Dokaz je već obrađen.", "error"); return; }
     setActing(row.id);
-    const { data, error } = await supabase.rpc("confirm_payment_proof", { proof_id: row.id });
-    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else {
-      const code = Array.isArray(data) ? data[0]?.activation_code : data?.activation_code;
-      setMsg(`Uplata potvrđena! Kod: ${code || "kreiran"}`, "success");
+    // FIX: RPC očekuje p_proof_id (prethodno pogrešno bilo proof_id)
+    const { error } = await supabase.rpc("confirm_payment_proof", { p_proof_id: row.id });
+    if (error) { logError("AdminClient.confirmProof", error); setMsg(safeMessage(error, "save"), "error"); } else {
+      setMsg("Uplata potvrđena. Paket aktiviran.", "success");
     }
     setActing(null); await load();
   }

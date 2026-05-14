@@ -15,29 +15,27 @@ export const metadata: Metadata = {
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; city?: string; category?: string }>;
+  searchParams: Promise<{ q?: string; city?: string; category?: string; page?: string }>;
 }) {
   const params = await searchParams;
-  const [jobs, lookups] = await Promise.all([getPublicJobs(), getLookups()]);
 
-  const q = (params.q || "").toLowerCase();
-  const isFiltering = Boolean(q || params.city || params.category);
+  // DB-side search i filtriranje — ne filtriramo u browseru
+  const [jobs, lookups] = await Promise.all([
+    getPublicJobs({
+      q: params.q || undefined,
+      city: params.city || undefined,
+      category: params.category || undefined,
+      limit: 100,
+    }),
+    getLookups(),
+  ]);
 
-  const filtered = jobs.filter((job: Job) => {
-    const haystack =
-      `${job.title} ${job.description} ${job.companies?.name || ""} ${job.categories?.name || ""}`.toLowerCase();
-    return (
-      (!q || haystack.includes(q)) &&
-      (!params.city || job.cities?.name === params.city) &&
-      (!params.category || job.categories?.name === params.category)
-    );
-  });
+  const isFiltering = Boolean(params.q || params.city || params.category);
 
   // Istaknuti oglasi — posebna sekcija iznad, samo bez aktivnih filtera
-  const featuredJobs = !isFiltering ? filtered.filter((j: Job) => j.featured) : [];
-  const regularJobs = !isFiltering ? filtered.filter((j: Job) => !j.featured) : filtered;
+  const featuredJobs = !isFiltering ? jobs.filter((j: Job) => j.featured) : [];
+  const regularJobs = !isFiltering ? jobs.filter((j: Job) => !j.featured) : jobs;
 
-  // Banner ubaci svakih 8 regularnih oglasa
   const BANNER_EVERY = 8;
 
   return (
@@ -57,9 +55,9 @@ export default async function JobsPage({
         label="Oglasi"
         title="Oglasi za posao"
         text={
-          filtered.length === 0
+          jobs.length === 0
             ? "Nema oglasa za zadatu pretragu."
-            : `${filtered.length} ${filtered.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`
+            : `${jobs.length} ${jobs.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`
         }
       />
 
@@ -89,7 +87,7 @@ export default async function JobsPage({
         <button type="submit">Traži</button>
       </form>
 
-      {filtered.length === 0 ? (
+      {jobs.length === 0 ? (
         <EmptyState title="Nema oglasa" text="Promijeni filtere ili se vrati kasnije." />
       ) : (
         <>

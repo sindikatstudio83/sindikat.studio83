@@ -48,7 +48,7 @@ export default async function JobDetailPage({ params }: Props) {
   const { slug } = await params;
   const id = parseIdFromSlug(slug);
   if (!id) return notFound();
-  const [job, allJobs] = await Promise.all([getJobById(id), getPublicJobs(10)]);
+  const [job, allJobs] = await Promise.all([getJobById(id), getPublicJobs({ limit: 10 })]);
   if (!job) return notFound();
 
   const co = job.companies;

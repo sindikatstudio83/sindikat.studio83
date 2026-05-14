@@ -77,11 +77,14 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     const [cityRows, categoryRows, planRows, companyResult] = await Promise.all([
       supabase.from("cities").select("id,name,slug").order("name"),
       supabase.from("categories").select("id,name,slug").order("name"),
-      supabase.from("plans").select("*").order("price_eur"),
-      supabase.from("companies").select("*").eq("owner_id", userId).maybeSingle()
+      supabase.from("plans").select("*").eq("is_active", true).order("price_eur"),
+      // FIX: koristimo .select() bez .maybeSingle() jer owner može imati više firmi
+      supabase.from("companies").select("*").eq("owner_id", userId).order("created_at")
     ]);
 
-    const myCompany = companyResult.data as Company | null;
+    // Uzmi prvu firmu (ili već selektovanu ako postoji višestruki izbor u budućnosti)
+    const allOwnerCompanies = (companyResult.data || []) as Company[];
+    const myCompany = allOwnerCompanies[0] || null;
     setCities((cityRows.data || []) as LookupItem[]);
     setCategories((categoryRows.data || []) as LookupItem[]);
     setPlans((planRows.data || []) as Plan[]);
@@ -261,7 +264,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     if (orderError || !orderData) { logError("CompanyClient.order", orderError); setMsg(safeMessage(orderError, "submit"), "error"); setSaving(false); return; }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
-    const filePath = `${company.id}/${orderData.id}-${Date.now()}-${safeName}`;
+    const filePath = `${userId}/${company.id}-${orderData.id}-${Date.now()}-${safeName}`;
     const { error: uploadError } = await supabase.storage.from("payment-proofs").upload(filePath, file, { upsert: false });
     if (uploadError) {
       await supabase.from("orders").delete().eq("id", orderData.id);
@@ -312,12 +315,17 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
             <strong>Profil firme nije kreiran</strong>
             <p>Popuni podatke o firmi da bi mogao objavljivati oglase.</p>
           </div>
-        ) : !company.approved ? (
-          <div className="notice-card warn">
-            <strong>Profil firme čeka odobrenje</strong>
-            <p>Admin pregleda profil i aktivira ga. Oglas možeš poslati nakon odobrenja.</p>
+        ) : company.approved ? (
+          <div className="notice-card" style={{ background: "color-mix(in srgb,var(--lime) 12%,var(--paper))", border: "2px solid color-mix(in srgb,var(--lime) 40%,var(--line))", marginBottom: 12 }}>
+            <strong style={{ color: "var(--ink)" }}>✓ Firma odobrena</strong>
+            <p style={{ color: "var(--muted)", marginTop: 2 }}>Vaš profil je aktivan. Možete objavljivati oglase.</p>
           </div>
-        ) : null}
+        ) : (
+          <div className="notice-card warn">
+            <strong>⏳ Profil firme čeka odobrenje</strong>
+            <p>Admin pregleda profil i aktivira ga. Oglas možete poslati nakon odobrenja.</p>
+          </div>
+        )}
         <form className="form-card" onSubmit={saveCompany}>
           <div className="kicker" style={{ marginBottom: 4 }}>Profil firme</div>
           {company?.id && userId && (
