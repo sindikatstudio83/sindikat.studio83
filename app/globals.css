@@ -204,8 +204,63 @@ h3{font-size:20px}
 
 /* ── JOB CARDS ── */
 .job-list{display:grid;gap:10px;grid-template-columns:1fr}
-/* Desktop: 2 kolone za job-list */
 @media(min-width:960px){.job-list.two-col{grid-template-columns:1fr 1fr}}
+
+/* ── FIRMA JOB CARDS (mobile-first) ── */
+.firm-job-list{display:flex;flex-direction:column;gap:10px}
+.firm-job-card{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.firm-job-card-top{margin-bottom:12px}
+.firm-job-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.firm-job-title{font-size:16px;font-weight:800;margin:0 0 6px;color:var(--ink);line-height:1.3}
+.firm-job-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;color:var(--muted)}
+.firm-job-actions{display:flex;flex-wrap:wrap;gap:7px;border-top:1.5px solid var(--line);padding-top:12px;margin-top:0}
+.firm-job-actions .btn{flex:1;min-width:80px;text-align:center;justify-content:center}
+
+/* ── MOBILE FILTER DRAWER ── */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;align-items:center}
+.filter-toggle-btn{background:var(--ink);color:var(--paper);border:0;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.filter-toggle-btn .filter-count{background:var(--lime);color:#111;border-radius:999px;padding:1px 7px;font-size:11px;font-weight:900}
+.filter-drawer{position:fixed;inset:0;z-index:200;pointer-events:none}
+.filter-drawer.open{pointer-events:auto}
+.filter-drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:.2s}
+.filter-drawer.open .filter-drawer-backdrop{opacity:1}
+.filter-drawer-panel{position:absolute;bottom:0;left:0;right:0;background:var(--paper);border-radius:24px 24px 0 0;padding:20px 16px 32px;transform:translateY(100%);transition:.25s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto}
+.filter-drawer.open .filter-drawer-panel{transform:translateY(0)}
+.filter-drawer-handle{width:40px;height:4px;background:var(--line2);border-radius:2px;margin:0 auto 18px}
+.filter-drawer-title{font-size:17px;font-weight:900;margin:0 0 16px;color:var(--ink)}
+.filter-drawer-fields{display:flex;flex-direction:column;gap:12px}
+.filter-drawer-fields label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.filter-drawer-fields input,.filter-drawer-fields select{padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:15px;font-weight:700;background:var(--soft);color:var(--ink)}
+.filter-drawer-actions{display:flex;gap:10px;margin-top:20px}
+.filter-drawer-actions .btn{flex:1;padding:14px;font-size:15px}
+
+/* ── PAYMENT STEPPER ── */
+.payment-stepper{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+.payment-step{display:flex;align-items:flex-start;gap:12px;padding:12px 0}
+.payment-step:not(:last-child){border-bottom:1.5px solid var(--line)}
+.payment-step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;margin-top:2px}
+.payment-step-dot.done{background:var(--lime);color:#111}
+.payment-step-dot.active{background:var(--blue);color:#fff}
+.payment-step-dot.pending{background:var(--soft);color:var(--muted);border:2px solid var(--line)}
+.payment-step-text strong{display:block;font-size:14px;font-weight:800;color:var(--ink);margin-bottom:2px}
+.payment-step-text small{font-size:12px;color:var(--muted);font-weight:700}
+
+/* ── ADMIN MOBILE CARDS ── */
+.admin-card-list{display:flex;flex-direction:column;gap:10px}
+.admin-card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)}
+.admin-card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.admin-card-avatar{width:40px;height:40px;border-radius:12px;background:var(--soft);border:2px solid var(--line);display:grid;place-items:center;font-weight:900;font-size:13px;flex-shrink:0;color:var(--muted)}
+.admin-card-info{flex:1;min-width:0}
+.admin-card-info strong{display:block;font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-card-info small{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-card-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.admin-card-actions{display:flex;flex-wrap:wrap;gap:7px;border-top:1.5px solid var(--line);padding-top:10px}
+.admin-card-actions .btn{flex:1;min-width:70px;text-align:center;justify-content:center;padding:9px 10px;font-size:12px}
+
+/* ── MOBILE SEARCH BAR (public jobs) ── */
+.search-inline{display:flex;gap:8px;margin-bottom:12px}
+.search-inline input{flex:1;padding:11px 14px;border:2px solid var(--ink);border-radius:12px;font-size:14px;font-weight:700;background:var(--paper);color:var(--ink)}
+.search-inline button[type=submit]{background:var(--ink);color:var(--paper);border:0;border-radius:12px;padding:0 18px;font-weight:900;font-size:13px;cursor:pointer}
 /* Featured section */
 .featured-section{margin-bottom:24px}
 .featured-section-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}

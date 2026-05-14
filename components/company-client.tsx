@@ -37,6 +37,15 @@ function SideNav({ email, companyName }: { email: string; companyName?: string |
   );
 }
 
+const JOB_STATUS_CONFIG = {
+  active:         { color: "#13b76d", bg: "rgba(19,183,109,.10)", emoji: "●" },
+  pending_review: { color: "#ff8a2a", bg: "rgba(255,138,42,.10)", emoji: "⏳" },
+  paused:         { color: "#6b7588", bg: "rgba(107,117,136,.10)", emoji: "⏸" },
+  draft:          { color: "#6b7588", bg: "rgba(107,117,136,.10)", emoji: "✏" },
+  rejected:       { color: "#e5484d", bg: "rgba(229,72,77,.10)",  emoji: "✗" },
+  expired:        { color: "#a0a8b8", bg: "rgba(160,168,184,.10)", emoji: "⌛" },
+};
+
 export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job" | "billing" }) {
   const { role, userId, email: authEmail, ready } = useAuth();
   const [company, setCompany] = useState<Company | null>(null);
@@ -221,31 +230,27 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     setEditSaving(false);
   }
 
-  // ── TOGGLE JOB STATUS (active ↔ paused) ────────────────────────────
-  async function toggleJobStatus(job: Job) {
-    const newStatus = job.status === "active" ? "paused" : "active";
-    const { error } = await supabase.from("jobs").update({ status: newStatus }).eq("id", job.id);
-    if (error) {
-      logError("CompanyClient.toggleStatus", error);
-      setMsg(safeMessage(error, "save"), "error");
-    } else {
-      setMsg(newStatus === "active" ? "Oglas je aktiviran." : "Oglas je pauziran.", "success");
-      await load();
-    }
+  // ── PAUSE JOB (RPC — zaobilazi trigger) ────────────────────────────
+  async function pauseJob(job: Job) {
+    const { error } = await supabase.rpc("company_pause_job", { p_job_id: job.id });
+    if (error) { logError("CompanyClient.pauseJob", error); setMsg(safeMessage(error, "save"), "error"); }
+    else { setMsg("Oglas je pauziran.", "success"); await load(); }
   }
 
-  // ── DELETE JOB ──────────────────────────────────────────────────────
+  // ── SUBMIT FOR REVIEW (RPC) ────────────────────────────────────────
+  async function submitForReview(job: Job) {
+    const { error } = await supabase.rpc("company_submit_for_review", { p_job_id: job.id });
+    if (error) { logError("CompanyClient.submitForReview", error); setMsg(safeMessage(error, "save"), "error"); }
+    else { setMsg("Oglas je poslat na ponovni pregled.", "success"); await load(); }
+  }
+
+  // ── DELETE JOB (RPC) ───────────────────────────────────────────────
   async function deleteJob(jobId: number) {
-    if (!window.confirm("Da li si siguran/na da želiš obrisati ovaj oglas? Ova akcija se ne može poništiti.")) return;
+    if (!window.confirm("Obriši oglas? Ova akcija se ne može poništiti.")) return;
     setDeletingId(jobId);
-    const { error } = await supabase.from("jobs").delete().eq("id", jobId);
-    if (error) {
-      logError("CompanyClient.deleteJob", error);
-      setMsg(safeMessage(error, "save"), "error");
-    } else {
-      setMsg("Oglas je obrisan.", "success");
-      await load();
-    }
+    const { error } = await supabase.rpc("company_delete_job", { p_job_id: jobId });
+    if (error) { logError("CompanyClient.deleteJob", error); setMsg(safeMessage(error, "save"), "error"); }
+    else { setMsg("Oglas je obrisan.", "success"); await load(); }
     setDeletingId(null);
   }
 
@@ -430,72 +435,48 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
         )}
 
         {/* ── JOB LIST ── */}
-        <div className="job-list">
+        <div className="firm-job-list">
           {jobs.map(job => {
             const isDeleting = deletingId === job.id;
-            const canPause = job.status === "active";
-            const canActivate = job.status === "paused";
+            const cfg = JOB_STATUS_CONFIG[job.status as keyof typeof JOB_STATUS_CONFIG] || JOB_STATUS_CONFIG.draft;
             return (
-              <article className="job-card" key={job.id} style={{ position: "relative", opacity: isDeleting ? 0.5 : 1 }}>
-                <div className="logo" style={{ background: "var(--soft)", border: "2px solid var(--line)", display: "grid", placeItems: "center", fontWeight: 900, fontSize: 12, borderRadius: 12 }}>
-                  {initials(company?.name || "F")}
-                </div>
-                <div>
-                  <div className="tags" style={{ marginBottom: 7 }}>
-                    {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}
-                    <span className={`badge ${job.status === "active" ? "green" : job.status === "pending_review" ? "orange" : job.status === "paused" ? "gray" : "red"}`}>
-                      {jobStatusLabels[job.status] || job.status}
-                    </span>
-                    {job.featured && <span className="badge orange">★ Istaknuto</span>}
+              <article className="firm-job-card" key={job.id} style={{ opacity: isDeleting ? 0.5 : 1 }}>
+                <div className="firm-job-card-top">
+                  <div className="firm-job-card-info">
+                    <div className="firm-job-badges">
+                      <span className="badge" style={{ background: cfg.bg, color: cfg.color, border: `1.5px solid ${cfg.color}` }}>
+                        {cfg.emoji} {jobStatusLabels[job.status] || job.status}
+                      </span>
+                      {job.featured && <span className="badge orange">★ Istaknuto</span>}
+                      {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}
+                    </div>
+                    <h3 className="firm-job-title">{job.title}</h3>
+                    <div className="firm-job-meta">
+                      {job.cities?.name && <span>📍 {job.cities.name}</span>}
+                      {job.salary_text && <span>💰 {job.salary_text}</span>}
+                      {job.deadline && <span>⏰ {new Date(job.deadline).toLocaleDateString("sr-ME")}</span>}
+                    </div>
                   </div>
-                  <span className="job-title">{job.title}</span>
-                  <div className="meta">
-                    {job.cities?.name && <span>· {job.cities.name}</span>}
-                    {job.deadline && <span>· Rok: {new Date(job.deadline).toLocaleDateString("sr-ME")}</span>}
-                    {job.salary_text && <span>· {job.salary_text}</span>}
-                  </div>
                 </div>
-                <div className="job-actions">
-                  {/* ATS — uvijek vidljiv */}
-                  <Link className="btn lime sm" href="/firma/selekcija">ATS →</Link>
-                  {/* Edit — na svim statusima sem archived/expired */}
+                <div className="firm-job-actions">
+                  <Link className="btn lime sm" href="/firma/selekcija">Prijave →</Link>
                   {job.status !== "expired" && (
-                    <button
-                      type="button"
-                      className="btn ghost sm"
-                      onClick={() => {
-                        setEditJob(editJob?.id === job.id ? null : job);
-                        setNotice(null);
-                        // Scroll to form
-                        setTimeout(() => {
-                          document.querySelector(".app-main")?.scrollTo({ top: 0, behavior: "smooth" });
-                        }, 50);
-                      }}
-                      disabled={isDeleting}
-                    >
-                      {editJob?.id === job.id ? "Zatvori" : "Uredi"}
+                    <button type="button" className="btn ghost sm"
+                      onClick={() => { setEditJob(editJob?.id === job.id ? null : job); setNotice(null);
+                        setTimeout(() => document.querySelector(".app-main")?.scrollTo({ top: 0, behavior: "smooth" }), 50); }}
+                      disabled={isDeleting}>
+                      {editJob?.id === job.id ? "× Zatvori" : "✏ Uredi"}
                     </button>
                   )}
-                  {/* Pause / Aktiviraj */}
-                  {(canPause || canActivate) && (
-                    <button
-                      type="button"
-                      className={`btn ${canActivate ? "blue" : "ghost"} sm`}
-                      onClick={() => toggleJobStatus(job)}
-                      disabled={isDeleting}
-                    >
-                      {canPause ? "Pauziraj" : "Aktiviraj"}
-                    </button>
+                  {job.status === "active" && (
+                    <button type="button" className="btn ghost sm" onClick={() => pauseJob(job)} disabled={isDeleting}>⏸ Pauziraj</button>
                   )}
-                  {/* Delete — samo draft, rejected ili paused */}
+                  {["paused", "rejected", "draft"].includes(job.status) && (
+                    <button type="button" className="btn blue sm" onClick={() => submitForReview(job)} disabled={isDeleting}>↑ Na pregled</button>
+                  )}
                   {["draft", "paused", "rejected", "expired"].includes(job.status) && (
-                    <button
-                      type="button"
-                      className="btn red sm"
-                      onClick={() => deleteJob(job.id)}
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? "Brisanje..." : "Briši"}
+                    <button type="button" className="btn red sm" onClick={() => deleteJob(job.id)} disabled={isDeleting}>
+                      {isDeleting ? "..." : "Briši"}
                     </button>
                   )}
                 </div>

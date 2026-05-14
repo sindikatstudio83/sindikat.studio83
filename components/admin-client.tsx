@@ -258,53 +258,58 @@ export function AdminClient({ view }: { view: AdminView }) {
           </>
         )}
 
-        <div className="table-card">
+        <div className="admin-card-list">
           {loading && <div className="empty"><strong>Učitavanje...</strong></div>}
-          {!loading && rows.map(row => (
-            <div className="table-row" key={row.id}>
-              <div>
-                <strong>{row.title || row.email || row.full_name || row.payment_reference || row.name || row.orders?.payment_reference || row.id}</strong>
-                <small>
-                  {view === "jobs"
-                    ? (row.companies?.name || "—") + (row.description ? " · " + row.description.slice(0, 50) : "")
-                    : row.description?.slice(0, 60) || row.companies?.name || row.orders?.plans?.name || row.role || row.industry || ""}
-                </small>
-              </div>
-              <div>
-                {row.role && <span className={`badge ${row.role === "admin" ? "pink" : row.role === "company" ? "blue" : "gray"}`}>{row.role}</span>}
-                {row.approved === false && <span className="badge orange">Čeka odobrenje</span>}
-                {row.approved === true && <span className="badge green">Odobrena</span>}
-                {row.status && !row.approved && !row.role && <span className={`badge ${row.status === "active" ? "green" : row.status === "pending_review" ? "orange" : "gray"}`}>{row.status}</span>}
-              </div>
-              <div>
-                {(row.amount_eur || row.orders?.amount_eur) ? <strong>{row.amount_eur || row.orders?.amount_eur} EUR</strong> : null}
-                {row.created_at ? <span className="muted">{new Date(row.created_at).toLocaleDateString("sr-ME")}</span> : null}
-              </div>
-              <div className="actions">
-                {view === "jobs" && <>
-                  <button className="btn ghost xs" onClick={() => setPreviewJob(row)}>👁 Pregledaj</button>
-                  <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "active" })}>Odobri</button>
-                  <button className="btn red xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "paused" })}>Pauziraj</button>
-                  <button className="btn lime xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { featured: !row.featured })}>
-                    {row.featured ? "★ Ukloni" : "★ Istakni"}
-                  </button>
-                  <button className="btn red xs" disabled={acting === row.id} onClick={() => deleteJob(row.id)}>Briši</button>
-                </>}
-                {view === "companies" && <>
-                  <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, true)}>Odobri</button>
-                  <button className="btn red xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, false)}>Sakrij</button>
-                </>}
-                {(view === "payments" || view === "dashboard") && <>
-                  <button className="btn ghost xs" onClick={() => openProof(row.file_path || row.proof_path)}>Otvori dokaz</button>
-                  {row.status === "pending" && <>
-                    <button className="btn blue xs" disabled={acting === row.id} onClick={() => confirmProof(row)}>Potvrdi</button>
-                    <button className="btn red xs" disabled={acting === row.id} onClick={() => rejectProof(row.id)}>Odbij</button>
+          {!loading && rows.map(row => {
+            const titleVal = row.title || row.email || row.full_name || row.payment_reference || row.name || row.orders?.payment_reference || row.id;
+            const titleStr = String(titleVal || "");
+            const subtitleStr = view === "jobs"
+              ? `${row.companies?.name || "—"}${row.description ? " · " + String(row.description).slice(0, 50) : ""}`
+              : String(row.description || "").slice(0, 60) || row.companies?.name || row.orders?.plans?.name || row.role || row.industry || "";
+            return (
+              <div className="admin-card" key={row.id}>
+                <div className="admin-card-head">
+                  <div className="admin-card-avatar">{titleStr.slice(0, 2).toUpperCase()}</div>
+                  <div className="admin-card-info">
+                    <strong title={titleStr}>{titleStr}</strong>
+                    {subtitleStr && <small>{subtitleStr}</small>}
+                    {row.created_at && <small style={{ marginTop: 2 }}>{new Date(row.created_at).toLocaleDateString("sr-ME")}</small>}
+                  </div>
+                  {(row.amount_eur || row.orders?.amount_eur) && (
+                    <strong style={{ fontSize: 15, flexShrink: 0, marginLeft: 8 }}>{row.amount_eur || row.orders?.amount_eur} €</strong>
+                  )}
+                </div>
+                <div className="admin-card-badges">
+                  {row.role && <span className={`badge ${row.role === "admin" ? "pink" : row.role === "company" ? "blue" : "gray"}`}>{row.role}</span>}
+                  {row.approved === false && <span className="badge orange">Čeka odobrenje</span>}
+                  {row.approved === true && <span className="badge green">Odobrena</span>}
+                  {row.status && !row.approved && !row.role && <span className={`badge ${row.status === "active" ? "green" : row.status === "pending_review" ? "orange" : "gray"}`}>{row.status}</span>}
+                  {row.featured && <span className="badge orange">★ Istaknuto</span>}
+                </div>
+                <div className="admin-card-actions">
+                  {view === "jobs" && <>
+                    <button className="btn ghost xs" onClick={() => setPreviewJob(row)}>👁 Pregledaj</button>
+                    <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "active" })}>Odobri</button>
+                    <button className="btn red xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "paused" })}>Pauziraj</button>
+                    <button className="btn lime xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { featured: !row.featured })}>{row.featured ? "★ Ukloni" : "★ Istakni"}</button>
+                    <button className="btn red xs" disabled={acting === row.id} onClick={() => deleteJob(row.id)}>Briši</button>
                   </>}
-                  {row.status === "approved" && <span className="badge green">Potvrđeno</span>}
-                </>}
+                  {view === "companies" && <>
+                    <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, true)}>Odobri</button>
+                    <button className="btn red xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, false)}>Sakrij</button>
+                  </>}
+                  {(view === "payments" || view === "dashboard") && <>
+                    <button className="btn ghost xs" onClick={() => openProof(row.file_path || row.proof_path)}>Otvori dokaz</button>
+                    {row.status === "pending" && <>
+                      <button className="btn blue xs" disabled={acting === row.id} onClick={() => confirmProof(row)}>Potvrdi</button>
+                      <button className="btn red xs" disabled={acting === row.id} onClick={() => rejectProof(row.id)}>Odbij</button>
+                    </>}
+                    {row.status === "approved" && <span className="badge green">Potvrđeno</span>}
+                  </>}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {!loading && !rows.length && <div className="empty"><strong>Nema podataka</strong><p>Podaci će se prikazati kada postoje u bazi.</p></div>}
         </div>
         {noticeEl}

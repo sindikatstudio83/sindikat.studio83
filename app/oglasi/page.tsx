@@ -5,6 +5,7 @@ import { BannerSlot } from "@/components/banner-slot";
 import { TowerBanner } from "@/components/tower-banner";
 import { EmptyState, SectionHead } from "@/components/ui";
 import { getLookups, getPublicJobs } from "@/lib/queries/public";
+import { MobileFilterDrawer } from "@/components/mobile-filter-drawer";
 import type { Job } from "@/types/domain";
 
 export const metadata: Metadata = {
@@ -15,11 +16,10 @@ export const metadata: Metadata = {
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; city?: string; category?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; city?: string; category?: string }>;
 }) {
   const params = await searchParams;
 
-  // DB-side search i filtriranje — ne filtriramo u browseru
   const [jobs, lookups] = await Promise.all([
     getPublicJobs({
       q: params.q || undefined,
@@ -31,8 +31,8 @@ export default async function JobsPage({
   ]);
 
   const isFiltering = Boolean(params.q || params.city || params.category);
+  const activeFilterCount = [params.q, params.city, params.category].filter(Boolean).length;
 
-  // Istaknuti oglasi — posebna sekcija iznad, samo bez aktivnih filtera
   const featuredJobs = !isFiltering ? jobs.filter((j: Job) => j.featured) : [];
   const regularJobs = !isFiltering ? jobs.filter((j: Job) => !j.featured) : jobs;
 
@@ -40,7 +40,7 @@ export default async function JobsPage({
 
   return (
     <>
-      {/* ── Fiksni tower baneri (samo desktop, position:fixed) ── */}
+      {/* Tower baneri — samo desktop */}
       <div className="tower-banner-fixed tower-banner-fixed-left">
         <TowerBanner side="left" />
       </div>
@@ -48,50 +48,43 @@ export default async function JobsPage({
         <TowerBanner side="right" />
       </div>
 
-      {/* ── Vrh stranice ── */}
       <BannerSlot placement="jobs_list_top" />
 
       <SectionHead
         label="Oglasi"
         title="Oglasi za posao"
-        text={
-          jobs.length === 0
-            ? "Nema oglasa za zadatu pretragu."
-            : `${jobs.length} ${jobs.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`
-        }
+        text={jobs.length === 0 ? "Nema oglasa za zadatu pretragu." : `${jobs.length} ${jobs.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`}
       />
 
-      {/* ── Pretraga i filteri ── */}
-      <form className="search-panel">
-        <input
-          name="q"
-          placeholder="Pozicija, firma ili vještina"
-          defaultValue={params.q || ""}
-        />
+      {/* Desktop search panel */}
+      <form className="search-panel desktop-only" method="get">
+        <input name="q" placeholder="Pozicija ili firma" defaultValue={params.q || ""} />
         <select name="city" defaultValue={params.city || ""}>
           <option value="">Svi gradovi</option>
-          {lookups.cities.map((city) => (
-            <option key={city.id} value={city.name}>
-              {city.name}
-            </option>
-          ))}
+          {lookups.cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
         </select>
         <select name="category" defaultValue={params.category || ""}>
           <option value="">Sve kategorije</option>
-          {lookups.categories.map((category) => (
-            <option key={category.id} value={category.name}>
-              {category.name}
-            </option>
-          ))}
+          {lookups.categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
         </select>
         <button type="submit">Traži</button>
       </form>
+
+      {/* Mobile: search + filter drawer */}
+      <MobileFilterDrawer
+        cities={lookups.cities}
+        categories={lookups.categories}
+        currentQ={params.q || ""}
+        currentCity={params.city || ""}
+        currentCategory={params.category || ""}
+        activeFilterCount={activeFilterCount}
+      />
 
       {jobs.length === 0 ? (
         <EmptyState title="Nema oglasa" text="Promijeni filtere ili se vrati kasnije." />
       ) : (
         <>
-          {/* ── Istaknuti oglasi ── */}
+          {/* Featured */}
           {featuredJobs.length > 0 && (
             <div className="featured-section">
               <div className="featured-section-head">
@@ -99,38 +92,24 @@ export default async function JobsPage({
                 <span className="badge-featured">★ ISTAKNUTO</span>
               </div>
               <div className="job-list">
-                {featuredJobs.map((job: Job) => (
-                  <JobCard key={job.id} job={job} />
-                ))}
+                {featuredJobs.map((job: Job) => <JobCard key={job.id} job={job} />)}
               </div>
             </div>
           )}
 
-          {/* ── Divider ako ima i featured i regular ── */}
+          {/* Divider */}
           {featuredJobs.length > 0 && regularJobs.length > 0 && (
-            <div
-              style={{
-                borderTop: "2px solid var(--line)",
-                margin: "20px 0 14px",
-                paddingTop: 14,
-              }}
-            >
-              <span
-                className="kicker"
-                style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".06em" }}
-              >
-                Svi oglasi
-              </span>
+            <div style={{ borderTop: "2px solid var(--line)", margin: "16px 0 14px", paddingTop: 12 }}>
+              <span className="kicker" style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".06em" }}>Svi oglasi</span>
             </div>
           )}
 
-          {/* ── Regularni oglasi — 2 kolone na desktopu ── */}
+          {/* Regular jobs */}
           {regularJobs.length > 0 && (
             <div className="job-list two-col">
               {regularJobs.map((job: Job, idx: number) => (
                 <React.Fragment key={job.id}>
                   <JobCard job={job} />
-                  {/* Banner svaki BANNER_EVERY oglasa, spans oba stupca */}
                   {(idx + 1) % BANNER_EVERY === 0 && idx < regularJobs.length - 1 && (
                     <div style={{ gridColumn: "1 / -1" }}>
                       <BannerSlot placement="jobs_list_middle" />
