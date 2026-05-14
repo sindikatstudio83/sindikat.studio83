@@ -7,6 +7,8 @@ export const placementLabels: Record<BannerPlacement, string> = {
   jobs_list_top: "Lista oglasa — vrh",
   jobs_list_middle: "Lista oglasa — sredina",
   jobs_list_bottom: "Lista oglasa — dno",
+  jobs_left_tower: "Lista oglasa — lijevi toranj (desktop)",
+  jobs_right_tower: "Lista oglasa — desni toranj (desktop)",
   job_detail_top: "Detalj oglasa — vrh",
   job_detail_bottom: "Detalj oglasa — dno",
   company_pages_top: "Stranica firme — vrh",

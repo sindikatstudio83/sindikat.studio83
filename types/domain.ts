@@ -205,6 +205,8 @@ export type BannerPlacement =
   | "jobs_list_top"
   | "jobs_list_middle"
   | "jobs_list_bottom"
+  | "jobs_left_tower"
+  | "jobs_right_tower"
   | "job_detail_top"
   | "job_detail_bottom"
   | "company_pages_top"

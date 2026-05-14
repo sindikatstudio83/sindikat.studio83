@@ -119,6 +119,22 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
     height: 90,
     deviceClass: "",
   },
+  jobs_left_tower: {
+    imageUrl: "https://picsum.photos/seed/imaposla-tower-left/160/600",
+    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_tower_left",
+    label: "160×600",
+    width: 160,
+    height: 600,
+    deviceClass: "ad-desktop",
+  },
+  jobs_right_tower: {
+    imageUrl: "https://picsum.photos/seed/imaposla-tower-right/160/600",
+    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_tower_right",
+    label: "160×600",
+    width: 160,
+    height: 600,
+    deviceClass: "ad-desktop",
+  },
 };
 
 export function getMockBanner(placement: BannerPlacement): MockBanner {

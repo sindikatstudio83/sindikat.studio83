@@ -213,13 +213,17 @@ h3{font-size:20px}
 .featured-section-head .badge-featured{background:var(--orange);color:#fff;font-size:11px;font-weight:900;padding:3px 8px;border-radius:999px;letter-spacing:.04em}
 .job-card.featured-card{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--lime) 10%,var(--paper)));border-color:var(--lime);box-shadow:0 2px 0 var(--lime),5px 5px 0 rgba(23,23,23,.1)}
 [data-theme="dark"] .job-card.featured-card{box-shadow:0 2px 0 var(--lime),5px 5px 0 rgba(255,255,255,.06)}
-/* Tower banners — desktop only sidebar layout */
-.jobs-with-towers{display:grid;grid-template-columns:160px 1fr 160px;gap:12px;align-items:start}
-.jobs-tower{display:none}
-@media(min-width:1100px){.jobs-tower{display:flex;flex-direction:column;gap:10px;position:sticky;top:90px}}
-.tower-banner{background:var(--soft);border:2px dashed var(--line);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;min-height:200px;text-align:center}
-.tower-banner img{max-width:100%;height:auto;border-radius:10px}
-.tower-banner .ad-label{position:static;margin-bottom:6px}
+/* Tower banners — position:fixed, van .wrap okvira, samo desktop */
+.jobs-with-towers{display:block}
+/* TowerBanner komponenta: .tower-banner-fixed */
+.tower-banner-fixed{display:none!important}
+@media(min-width:1540px){
+  /* Pojavljuje se samo kada viewport > 1180 (wrap) + 2×(160+20) = 1540px */
+  .tower-banner-fixed{display:flex!important;flex-direction:column;gap:10px;position:fixed;top:90px;width:160px;z-index:10}
+  .tower-banner-fixed-left{left:calc(50% - 590px - 10px - 160px)}
+  .tower-banner-fixed-right{right:calc(50% - 590px - 10px - 160px)}
+}
+.tower-banner-placeholder{pointer-events:none}
 .job-card{background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:start;transition:.12s;position:relative}
 .job-card:hover{transform:translateY(-2px);box-shadow:5px 5px 0 rgba(23,23,23,.12)}
 [data-theme="dark"] .job-card:hover{box-shadow:5px 5px 0 rgba(255,255,255,.08)}
@@ -1248,10 +1252,8 @@ h3{font-size:20px}
   .side{display:none}
   .sticky,.cv-preview,.ats-detail{position:static}
   .section-head,.live-section-head{flex-direction:column;align-items:flex-start}
-  /* Mobile: job list 1 kolona, towers skriveni, layout bez tornjeva */
+  /* Mobile: job list 1 kolona */
   .job-list.two-col{grid-template-columns:1fr}
-  .jobs-with-towers{grid-template-columns:1fr}
-  .jobs-tower{display:none!important}
   .kanban{min-width:max-content}
   .form-grid{grid-template-columns:1fr}
   .live-paths,.quick-links{grid-template-columns:1fr}
