@@ -9,7 +9,7 @@ import { desktopNavItems } from "@/lib/navigation";
 import { initials } from "@/lib/format";
 
 type AdminView = "dashboard" | "jobs" | "users" | "payments" | "companies";
-type Row = Record<string, any>;
+type Row = Record<string, any>; // dynamic Supabase rows
 type Notice = { text: string; type: "info" | "error" | "success" };
 
 function SideNav({ email }: { email: string }) {
@@ -31,6 +31,83 @@ function SideNav({ email }: { email: string }) {
   );
 }
 
+// ── Job Preview Modal ─────────────────────────────────────────────────────
+function JobPreviewModal({ job, onClose }: { job: Row; onClose: () => void }) {
+  if (!job) return null;
+  return (
+    <div
+      style={{
+        position: "fixed", inset: 0, zIndex: 1000,
+        background: "rgba(0,0,0,0.55)", display: "flex",
+        alignItems: "center", justifyContent: "center", padding: 16
+      }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{
+        background: "var(--paper)", borderRadius: 20, maxWidth: 680,
+        width: "100%", maxHeight: "85vh", overflow: "auto",
+        padding: "28px 28px 32px", position: "relative",
+        border: "2px solid var(--line)", boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
+      }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute", top: 16, right: 16,
+            background: "var(--soft)", border: "none", borderRadius: 8,
+            width: 32, height: 32, cursor: "pointer", fontSize: 18,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: "var(--ink)"
+          }}
+        >×</button>
+
+        {/* Header */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
+            {job.companies?.name && (
+              <span className="badge blue">{job.companies.name}</span>
+            )}
+            {job.categories?.name && (
+              <span className="badge gray">{job.categories.name}</span>
+            )}
+            <span className={`badge ${job.status === "active" ? "green" : job.status === "pending_review" ? "orange" : "gray"}`}>
+              {job.status === "active" ? "Aktivan" : job.status === "pending_review" ? "Na pregledu" : job.status}
+            </span>
+            {job.featured && <span className="badge orange">★ Istaknuto</span>}
+          </div>
+          <h2 style={{ fontSize: 22, fontWeight: 900, margin: "0 0 8px" }}>{job.title}</h2>
+          <div style={{ display: "flex", gap: 16, fontSize: 13, color: "var(--muted)", flexWrap: "wrap" }}>
+            {job.cities?.name && <span>📍 {job.cities.name}</span>}
+            {job.contract_type && <span>📄 {job.contract_type}</span>}
+            {job.salary_text && <span>💰 {job.salary_text}</span>}
+            {job.deadline && <span>⏰ Rok: {new Date(job.deadline).toLocaleDateString("sr-ME")}</span>}
+          </div>
+        </div>
+
+        <hr style={{ border: "none", borderTop: "2px solid var(--line)", margin: "16px 0" }} />
+
+        {/* Description */}
+        <div style={{ whiteSpace: "pre-line", fontSize: 14, lineHeight: 1.75, color: "var(--ink)" }}>
+          {job.description}
+        </div>
+
+        {job.requirements && (
+          <>
+            <hr style={{ border: "none", borderTop: "2px solid var(--line)", margin: "16px 0" }} />
+            <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 8 }}>Zahtjevi</h3>
+            <div style={{ whiteSpace: "pre-line", fontSize: 14, lineHeight: 1.75 }}>
+              {job.requirements}
+            </div>
+          </>
+        )}
+
+        <div style={{ marginTop: 20, fontSize: 11, color: "var(--muted)" }}>
+          Kreiran: {new Date(job.created_at).toLocaleDateString("sr-ME")} · ID: {job.id}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AdminClient({ view }: { view: AdminView }) {
   const [rows, setRows] = useState<Row[]>([]);
   const [stats, setStats] = useState({ jobs: 0, companies: 0, payments: 0, users: 0, revenue: 0 });
@@ -38,6 +115,7 @@ export function AdminClient({ view }: { view: AdminView }) {
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<number | null>(null);
   const [email, setEmail] = useState("");
+  const [previewJob, setPreviewJob] = useState<Row | null>(null);
   const [supabase] = useState(() => createBrowserSupabase());
 
   function setMsg(text: string, type: Notice["type"] = "info") { setNotice({ text, type }); }
@@ -75,7 +153,7 @@ export function AdminClient({ view }: { view: AdminView }) {
     } else if (view === "companies") {
       result = await supabase.from("companies").select("*").order("created_at", { ascending: false });
     } else {
-      result = await supabase.from("jobs").select("*,companies(name)").order("created_at", { ascending: false });
+      result = await supabase.from("jobs").select("*,companies(id,name,slug),categories(id,name),cities(id,name)").order("created_at", { ascending: false });
     }
 
     setRows(result?.data || []);
@@ -89,6 +167,14 @@ export function AdminClient({ view }: { view: AdminView }) {
     setActing(id);
     const { error } = await supabase.from("jobs").update(patch).eq("id", id);
     if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg("Oglas ažuriran.", "success"); }
+    setActing(null); await load();
+  }
+
+  async function deleteJob(id: number) {
+    if (!window.confirm("Obriši ovaj oglas? Ova akcija se ne može poništiti.")) return;
+    setActing(id);
+    const { error } = await supabase.from("jobs").delete().eq("id", id);
+    if (error) { logError("AdminClient.deleteJob", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg("Oglas obrisan.", "success"); }
     setActing(null); await load();
   }
 
@@ -178,7 +264,11 @@ export function AdminClient({ view }: { view: AdminView }) {
             <div className="table-row" key={row.id}>
               <div>
                 <strong>{row.title || row.email || row.full_name || row.payment_reference || row.name || row.orders?.payment_reference || row.id}</strong>
-                <small>{row.description?.slice(0, 60) || row.companies?.name || row.orders?.plans?.name || row.role || row.industry || ""}</small>
+                <small>
+                  {view === "jobs"
+                    ? (row.companies?.name || "—") + (row.description ? " · " + row.description.slice(0, 50) : "")
+                    : row.description?.slice(0, 60) || row.companies?.name || row.orders?.plans?.name || row.role || row.industry || ""}
+                </small>
               </div>
               <div>
                 {row.role && <span className={`badge ${row.role === "admin" ? "pink" : row.role === "company" ? "blue" : "gray"}`}>{row.role}</span>}
@@ -192,9 +282,13 @@ export function AdminClient({ view }: { view: AdminView }) {
               </div>
               <div className="actions">
                 {view === "jobs" && <>
+                  <button className="btn ghost xs" onClick={() => setPreviewJob(row)}>👁 Pregledaj</button>
                   <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "active" })}>Odobri</button>
                   <button className="btn red xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "paused" })}>Pauziraj</button>
-                  <button className="btn lime xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { featured: true })}>★ Istakni</button>
+                  <button className="btn lime xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { featured: !row.featured })}>
+                    {row.featured ? "★ Ukloni" : "★ Istakni"}
+                  </button>
+                  <button className="btn red xs" disabled={acting === row.id} onClick={() => deleteJob(row.id)}>Briši</button>
                 </>}
                 {view === "companies" && <>
                   <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, true)}>Odobri</button>
@@ -214,6 +308,9 @@ export function AdminClient({ view }: { view: AdminView }) {
           {!loading && !rows.length && <div className="empty"><strong>Nema podataka</strong><p>Podaci će se prikazati kada postoje u bazi.</p></div>}
         </div>
         {noticeEl}
+
+        {/* Job preview modal */}
+        {previewJob && <JobPreviewModal job={previewJob} onClose={() => setPreviewJob(null)} />}
       </main>
     </div>
   );

@@ -151,15 +151,17 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     const fd = new FormData(e.currentTarget);
     const title = String(fd.get("title") || "").trim();
     const categoryId = Number(fd.get("category_id")); const cityId = Number(fd.get("city_id"));
+    const deadline = String(fd.get("deadline") || "").trim();
     if (!title) { setMsg("Upiši naziv pozicije.", "error"); setSaving(false); return; }
     if (!categoryId || !cityId) { setMsg("Izaberi grad i kategoriju.", "error"); setSaving(false); return; }
+    if (!deadline) { setMsg("Rok prijave je obavezan.", "error"); setSaving(false); return; }
     const row = {
       company_id: company.id, category_id: categoryId, city_id: cityId, title,
       slug: `${slugify(title)}-${Date.now()}`,
       description: String(fd.get("description") || "").trim(),
       contract_type: String(fd.get("contract_type") || "").trim(),
       salary_text: String(fd.get("salary_text") || "").trim(),
-      deadline: String(fd.get("deadline") || "") || null,
+      deadline,
       status: "pending_review", featured: false
     };
     const { error } = await supabase.from("jobs").insert(row);
@@ -533,7 +535,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
             <label><span className="label">Tip ugovora</span><input className="field" name="contract_type" placeholder="Stalni, sezonski, ugovor..." /></label>
             <label><span className="label">Plata / naknada</span><input className="field" name="salary_text" placeholder="800–1200€ / po dogovoru" /></label>
           </div>
-          <label><span className="label">Rok prijave</span><input className="field" type="date" name="deadline" min={new Date().toISOString().split("T")[0]} /></label>
+          <label><span className="label">Rok prijave *</span><input className="field" type="date" name="deadline" required min={new Date().toISOString().split("T")[0]} /></label>
           <label><span className="label">Opis oglasa *</span><textarea className="textarea" name="description" placeholder="Opis uloge, zahtjevi, šta nudite..." required /></label>
           <button className="btn blue" disabled={saving || !company?.approved}>{saving ? "Slanje..." : "Pošalji na odobrenje →"}</button>
           {noticeEl}
