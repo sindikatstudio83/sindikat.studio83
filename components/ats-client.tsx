@@ -132,7 +132,9 @@ export function AtsClient() {
   const load = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
+    setNotice(null);
 
+    // ── Step 1: Company lookup ────────────────────────────────
     const companyResult = await supabase
       .from("companies")
       .select("*")
@@ -142,25 +144,93 @@ export function AtsClient() {
     const myCompany = companyResult.data as Company | null;
     setCompany(myCompany);
 
-    if (myCompany) {
-      const { data, error } = await supabase
-        .from("job_applications")
-        .select(`
-          *,
-          jobs!inner(id,title,company_id),
-          profiles(full_name,email,phone,city,cv_data),
-          application_labels(label),
-          application_comments(id)
-        `)
-        .eq("jobs.company_id", myCompany.id)
-        .order("created_at", { ascending: false });
+    if (!myCompany) {
+      setLoading(false);
+      return;
+    }
 
-      if (error) {
-        logError("AtsClient.load", error);
-      } else {
-        setApps((data || []) as unknown as RichApp[]);
+    // ── Step 2: Base applications (no ATS tables needed) ──────
+    // First get the job IDs belonging to this company
+    const { data: jobRows, error: jobErr } = await supabase
+      .from("jobs")
+      .select("id")
+      .eq("company_id", myCompany.id);
+
+    if (jobErr) {
+      logError("AtsClient.loadJobs", jobErr);
+      setNotice(`Greška pri učitavanju oglasa: ${safeMessage(jobErr, "load")}`);
+      setLoading(false);
+      return;
+    }
+
+    const jobIds = (jobRows || []).map((j: { id: number }) => j.id);
+
+    if (jobIds.length === 0) {
+      // Company has no jobs — legit empty state
+      setApps([]);
+      setLoading(false);
+      return;
+    }
+
+    // Now fetch applications for those jobs (with profiles join)
+    const { data: baseData, error: baseErr } = await supabase
+      .from("job_applications")
+      .select(`
+        *,
+        jobs(id,title,company_id),
+        profiles(full_name,email,phone,city,cv_data)
+      `)
+      .in("job_id", jobIds)
+      .order("created_at", { ascending: false });
+
+    if (baseErr) {
+      logError("AtsClient.loadApps", baseErr);
+      setNotice(`Greška pri učitavanju prijava: ${safeMessage(baseErr, "load")}`);
+      setLoading(false);
+      return;
+    }
+
+    const baseApps = (baseData || []) as unknown as RichApp[];
+
+    // ── Step 3: Enrich with ATS labels/comments (optional) ────
+    // If ats-persistence migration hasn't been run, this gracefully degrades
+    let enriched = baseApps.map(a => ({
+      ...a,
+      application_labels: a.application_labels || [],
+      application_comments: a.application_comments || [],
+    }));
+
+    if (baseApps.length > 0) {
+      const appIds = baseApps.map(a => a.id);
+
+      const [labelsResult, commentsResult] = await Promise.all([
+        supabase.from("application_labels").select("application_id,label").in("application_id", appIds),
+        supabase.from("application_comments").select("id,application_id").in("application_id", appIds),
+      ]);
+
+      // Only use enrichment if no error (tables might not exist yet)
+      if (!labelsResult.error && !commentsResult.error) {
+        const labelsByApp: Record<number, AppLabel[]> = {};
+        const commentsByApp: Record<number, AppComment[]> = {};
+        for (const row of (labelsResult.data || [])) {
+          const aid = (row as { application_id: number; label: string }).application_id;
+          if (!labelsByApp[aid]) labelsByApp[aid] = [];
+          labelsByApp[aid].push({ label: (row as { label: string }).label });
+        }
+        for (const row of (commentsResult.data || [])) {
+          const aid = (row as { application_id: number; id: number }).application_id;
+          if (!commentsByApp[aid]) commentsByApp[aid] = [];
+          commentsByApp[aid].push({ id: (row as { id: number }).id });
+        }
+        enriched = baseApps.map(a => ({
+          ...a,
+          application_labels: labelsByApp[a.id] || [],
+          application_comments: commentsByApp[a.id] || [],
+        }));
       }
     }
+
+    setApps(enriched);
     setLoading(false);
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 

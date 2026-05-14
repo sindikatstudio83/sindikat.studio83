@@ -8,7 +8,7 @@ export function JobCard({ job, showStatus = false }: { job: Job; showStatus?: bo
   const co = job.companies;
   const url = jobUrl(job);
   return (
-    <article className={`job-card${job.featured ? " featured" : ""}`}>
+    <article className={`job-card${job.featured ? " featured featured-card" : ""}`}>
       {job.featured && <span className="featured-badge">★ Istaknuto</span>}
       <div className="logo"><Avatar bucket="company-logos" path={co?.logo_path} fallback={co?.name || ""} size={56} shape="rounded" /></div>
       <div>

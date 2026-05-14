@@ -95,7 +95,25 @@ export function AdminClient({ view }: { view: AdminView }) {
   async function updateCompany(id: number, approved: boolean) {
     setActing(id);
     const { error } = await supabase.from("companies").update({ approved }).eq("id", id);
-    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); } else { setMsg(approved ? "Firma odobrena." : "Firma sakrivena.", "success"); }
+    if (error) {
+      logError("AdminClient", error);
+      setMsg(safeMessage(error, "save"), "error");
+    } else {
+      setMsg(approved ? "Firma odobrena." : "Firma sakrivena.", "success");
+      // Notifikacija vlasniku firme pri odobrenju
+      if (approved) {
+        const co = rows.find((r: Row) => r.id === id);
+        if (co?.owner_id) {
+          await supabase.from("notifications").insert({
+            recipient_id: co.owner_id,
+            title: "Firma odobrena ✓",
+            message: `Vaša firma "${co.name}" je odobrena. Sada možete objavljivati oglase.`,
+            notification_type: "company_approved",
+            link: "/firma",
+          });
+        }
+      }
+    }
     setActing(null); await load();
   }
 
