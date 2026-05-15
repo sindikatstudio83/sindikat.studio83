@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { MobileNav } from "@/components/mobile-nav";
@@ -8,6 +8,12 @@ import "./globals.css";
 // Fontovi se učitavaju kroz CSS @import u globals.css (browser-side).
 // next/font/google zahtijeva mrežni pristup u build fazi — ne radi u svim CI okruženjima.
 // Na Vercel-u (produkcija) fontovi se učitavaju normalno putem Google Fonts CDN-a.
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: { default: "imaposla.me — Poslovi u Crnoj Gori", template: "%s | imaposla.me" },

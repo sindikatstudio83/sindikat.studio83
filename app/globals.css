@@ -1295,7 +1295,7 @@ h3{font-size:20px}
 
 /* ── RESPONSIVE ── */
 @media(max-width:860px){
-  body{padding-bottom:72px}
+  /* Body bottom padding: definisano u Mobile Nav sekciji iznad, uz :has() override za iOS */
   .top-in{height:58px}
   .detail-layout,.auth-two,.grid.two,.grid.three,.grid.four,
   .cv-builder-grid,.app-shell,.ats-layout{grid-template-columns:1fr}
@@ -1317,11 +1317,122 @@ h3{font-size:20px}
   .auth-shell h1{font-size:40px}
   .live-hero{padding:22px}
   .foot-grid{grid-template-columns:1fr 1fr}
-  .mobile-app-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:rgba(245,241,232,.96);border-top:1.5px solid var(--line);backdrop-filter:blur(14px)}
+  /* ── DEFAULT MOBILE NAV (Android / Chrome iOS / non-Safari) ── */
+  .mobile-app-nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:70;
+    display:grid;grid-template-columns:repeat(5,1fr);gap:3px;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+    background:rgba(245,241,232,.96);
+    border-top:1.5px solid var(--line);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
   [data-theme="dark"] .mobile-app-nav{background:rgba(17,17,17,.97)}
-  .mobile-app-nav a{display:grid;place-items:center;min-height:48px;padding:8px 4px;border-radius:12px;color:var(--muted);font-size:11px;font-weight:850;text-align:center;line-height:1.2;transition:.12s}
+
+  .mobile-app-nav a{
+    display:grid;
+    grid-template-rows:auto auto;
+    place-items:center;
+    gap:2px;
+    min-height:52px;
+    padding:7px 4px 6px;
+    border-radius:12px;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:850;
+    text-align:center;
+    line-height:1.15;
+    transition:.12s;
+    overflow:hidden;
+  }
+  .mobile-app-nav .nav-icon{
+    font-size:16px;
+    line-height:1;
+    display:block;
+    transition:.12s;
+  }
+  .mobile-app-nav .nav-label{
+    font-size:10px;
+    font-weight:850;
+    line-height:1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:100%;
+    display:block;
+  }
   .mobile-app-nav a.active{background:var(--ink);color:var(--soft)}
   [data-theme="dark"] .mobile-app-nav a.active{background:var(--lime);color:#111}
+
+  /* ── iOS SAFARI FLOATING DOCK ── */
+  /* Aktivira se samo kada JS doda .ios-safari-nav klasu */
+  .mobile-app-nav.ios-safari-nav{
+    /* Floating: odvojena od ruba ekrana */
+    left:12px;
+    right:12px;
+    /* Podignuta iznad Safari bottom bara + siguran razmak */
+    bottom:max(12px, env(safe-area-inset-bottom));
+    /* Nema border-bottom/top trake — floating dock */
+    border:none;
+    border-top:none;
+    /* Zaobljeni dock */
+    border-radius:22px;
+    /* Jači blur za glass efekt */
+    background:rgba(248,244,236,.88);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    /* Suptilna bordura */
+    outline:1.5px solid rgba(222,213,198,.7);
+    outline-offset:-1px;
+    /* Dubina — lagani shadow */
+    box-shadow:0 8px 32px rgba(28,22,12,.18), 0 2px 8px rgba(28,22,12,.10), 0 0 0 0.5px rgba(222,213,198,.5);
+    /* Padding kompenzira za rounded corners na stranama */
+    padding:7px 8px calc(7px);
+    gap:2px;
+  }
+  [data-theme="dark"] .mobile-app-nav.ios-safari-nav{
+    background:rgba(18,22,30,.88);
+    outline:1.5px solid rgba(37,43,58,.9);
+    box-shadow:0 8px 32px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.25), 0 0 0 0.5px rgba(37,43,58,.8);
+  }
+
+  /* Linkovi unutar iOS doka */
+  .mobile-app-nav.ios-safari-nav a{
+    border-radius:15px;
+    padding:7px 3px 6px;
+    min-height:50px;
+    /* Tap target dovoljan za iOS HIG: 44pt */
+    min-width:44px;
+  }
+  /* Aktivna stavka u iOS doku: tamnija/puna pozadina */
+  .mobile-app-nav.ios-safari-nav a.active{
+    background:var(--ink);
+    color:var(--soft);
+    box-shadow:0 2px 8px rgba(23,23,23,.18);
+  }
+  [data-theme="dark"] .mobile-app-nav.ios-safari-nav a.active{
+    background:var(--lime);
+    color:#0a0e14;
+    box-shadow:0 2px 10px rgba(192,255,61,.22);
+  }
+
+  /* Ikona u aktivnom stanju — malo povećana */
+  .mobile-app-nav.ios-safari-nav a.active .nav-icon{
+    transform:scale(1.1);
+  }
+
+  /* Body padding: treba biti veći da floating nav ne prekrije sadržaj */
+  /* Default (non-iOS): kompaktniji */
+  body{padding-bottom:72px}
+
+  /* Kada je iOS Safari nav aktivan (JS dodaje klasu na <nav>),
+     povećavamo body padding putem sibling selektora da ne zavisimo od JS-a na body.
+     Ali nav je fiksiran pa radimo override putem CSS var trick-a:
+     Koristimo :has() — podržan u iOS Safari 15.4+ */
+  body:has(.mobile-app-nav.ios-safari-nav){
+    /* Floating nav + safe area + buffer da se CTA ne sakrije */
+    padding-bottom:calc(90px + env(safe-area-inset-bottom));
+  }
 
   /* ATS mobile layout */
   .ats-body{grid-template-columns:1fr}
@@ -1357,8 +1468,59 @@ h3{font-size:20px}
   .job-actions{grid-column:1/-1;flex-direction:row;min-width:0}
   .job-actions>*{flex:1}
   .foot-grid{grid-template-columns:1fr}
-  .footer{padding-bottom:84px}
+  /* Footer: dovoljno prostora ispod floating nava + safe area */
+  .footer{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  /* Na iOS Safari: extra buffer */
+  body:has(.mobile-app-nav.ios-safari-nav) .footer{
+    padding-bottom:calc(100px + env(safe-area-inset-bottom));
+  }
 }
+/* ── iOS SAFARI NAV — LANDSCAPE MODE ── */
+@media(max-width:860px) and (orientation:landscape){
+  .mobile-app-nav.ios-safari-nav{
+    /* U landscapeu safe-area je sa strana, ne dolu */
+    bottom:max(8px, env(safe-area-inset-bottom));
+    left:max(16px, env(safe-area-inset-left));
+    right:max(16px, env(safe-area-inset-right));
+    /* Niža visina u landscape */
+    padding:5px 8px 5px;
+  }
+  .mobile-app-nav.ios-safari-nav a{
+    min-height:42px;
+    padding:5px 3px 4px;
+  }
+  body:has(.mobile-app-nav.ios-safari-nav){
+    padding-bottom:calc(72px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ── iPhone SE (375px i manji ekrani) ── */
+@media(max-width:375px){
+  .mobile-app-nav{
+    gap:1px;
+    padding-left:4px;
+    padding-right:4px;
+  }
+  .mobile-app-nav .nav-label{
+    font-size:9px;
+  }
+  .mobile-app-nav .nav-icon{
+    font-size:15px;
+  }
+  .mobile-app-nav.ios-safari-nav{
+    left:8px;
+    right:8px;
+    border-radius:18px;
+  }
+}
+
+/* ── iPhone 14/15 Pro (393px+) — max tap targets ── */
+@media(min-width:390px) and (max-width:430px){
+  .mobile-app-nav.ios-safari-nav a{
+    min-height:52px;
+  }
+}
+
 @media print{
   body *{visibility:hidden}
   .cv-preview,.cv-preview *{visibility:visible}
