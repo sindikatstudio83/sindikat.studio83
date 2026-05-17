@@ -21,11 +21,11 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
-      {
-        // Picsum for mock banners
-        protocol: "https",
+      // picsum.photos only needed for dev mock banners — not used in production
+      ...(process.env.NODE_ENV !== "production" ? [{
+        protocol: "https" as const,
         hostname: "picsum.photos",
-      },
+      }] : []),
     ],
   },
 
