@@ -15,6 +15,14 @@ export type MockBanner = {
  * Koristimo picsum.photos sa seed-om radi konzistentnog vizualnog izgleda.
  */
 const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
+  homepage_hero: {
+    imageUrl: "https://picsum.photos/seed/imaposla-hero/1200/280",
+    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_hero",
+    label: "1200×280",
+    width: 1200,
+    height: 280,
+    deviceClass: "",
+  },
   homepage_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-home-top/970/250",
     targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_home_top",
