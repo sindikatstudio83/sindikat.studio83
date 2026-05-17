@@ -7,6 +7,7 @@ import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
 import { desktopNavItems } from "@/lib/navigation";
 import { initials } from "@/lib/format";
+import { AdminPromoteModal } from "@/components/admin-promote-modal";
 
 type AdminView = "dashboard" | "jobs" | "users" | "payments" | "companies";
 type Row = Record<string, any>; // dynamic Supabase rows
@@ -116,6 +117,9 @@ export function AdminClient({ view }: { view: AdminView }) {
   const [acting, setActing] = useState<number | null>(null);
   const [email, setEmail] = useState("");
   const [previewJob, setPreviewJob] = useState<Row | null>(null);
+  const [promoteJob, setPromoteJob] = useState<Row | null>(null);
+  const [searchQ, setSearchQ] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
   const [supabase] = useState(() => createBrowserSupabase());
 
   function setMsg(text: string, type: Notice["type"] = "info") { setNotice({ text, type }); }
@@ -178,9 +182,21 @@ export function AdminClient({ view }: { view: AdminView }) {
     setActing(null); await load();
   }
 
-  async function updateCompany(id: number, approved: boolean) {
+
+  async function toggleCompanyRecommended(id: number, current: boolean) {
     setActing(id);
-    const { error } = await supabase.from("companies").update({ approved }).eq("id", id);
+    const { error } = await supabase.from("companies").update({ recommended: !current }).eq("id", id);
+    if (error) { logError("AdminClient", error); setMsg(safeMessage(error, "save"), "error"); }
+    else { setMsg(!current ? "Firma označena kao preporučena." : "Preporuka uklonjena.", "success"); }
+    setActing(null); await load();
+  }
+
+  async function updateCompany(id: number, approved?: boolean, recommended?: boolean) {
+    setActing(id);
+    const patch: Record<string, unknown> = {};
+    if (approved !== undefined) patch.approved = approved;
+    if (recommended !== undefined) patch.recommended = recommended;
+    const { error } = await supabase.from("companies").update(patch).eq("id", id);
     if (error) {
       logError("AdminClient", error);
       setMsg(safeMessage(error, "save"), "error");
@@ -252,15 +268,69 @@ export function AdminClient({ view }: { view: AdminView }) {
               <Link className="quick-link" href="/admin/firme"><strong>Firme ({stats.companies})</strong><span>Odobri poslodavce</span></Link>
               <Link className="quick-link" href="/admin/korisnici"><strong>Korisnici ({stats.users})</strong><span>Pregled svih korisnika</span></Link>
               <Link className="quick-link" href="/admin/baneri"><strong>Baneri</strong><span>Upravljanje reklamama</span></Link>
+              <Link className="quick-link" href="/admin/banner-zahtjevi"><strong>Banner zahtjevi</strong><span>Zahtjevi firmi</span></Link>
               <Link className="quick-link" href="/admin/paketi"><strong>Paketi pretplate</strong><span>Kreiraj i uredi pakete</span></Link>
+              <Link className="quick-link" href="/admin/templates"><strong>Canva Templates</strong><span>Linkovi za kreative</span></Link>
             </div>
             <div className="section-head compact-head"><div><h2>Uplate koje čekaju potvrdu</h2></div></div>
           </>
         )}
 
+        {/* ── SEARCH + FILTER BAR ──────────────────────────── */}
+        {(view === "jobs" || view === "companies" || view === "users") && (
+          <div className="admin-filters">
+            <input
+              placeholder={view === "jobs" ? "Pretraži oglas..." : view === "companies" ? "Pretraži firmu..." : "Pretraži korisnika..."}
+              value={searchQ}
+              onChange={e => setSearchQ(e.target.value)}
+              style={{ flex: 1, minWidth: 180 }}
+            />
+            {view === "jobs" && (
+              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <option value="">Svi statusi</option>
+                <option value="active">Aktivan</option>
+                <option value="pending_review">Na pregledu</option>
+                <option value="paused">Pauziran</option>
+                <option value="rejected">Odbijen</option>
+                <option value="expired">Istekao</option>
+              </select>
+            )}
+            {view === "companies" && (
+              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <option value="">Sve firme</option>
+                <option value="approved">Odobrene</option>
+                <option value="pending">Na čekanju</option>
+                <option value="recommended">Preporučene</option>
+              </select>
+            )}
+            {(searchQ || filterStatus) && (
+              <button className="btn ghost xs" onClick={() => { setSearchQ(""); setFilterStatus(""); }}>✕ Reset</button>
+            )}
+          </div>
+        )}
+
         <div className="admin-card-list">
           {loading && <div className="empty"><strong>Učitavanje...</strong></div>}
-          {!loading && rows.map(row => {
+          {!loading && rows
+            .filter(row => {
+              if (!searchQ && !filterStatus) return true;
+              const q = searchQ.toLowerCase();
+              const matchQ = !searchQ || (
+                String(row.title || "").toLowerCase().includes(q) ||
+                String(row.name || "").toLowerCase().includes(q) ||
+                String(row.email || "").toLowerCase().includes(q) ||
+                String(row.full_name || "").toLowerCase().includes(q) ||
+                String(row.companies?.name || "").toLowerCase().includes(q)
+              );
+              const matchStatus = !filterStatus || (
+                filterStatus === "approved" ? row.approved === true :
+                filterStatus === "pending" ? row.approved === false :
+                filterStatus === "recommended" ? row.recommended === true :
+                row.status === filterStatus
+              );
+              return matchQ && matchStatus;
+            })
+            .map(row => {
             const titleVal = row.title || row.email || row.full_name || row.payment_reference || row.name || row.orders?.payment_reference || row.id;
             const titleStr = String(titleVal || "");
             const subtitleStr = view === "jobs"
@@ -283,6 +353,7 @@ export function AdminClient({ view }: { view: AdminView }) {
                   {row.role && <span className={`badge ${row.role === "admin" ? "pink" : row.role === "company" ? "blue" : "gray"}`}>{row.role}</span>}
                   {row.approved === false && <span className="badge orange">Čeka odobrenje</span>}
                   {row.approved === true && <span className="badge green">Odobrena</span>}
+                  {row.recommended && <span className="badge orange">★ Preporučena</span>}
                   {row.status && !row.approved && !row.role && <span className={`badge ${row.status === "active" ? "green" : row.status === "pending_review" ? "orange" : "gray"}`}>{row.status}</span>}
                   {row.featured && <span className="badge orange">★ Istaknuto</span>}
                 </div>
@@ -292,11 +363,13 @@ export function AdminClient({ view }: { view: AdminView }) {
                     <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "active" })}>Odobri</button>
                     <button className="btn red xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { status: "paused" })}>Pauziraj</button>
                     <button className="btn lime xs" disabled={acting === row.id} onClick={() => updateJob(row.id, { featured: !row.featured })}>{row.featured ? "★ Ukloni" : "★ Istakni"}</button>
+                    <button className="btn ghost xs" onClick={() => setPromoteJob(row)}>⬆ Promoviši</button>
                     <button className="btn red xs" disabled={acting === row.id} onClick={() => deleteJob(row.id)}>Briši</button>
                   </>}
                   {view === "companies" && <>
                     <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, true)}>Odobri</button>
                     <button className="btn red xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, false)}>Sakrij</button>
+                    <button className="btn ghost xs" disabled={acting === row.id} onClick={() => toggleCompanyRecommended(row.id, row.recommended)}>{row.recommended ? "★ Ukloni preporuku" : "★ Preporuči"}</button>
                   </>}
                   {(view === "payments" || view === "dashboard") && <>
                     <button className="btn ghost xs" onClick={() => openProof(row.file_path || row.proof_path)}>Otvori dokaz</button>
@@ -316,6 +389,7 @@ export function AdminClient({ view }: { view: AdminView }) {
 
         {/* Job preview modal */}
         {previewJob && <JobPreviewModal job={previewJob} onClose={() => setPreviewJob(null)} />}
+        {promoteJob && <AdminPromoteModal job={promoteJob} onClose={() => setPromoteJob(null)} onSaved={() => { setPromoteJob(null); load(); }} />}
       </main>
     </div>
   );

@@ -199,6 +199,7 @@ export type CompanyActivePlan = {
 };
 
 export type BannerPlacement =
+  | "homepage_hero"      // ← NOVO: hero carousel
   | "homepage_top"
   | "homepage_middle"
   | "homepage_bottom"
@@ -244,6 +245,130 @@ export type Banner = {
   end_date: string | null;
   impressions: number;
   clicks: number;
+  created_at: string;
+  updated_at: string;
+};
+
+// ── COMPANY WITH EXTRAS (post-migration) ──────────────────────────────────
+export type CompanyWithExtras = Company & {
+  recommended: boolean;
+  recommended_priority: number;
+  instagram_url: string | null;
+  updated_at: string;
+};
+
+// ── JOB_PROMOTIONS ────────────────────────────────────────────────────────
+export type JobPromotionType = "featured" | "paid_top" | "homepage_top" | "urgent";
+export type JobPromotionStatus = "active" | "paused" | "expired";
+export type JobPromotionSource = "admin" | "package" | "payment" | "credit";
+
+export type JobPromotion = {
+  id: number;
+  job_id: number;
+  company_id: number;
+  type: JobPromotionType;
+  status: JobPromotionStatus;
+  priority: number;
+  starts_at: string;
+  ends_at: string | null;
+  source: JobPromotionSource;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type JobWithPromotion = Job & {
+  promotion_type?: JobPromotionType | null;
+  promotion_priority?: number;
+  promotion_ends_at?: string | null;
+  quick_job?: boolean;
+  urgent?: boolean;
+  daily_rate?: number | null;
+};
+
+// ── HOMEPAGE DATA ─────────────────────────────────────────────────────────
+export type HomepageData = {
+  paidTopJobs: JobWithPromotion[];
+  featuredJobs: JobWithPromotion[];
+  regularJobs: Job[];
+  quickJobs: Job[];
+  recommendedCompanies: CompanyWithExtras[];
+};
+
+// ── CREDIT TRANSACTIONS ───────────────────────────────────────────────────
+export type CreditTransactionType =
+  | "package_activation" | "cv_unlock" | "admin_adjustment"
+  | "bonus" | "refund" | "promotion_spend" | "banner_spend";
+
+export type CreditTransaction = {
+  id: number;
+  company_id: number;
+  subscription_id: number | null;
+  type: CreditTransactionType;
+  amount: number;
+  balance_after: number;
+  reference_type: string | null;
+  reference_id: string | null;
+  note: string | null;
+  created_by: string | null;
+  created_at: string;
+};
+
+// ── BANNER REQUESTS ───────────────────────────────────────────────────────
+export type BannerRequestStatus = "pending" | "approved" | "rejected" | "active" | "expired";
+
+export type BannerRequest = {
+  id: number;
+  company_id: number;
+  title: string;
+  image_path: string | null;
+  target_url: string | null;
+  requested_placement: string | null;
+  requested_device: "all" | "desktop" | "mobile";
+  requested_start_date: string | null;
+  requested_end_date: string | null;
+  note: string | null;
+  status: BannerRequestStatus;
+  admin_note: string | null;
+  approved_banner_id: number | null;
+  created_by: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+// ── WORKER RATINGS ────────────────────────────────────────────────────────
+export type WorkerRating = {
+  id: number;
+  company_id: number;
+  worker_id: string;
+  job_id: number | null;
+  rating: number;
+  tags: string[];
+  note: string | null;
+  visibility: "private" | "admin_only";
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+// ── CREATIVE TEMPLATES ────────────────────────────────────────────────────
+export type CreativeTemplateFormat =
+  | "instagram_post" | "instagram_story" | "facebook_feed"
+  | "banner" | "square" | "vertical" | "horizontal";
+
+export type CreativeTemplatePurpose =
+  | "job_ad" | "featured_job" | "paid_top"
+  | "company_promo" | "quick_job" | "generic";
+
+export type CreativeTemplate = {
+  id: number;
+  name: string;
+  template_url: string;
+  format: CreativeTemplateFormat;
+  purpose: CreativeTemplatePurpose;
+  active: boolean;
   created_at: string;
   updated_at: string;
 };

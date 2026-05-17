@@ -1,6 +1,7 @@
 import type { BannerPlacement, BannerFormat } from "@/types/domain";
 
 export const placementLabels: Record<BannerPlacement, string> = {
+  homepage_hero: "Početna — hero carousel",
   homepage_top: "Početna — vrh",
   homepage_middle: "Početna — sredina",
   homepage_bottom: "Početna — dno",
