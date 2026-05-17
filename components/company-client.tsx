@@ -328,7 +328,12 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
         ) : (
           <div className="notice-card warn">
             <strong>⏳ Profil firme čeka odobrenje</strong>
-            <p>Admin pregleda profil i aktivira ga. Oglas možete poslati nakon odobrenja.</p>
+            <p style={{ marginTop: 4 }}>Admin pregleda profil i aktivira ga. Obično traje 24h radnim danima.</p>
+            <ul style={{ marginTop: 8, paddingLeft: 18, fontSize: 13, color: "var(--muted)", lineHeight: 2 }}>
+              <li>✓ Popunite profil firme u potpunosti (ime, grad, opis, logo)</li>
+              <li>⌛ Sačekajte admin odobrenje — dobit ćete notifikaciju</li>
+              <li>📋 Nakon odobrenja možete kreirati oglase i naručiti paket</li>
+            </ul>
           </div>
         )}
         <form className="form-card" onSubmit={saveCompany}>

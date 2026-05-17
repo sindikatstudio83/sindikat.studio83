@@ -69,7 +69,9 @@ export async function BannerSlot({
   }
 
   // Mock / placeholder banner fallback
-  if (!showMock) return null;
+  // Only show mock banners in development — never in production
+  const isDev = process.env.NODE_ENV !== "production";
+  if (!showMock || !isDev) return null;
 
   const mock: MockBanner = getMockBanner(placement);
   const wrapperClass = ["ad-banner", "ad-mock", mock.deviceClass, className].filter(Boolean).join(" ");

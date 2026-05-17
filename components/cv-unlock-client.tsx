@@ -125,7 +125,7 @@ export function CvUnlockClient() {
     // Pretraga kandidata — javni podaci samo
     let q = supabase
       .from("profiles")
-      .select("id,full_name,city,avatar_path,cv_data,cv_updated_at")
+      .select("id,full_name,city,avatar_path")  // cv_data intentionally excluded — only fetched after unlock
       .eq("role", "candidate");
 
     if (searchCity) q = q.ilike("city", `%${searchCity}%`);

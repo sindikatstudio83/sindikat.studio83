@@ -9,6 +9,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { initials } from "@/lib/format";
 import { placementLabels } from "@/lib/banner-constants";
+import { ImageUpload } from "@/components/image-upload";
+import { supabaseUrl } from "@/lib/supabase/config";
 import type { BannerRequest, BannerPlacement } from "@/types/domain";
 
 type Notice = { text: string; type: "info" | "error" | "success" };
@@ -62,6 +64,7 @@ export function BannerRequestClient() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [imagePath, setImagePath] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
 
@@ -104,6 +107,7 @@ export function BannerRequestClient() {
     const { error } = await supabase.from("banner_requests").insert({
       ...form,
       company_id: companyId,
+      image_path: imagePath,
       status: "pending",
     });
     setSaving(false);
@@ -115,6 +119,7 @@ export function BannerRequestClient() {
       setNotice({ type: "success", text: "Zahtjev je poslan! Admin će ga pregledati uskoro." });
       setShowForm(false);
       setForm(emptyForm);
+      setImagePath(null);
       loadRequests();
     }
   }
@@ -205,8 +210,43 @@ export function BannerRequestClient() {
                   style={{ width: "100%", background: "var(--soft)", border: "2px solid var(--line2)", borderRadius: 10, padding: "8px 12px", fontWeight: 700 }}
                 />
               </div>
+              {/* Image/creative upload */}
               <div style={{ gridColumn: "1/-1" }}>
-                <label className="hint">Napomena (dimenzije slike, posebni zahtjevi...)</label>
+                <label className="hint" style={{ marginBottom: 6, display: "block" }}>Kreativ / banner slika (opcionalno)</label>
+                {userId && companyId && (
+                  <ImageUpload
+                    bucket="banners"
+                    ownerUserId={userId}
+                    currentPath={imagePath}
+                    fallbackText="Banner"
+                    shape="rounded"
+                    size={72}
+                    onUploaded={(path) => setImagePath(path)}
+                  />
+                )}
+                {imagePath && (
+                  <div style={{ marginTop: 8 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`${supabaseUrl}/storage/v1/object/public/banners/${imagePath}`}
+                      alt="Preview kreativa"
+                      style={{ maxHeight: 120, maxWidth: "100%", borderRadius: 10, border: "2px solid var(--line2)" }}
+                    />
+                    <button
+                      type="button"
+                      className="btn ghost xs"
+                      style={{ marginLeft: 8 }}
+                      onClick={() => setImagePath(null)}
+                    >Ukloni sliku</button>
+                  </div>
+                )}
+                <p className="hint" style={{ marginTop: 4 }}>
+                  JPG, PNG, WebP do 5MB. Preporučeno: 970×250px za leaderboard, 300×600px za tower.
+                </p>
+              </div>
+
+              <div style={{ gridColumn: "1/-1" }}>
+                <label className="hint">Napomena (posebni zahtjevi...)</label>
                 <textarea
                   value={form.note}
                   onChange={e => setForm(f => ({ ...f, note: e.target.value }))}

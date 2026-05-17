@@ -155,12 +155,14 @@ export function CvBuilder() {
         <div>
           <span className="page-label">Biografija</span>
           <h1>Napravi biografiju bez slanja fajlova.</h1>
-          <p>Popuni podatke jednom — koristiš ih za sve prijave. Skini PDF direktno iz sajta.</p>
+          <p>Popuni podatke jednom — koristiš ih za sve prijave. Klikni &quot;Preuzmi PDF&quot; ili pritisni Ctrl+P / ⌘P i odaberi &quot;Spremi kao PDF&quot;.</p>
           <p className="hint" style={{ marginTop: 10 }}>{loadStatus}</p>
         </div>
         <div className="cv-head-actions">
           <Link className="btn ghost" href="/profil">← Nazad</Link>
-          <button className="btn ghost" onClick={printCv} type="button">Štampa / PDF</button>
+          <button className="btn ghost" onClick={printCv} type="button" title="Koristi Ctrl+P ili Cmd+P → Spremi kao PDF">
+            ⬇ Preuzmi PDF
+          </button>
           <button className="btn blue" onClick={save} type="button" disabled={saveStatus === "saving"}>
             {saveLabel}
           </button>

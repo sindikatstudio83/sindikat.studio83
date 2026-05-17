@@ -183,6 +183,24 @@ export function AdminClient({ view }: { view: AdminView }) {
   }
 
 
+  async function changeUserRole(id: string, newRole: string) {
+    if (!window.confirm(`Promijeni rolu korisnika na "${newRole}"?`)) return;
+    // Admin-only: direct profiles update is allowed by RLS "admin updates all profiles" policy
+    const { error } = await supabase.from("profiles").update({ role: newRole }).eq("id", id);
+    if (error) { logError("AdminClient.changeRole", error); setMsg(safeMessage(error, "save"), "error"); }
+    else { setMsg(`Rola promijenjena na "${newRole}".`, "success"); }
+    await load();
+  }
+
+  async function sendPasswordReset(email: string) {
+    if (!email) return;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-lozinka`
+    });
+    if (error) { logError("AdminClient.resetPw", error); setMsg(safeMessage(error, "save"), "error"); }
+    else { setMsg("Reset email poslan.", "success"); }
+  }
+
   async function toggleCompanyRecommended(id: number, current: boolean) {
     setActing(id);
     const { error } = await supabase.from("companies").update({ recommended: !current }).eq("id", id);
@@ -370,6 +388,26 @@ export function AdminClient({ view }: { view: AdminView }) {
                     <button className="btn blue xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, true)}>Odobri</button>
                     <button className="btn red xs" disabled={acting === row.id} onClick={() => updateCompany(row.id, false)}>Sakrij</button>
                     <button className="btn ghost xs" disabled={acting === row.id} onClick={() => toggleCompanyRecommended(row.id, row.recommended)}>{row.recommended ? "★ Ukloni preporuku" : "★ Preporuči"}</button>
+                  </>}
+                  {view === "users" && <>
+                    <select
+                      className="btn ghost xs"
+                      style={{ cursor: "pointer" }}
+                      value=""
+                      onChange={e => { if (e.target.value) changeUserRole(String(row.id), e.target.value); }}
+                      disabled={acting === row.id}
+                      title="Promijeni rolu"
+                    >
+                      <option value="">Promijeni rolu...</option>
+                      <option value="candidate">candidate</option>
+                      <option value="company">company</option>
+                      <option value="admin">admin</option>
+                    </select>
+                    {row.email && (
+                      <button className="btn ghost xs" onClick={() => sendPasswordReset(row.email)} disabled={acting === row.id}>
+                        Reset lozinke
+                      </button>
+                    )}
                   </>}
                   {(view === "payments" || view === "dashboard") && <>
                     <button className="btn ghost xs" onClick={() => openProof(row.file_path || row.proof_path)}>Otvori dokaz</button>

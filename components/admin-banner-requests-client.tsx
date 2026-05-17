@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
+import { supabaseUrl } from "@/lib/supabase/config";
 import { desktopNavItems } from "@/lib/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -121,6 +122,21 @@ export function AdminBannerRequestsClient() {
               <p><b>Period:</b> {selected.requested_start_date} – {selected.requested_end_date}</p>
               {selected.target_url && <p style={{ gridColumn: "1/-1" }}><b>URL:</b> <a href={selected.target_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--blue)" }}>{selected.target_url}</a></p>}
               {selected.note && <p style={{ gridColumn: "1/-1" }}><b>Napomena firme:</b> {selected.note}</p>}
+              {selected.image_path && (
+                <div style={{ gridColumn: "1/-1" }}>
+                  <b>Kreativ:</b>
+                  <div style={{ marginTop: 6 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={selected.image_path.startsWith("http")
+                        ? selected.image_path
+                        : `${supabaseUrl}/storage/v1/object/public/banners/${selected.image_path}`}
+                      alt="Banner kreativ"
+                      style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 10, border: "2px solid var(--line2)" }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <label className="hint" style={{ marginBottom: 4, display: "block" }}>Admin napomena</label>

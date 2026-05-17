@@ -9,7 +9,8 @@ import { initials } from "@/lib/format";
 
 const MAX_BYTES_DEFAULT = 2 * 1024 * 1024; // 2MB
 const MAX_BYTES_BANNERS = 5 * 1024 * 1024; // 5MB
-const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+// SVG removed: can contain JavaScript (XSS risk) when served as active SVG
+const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 // All valid Supabase Storage buckets used in this project
 export type ImageBucket = "avatars" | "company-logos" | "banners";
@@ -125,7 +126,7 @@ export function ImageUpload({
         <input
           ref={inputRef}
           type="file"
-          accept={ALLOWED.join(",")}
+          accept="image/jpeg,image/png,image/webp,image/gif"
           style={{ display: "none" }}
           onChange={(e) => {
             const file = e.target.files?.[0];
