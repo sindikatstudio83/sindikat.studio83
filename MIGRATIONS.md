@@ -26,6 +26,7 @@ Pokreni SQL fajlove **u ovom tačnom redosljed** u Supabase SQL Editoru:
 15. supabase-performance.sql         ← Performance indeksi, ANALYZE
 16. supabase-live-hardening-2026-05-05.sql ← Zadnje sigurnosne zakrpe pre produkcije
 17. supabase-growth-features-2026-05.sql   ← Nove funkcionalnosti: job_promotions, cv_unlocks, krediti, baneri
+18. supabase-audit-and-setup.sql           ← Audit log za admin akcije i role/status promjene
 ```
 
 **NE pokretati:**
@@ -39,7 +40,8 @@ Pokreni SQL fajlove **u ovom tačnom redosljed** u Supabase SQL Editoru:
 Ako već imaš produkcijsku bazu i samo dodaješ nove funkcionalnosti:
 
 ```
-Samo pokreni: supabase-growth-features-2026-05.sql
+Pokreni: supabase-growth-features-2026-05.sql
+    zatim: supabase-audit-and-setup.sql
 ```
 
 Svi ostali su idempotentni i mogu se sigurno pokrenuti ponovo, ali to nije neophodno.
