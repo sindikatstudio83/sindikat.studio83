@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ApplyForm } from "@/components/apply-form";
 import { JobViewTracker } from "@/components/job-view-tracker";
 import { BannerSlot } from "@/components/banner-slot";
-import { companyUrl, formatDate, initials, parseIdFromSlug } from "@/lib/format";
+import { formatDate, initials, jobUrl, parseIdFromSlug } from "@/lib/format";
 import { getJobById, getPublicJobs } from "@/lib/queries/public";
 import { JobCard } from "@/components/job-card";
 
@@ -101,7 +101,7 @@ export default async function JobDetailPage({ params }: Props) {
               <span className="tag">Rok {formatDate(job.deadline)}</span>
               {job.contract_type && <span className="tag">{job.contract_type}</span>}
             </div>
-            {co && <Link className="btn ghost sm" href={companyUrl(co)} style={{ width: "100%", justifyContent: "center", marginBottom: 8 }}>Profil firme</Link>}
+            {co && <Link className="btn ghost sm" href={`/firme/${co.slug || co.id}`} style={{ width: "100%", justifyContent: "center", marginBottom: 8 }}>Profil firme</Link>}
           </div>
           <div className="card">
             <h2 style={{ fontSize: 22, marginBottom: 14 }}>Prijavi se</h2>

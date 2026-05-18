@@ -73,9 +73,7 @@ export async function TowerBanner({ side }: { side: Side }) {
     );
   }
 
-  if (process.env.NODE_ENV === "production") return null;
-
-  // Development-only placeholder.
+  // Placeholder — prikazuje se samo ako admin želi (showPlaceholder=true default)
   return (
     <aside
       className="tower-banner-fixed tower-banner-placeholder"

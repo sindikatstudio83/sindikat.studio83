@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       style={{
         width: "1200px",
         height: "630px",
-        background: "#0D1B2A",
+        background: "#0a0e14",
         display: "flex",
         alignItems: "stretch",
         justifyContent: "stretch",
@@ -25,9 +25,9 @@ export async function GET(request: Request) {
         style={{
           margin: "40px",
           flex: 1,
-          background: "#FFFFFF",
+          background: "#1a1f2e",
           borderRadius: "32px",
-          border: "2px solid #E1E6EF",
+          border: "2px solid #252b3a",
           display: "flex",
           flexDirection: "column",
           padding: "50px 60px",
@@ -45,19 +45,19 @@ export async function GET(request: Request) {
             style={{
               width: "68px",
               height: "68px",
-              background: "#FF202B",
+              background: "#c8ff3d",
               borderRadius: "16px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "26px",
               fontWeight: 900,
-              color: "#FFFFFF",
+              color: "#0a0e14",
             }}
           >
             ip
           </div>
-          <span style={{ fontSize: "26px", fontWeight: 700, color: "#0D1B2A" }}>
+          <span style={{ fontSize: "26px", fontWeight: 700, color: "#e8eef5" }}>
             imaposla.me
           </span>
         </div>
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
           style={{
             fontSize: "60px",
             fontWeight: 900,
-            color: "#0D1B2A",
+            color: "#ffffff",
             lineHeight: 1.1,
             flex: 1,
             display: "flex",
@@ -77,7 +77,7 @@ export async function GET(request: Request) {
         <div
           style={{
             fontSize: "26px",
-            color: "#6B7280",
+            color: "#9aa5b8",
             marginBottom: "16px",
             marginTop: "24px",
           }}
@@ -87,7 +87,7 @@ export async function GET(request: Request) {
         <div
           style={{
             fontSize: "18px",
-            color: "#FF202B",
+            color: "#c8ff3d",
             fontWeight: 700,
           }}
         >
