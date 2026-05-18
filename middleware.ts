@@ -97,11 +97,9 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(new URL(dest, request.url));
         }
       } catch {
-        // DB unreachable — fail CLOSED: deny access to protected routes on error
-        // Better to ask for re-login than to accidentally expose protected content
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("next", pathname);
-        loginUrl.searchParams.set("error", "session");
+        loginUrl.searchParams.set("error", "role-check");
         return NextResponse.redirect(loginUrl);
       }
 

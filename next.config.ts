@@ -6,22 +6,6 @@ const securityHeaders = [
   { key: "Referrer-Policy",           value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy",        value: "camera=(), microphone=(), geolocation=()" },
   { key: "X-DNS-Prefetch-Control",    value: "on" },
-  {
-    key: "Content-Security-Policy-Report-Only",
-    value: [
-      "default-src 'self'",
-      "base-uri 'self'",
-      "frame-ancestors 'none'",
-      "form-action 'self'",
-      "object-src 'none'",
-      "img-src 'self' data: blob: https://*.supabase.co",
-      "font-src 'self' data: https://fonts.gstatic.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
-      "upgrade-insecure-requests",
-    ].join("; "),
-  },
 ];
 
 const nextConfig: NextConfig = {
@@ -75,3 +59,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+

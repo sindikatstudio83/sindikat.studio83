@@ -12,9 +12,10 @@ type AuthState = {
   email: string | null;
   /** true only after role is fully resolved (DB confirmed or definitively failed) */
   ready: boolean;
+  authError?: string | null;
 };
 
-const initialState: AuthState = { role: "guest", userId: null, email: null, ready: false };
+const initialState: AuthState = { role: "guest", userId: null, email: null, ready: false, authError: null };
 
 const AuthContext = createContext<AuthState>(initialState);
 
@@ -42,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session?.user) {
-        if (mounted) setState({ role: "guest", userId: null, email: null, ready: true });
+        if (mounted) setState({ role: "guest", userId: null, email: null, ready: true, authError: null });
         return;
       }
 
@@ -64,35 +65,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               userId: user.id,
               email: user.email || null,
               ready: true,
+              authError: null,
             });
           }
           return;
         }
 
-        // Profile row missing — DB trigger should have created it on signup.
-        // Do NOT auto-assign role here; instead set guest so middleware redirects to login.
-        // The trigger in supabase-auth-complete.sql handles profile creation.
+        // Profile row missing — kreiraj sa candidate role (ne uzimati iz metadata!)
         if (!error && !data) {
+          const fallbackRole: UserRole = "candidate";
+          await supabase.from("profiles").upsert({
+            id: user.id,
+            email: user.email,
+            role: fallbackRole,
+          }, { onConflict: "id" });
           if (mounted) {
-            // Try once to upsert the profile (handles edge case where trigger failed)
-            await supabase.from("profiles").upsert({
-              id: user.id,
-              email: user.email,
-              role: "candidate", // safe default; admin can change via admin panel
-            }, { onConflict: "id" });
-            setState({ role: "candidate", userId: user.id, email: user.email || null, ready: true });
+            setState({ role: fallbackRole, userId: user.id, email: user.email || null, ready: true, authError: null });
           }
           return;
         }
       } catch {
-        // Network or RLS error — fall through to metadata
+        // Network/RLS error: do not invent a role. Protected UI must fail closed.
       }
 
-      // Step 2: DB query failed (network error, RLS issue, etc.)
-      // Fail-safe: set role to "guest" so middleware denies protected route access.
-      // User will see login page and can retry — better than wrong role access.
       if (mounted) {
-        setState({ role: "guest", userId: null, email: null, ready: true });
+        setState({ role: "guest", userId: null, email: null, ready: true, authError: "role-check-failed" });
       }
     }
 
@@ -100,14 +97,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
       if (event === "SIGNED_OUT" || !session) {
-        if (mounted) setState({ role: "guest", userId: null, email: null, ready: true });
+        if (mounted) setState({ role: "guest", userId: null, email: null, ready: true, authError: null });
       } else if (event === "SIGNED_IN") {
         // Only reload if this is actually a different user session
         setState(prev => {
           if (prev.userId !== session.user.id) {
             // Reset to not-ready while we fetch the new user's role
             if (mounted) {
-              setState({ role: "guest", userId: null, email: null, ready: false });
+              setState({ role: "guest", userId: null, email: null, ready: false, authError: null });
               loadFromSession();
             }
           }
