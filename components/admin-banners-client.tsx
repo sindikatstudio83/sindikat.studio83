@@ -7,6 +7,7 @@ import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
 import { ImageUpload } from "@/components/image-upload";
 import { supabaseUrl } from "@/lib/supabase/config";
+import { safeExternalUrl } from "@/lib/url";
 import { placementLabels, formatLabels, audienceLabels, deviceLabels } from "@/lib/banner-constants";
 import type { Banner, BannerPlacement, BannerFormat, BannerAudience, BannerDevice } from "@/types/domain";
 
@@ -106,12 +107,17 @@ export function AdminBannersClient() {
       setNotice({ type: "error", text: "Naziv i slika su obavezni." });
       return;
     }
+    const targetUrl = form.target_url.trim() ? safeExternalUrl(form.target_url) : null;
+    if (form.target_url.trim() && !targetUrl) {
+      setNotice({ type: "error", text: "Destinacija mora biti validan http ili https URL." });
+      return;
+    }
     setSaving(true);
 
     const payload = {
       title: form.title,
       image_path: form.image_path || null,
-      target_url: form.target_url || null,
+      target_url: targetUrl,
       placement: form.placement,
       format: form.format || null,
       target_audience: form.target_audience,

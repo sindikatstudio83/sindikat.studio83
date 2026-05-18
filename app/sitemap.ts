@@ -18,11 +18,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/uslovi-koriscenja`, changeFrequency: "yearly", priority: 0.2 }
   ];
 
-  const [jobs, companies, lookups] = await Promise.all([
-    getPublicJobs(),
-    getCompanies(),
-    getLookups()
-  ]);
+  let jobs: Awaited<ReturnType<typeof getPublicJobs>> = [];
+  let companies: Awaited<ReturnType<typeof getCompanies>> = [];
+  let lookups: Awaited<ReturnType<typeof getLookups>> = { cities: [], categories: [] };
+
+  try {
+    [jobs, companies, lookups] = await Promise.all([
+      getPublicJobs(),
+      getCompanies(),
+      getLookups()
+    ]);
+  } catch {
+    return staticRoutes;
+  }
 
   const jobRoutes: MetadataRoute.Sitemap = jobs.map((job) => ({
     url: `${base}${jobUrl(job)}`,

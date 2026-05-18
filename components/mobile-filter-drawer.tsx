@@ -21,12 +21,48 @@ export function MobileFilterDrawer({ cities, categories, currentQ, currentCity, 
   const [category, setCategory] = useState(currentCategory);
   const router = useRouter();
   const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const firstInputRef = useRef<HTMLInputElement>(null);
 
   // Close on back button
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    firstInputRef.current?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+        return;
+      }
+
+      if (event.key === "Tab" && panelRef.current) {
+        const focusable = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => !el.hasAttribute("disabled"));
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (!first || !last) return;
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   function apply() {
@@ -57,6 +93,7 @@ export function MobileFilterDrawer({ cities, categories, currentQ, currentCity, 
           <button type="submit">→</button>
         </form>
         <button
+          ref={toggleRef}
           type="button"
           className="filter-toggle-btn"
           onClick={() => setOpen(true)}
@@ -82,6 +119,7 @@ export function MobileFilterDrawer({ cities, categories, currentQ, currentCity, 
             <label>
               Pretraga
               <input
+                ref={firstInputRef}
                 type="text"
                 placeholder="Naziv posla, firma..."
                 value={q}

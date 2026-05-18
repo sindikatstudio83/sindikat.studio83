@@ -125,9 +125,7 @@ export function CvUnlockClient() {
     // Pretraga kandidata — javni podaci samo
     let q = supabase
       .from("profiles")
-      .select("id,full_name,city,avatar_path,email,phone")
-      // email/phone: RLS "company reads applicant profiles" policy restricts based on applications/unlocks
-      // cv_data intentionally excluded — too large, not needed for search list
+      .select("id,full_name,city,avatar_path")  // cv_data intentionally excluded — only fetched after unlock
       .eq("role", "candidate");
 
     if (searchCity) q = q.ilike("city", `%${searchCity}%`);
@@ -159,7 +157,6 @@ export function CvUnlockClient() {
         worker_type: cp?.worker_type || null,
         quick_jobs_enabled: cp?.quick_jobs_enabled || false,
         is_unlocked: unlockedSet!.has(p.id),
-        // email/phone: RLS returns them only if company has existing application or unlock
       };
     });
 
@@ -197,22 +194,8 @@ export function CvUnlockClient() {
       .maybeSingle();
 
     if (existing) {
-      // Already unlocked — fetch contact data if not already loaded
-      const candidate = candidates.find(c => c.id === candidateId);
-      if (!candidate?.email && !candidate?.phone) {
-        const { data: contactData } = await supabase
-          .from("profiles")
-          .select("email,phone,full_name")
-          .eq("id", candidateId)
-          .maybeSingle();
-        setCandidates(prev => prev.map(c =>
-          c.id === candidateId
-            ? { ...c, is_unlocked: true, email: contactData?.email ?? null, phone: contactData?.phone ?? null }
-            : c
-        ));
-      } else {
-        setCandidates(prev => prev.map(c => c.id === candidateId ? { ...c, is_unlocked: true } : c));
-      }
+      // Već otključano, samo označi
+      setCandidates(prev => prev.map(c => c.id === candidateId ? { ...c, is_unlocked: true } : c));
       setUnlocking(null);
       return;
     }
@@ -247,28 +230,8 @@ export function CvUnlockClient() {
     }
 
     setCreditBalance(spendResult.balance_after);
-
-    // Fetch contact details now that we have permission (RLS allows company to read
-    // applicant profiles via company_reads_applicant_profiles policy, and the unlock
-    // record we just created satisfies that policy)
-    const { data: contactData } = await supabase
-      .from("profiles")
-      .select("email,phone,full_name")
-      .eq("id", candidateId)
-      .maybeSingle();
-
-    setCandidates(prev => prev.map(c =>
-      c.id === candidateId
-        ? {
-            ...c,
-            is_unlocked: true,
-            email: contactData?.email ?? null,
-            phone: contactData?.phone ?? null,
-            full_name: contactData?.full_name ?? c.full_name,
-          }
-        : c
-    ));
-    setNotice({ type: "success", text: "CV otključan! Kontakt podaci su sada vidljivi." });
+    setCandidates(prev => prev.map(c => c.id === candidateId ? { ...c, is_unlocked: true } : c));
+    setNotice({ type: "success", text: "CV otključan! Sada možete vidjeti kontakt podatke kandidata." });
     setUnlocking(null);
   }
 

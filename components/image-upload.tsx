@@ -22,7 +22,10 @@ export type ImageBucket = "avatars" | "company-logos" | "banners";
  */
 export function getPublicStorageUrl(bucket: ImageBucket, path: string | null | undefined): string | null {
   if (!path) return null;
-  if (path.startsWith("http")) return path; // already a full URL
+  if (path.startsWith("http")) {
+    const storageBase = `${supabaseUrl}/storage/v1/object/public/${bucket}/`;
+    return path.startsWith(storageBase) ? path : null;
+  }
   return `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}`;
 }
 
@@ -59,7 +62,7 @@ export function ImageUpload({
     setError("");
 
     if (!ALLOWED.includes(file.type)) {
-      setError("Dozvoljeni formati: JPG, PNG, WebP, GIF. Max " + (bucket === "banners" ? "5" : "2") + " MB.");
+      setError("Dozvoljeni formati: JPG, PNG, WebP, GIF.");
       return;
     }
     if (file.size > maxBytes) {
@@ -163,7 +166,7 @@ export function ImageUpload({
       </div>
 
       <p className="hint" style={{ margin: 0 }}>
-        {bucket === "banners" ? "JPG, PNG, WebP, GIF. Max 5 MB." : "JPG, PNG, WebP. Max 2 MB."}
+        {bucket === "banners" ? "JPG, PNG, WebP, GIF. Max 5 MB." : "JPG, PNG, WebP, GIF. Max 2 MB."}
       </p>
       {error && <p className="notice error" role="alert" style={{ marginTop: 6 }}>{error}</p>}
     </div>
@@ -215,4 +218,3 @@ export function AvatarImage({
     </div>
   );
 }
-
