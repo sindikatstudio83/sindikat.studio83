@@ -26,8 +26,7 @@ export const desktopNavItems: Record<UserRole, NavItem[]> = {
     { icon: "pregled",     label: "Admin",         href: "/admin" },
     { icon: "oglasi",      label: "Oglasi",        href: "/admin/oglasi" },
     { icon: "firme",       label: "Firme",         href: "/admin/firme" },
-    { icon: "uplate",      label: "Uplate",        href: "/admin/uplate" },
-    { icon: "audit",       label: "Audit",         href: "/admin/audit-log" }
+    { icon: "uplate",      label: "Uplate",        href: "/admin/uplate" }
   ]
 };
 
