@@ -1,14 +1,14 @@
 /* ── GOOGLE FONTS — browser-side load, ne blokira build ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ── TOKENS ── */
 :root{
-  --bg:#f5f1e8;--ink:#171717;--muted:#6d665f;--soft:#fff7e8;--paper:#fffdf8;
-  --line:#ded5c6;--line2:#cabcaa;
-  --blue:#2148ff;--lime:#c8ff3d;--pink:#ff4fa3;--orange:#ff8a2a;--green:#13b76d;--red:#e5484d;
-  --shadow:0 4px 24px rgba(28,22,12,.10);--shadow2:0 8px 40px rgba(28,22,12,.14);
-  --r:16px;--r2:24px;
-  --font:var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);--display:var(--font-space, 'Space Grotesk', 'Inter', system-ui, sans-serif);
+  --bg:#F2F4F7;--ink:#0D1B2A;--muted:#6B7280;--soft:#F8FAFC;--paper:#FFFFFF;
+  --line:#E1E6EF;--line2:#C9D1DE;
+  --blue:#0A5CF6;--lime:#FF202B;--pink:#FF202B;--orange:#F59E0B;--green:#10B981;--red:#FF202B;
+  --shadow:0 10px 30px rgba(13,27,42,.08);--shadow2:0 18px 55px rgba(13,27,42,.12);
+  --r:14px;--r2:22px;
+  --font:var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);--display:var(--font-poppins, 'Poppins', 'Inter', system-ui, sans-serif);
 }
 [data-theme="dark"]{
   /* ─────────────────────────────────────────────────
@@ -713,544 +713,6 @@ h3{font-size:20px}
 @media(max-width:560px){
   .image-upload{gap:10px}
   .image-upload-actions .btn{flex:1}
-}
-
-/* ─────────────────────────────────────────────────────────────
-   FINAL PRODUCT POLISH
-   Preglednost iz mockup-a, ali smirenija i sigurnija za produkciju.
-   Ovaj sloj namjerno dolazi na kraj fajla da normalizuje stare inline-heavy
-   ekrane i spriječi preklapanja, overflow i neujednačene kartice.
-   ───────────────────────────────────────────────────────────── */
-
-:root{
-  --surface-gap:14px;
-  --control-h:40px;
-}
-
-main,
-.app-main,
-.card,
-.panel,
-.table-card,
-.form-card,
-.job-card,
-.company-card,
-.admin-card,
-.firm-job-card,
-.ats-card,
-.quick-link,
-.live-path,
-.plan-card,
-.template-card{
-  min-width:0;
-}
-
-p,
-small,
-strong,
-h1,
-h2,
-h3,
-.job-title,
-.firm-job-title,
-.admin-card-info strong,
-.admin-card-info small,
-.ats-card-name,
-.ats-card-job,
-.quick-link span,
-.quick-link strong{
-  overflow-wrap:anywhere;
-}
-
-h1{
-  max-width:980px;
-}
-
-.section-head{
-  background:color-mix(in srgb,var(--paper) 80%,transparent);
-  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  border-radius:22px;
-  padding:16px 18px;
-  box-shadow:0 10px 28px rgba(28,22,12,.06);
-}
-
-[data-theme="dark"] .section-head{
-  background:color-mix(in srgb,var(--paper) 88%,transparent);
-  box-shadow:0 10px 30px rgba(0,0,0,.24);
-}
-
-.section-head h1{
-  font-size:clamp(30px,4vw,52px);
-  margin-bottom:6px;
-}
-
-.section-head h2{
-  font-size:clamp(22px,3vw,34px);
-}
-
-.head-actions,
-.actions,
-.admin-card-actions,
-.firm-job-actions,
-.template-card__actions,
-.auth-actions{
-  align-items:center;
-}
-
-.btn,
-.icon-btn,
-.field,
-.select,
-.textarea,
-select,
-input,
-textarea{
-  max-width:100%;
-}
-
-.btn{
-  text-align:center;
-}
-
-.app-shell{
-  width:min(1180px,calc(100% - 32px));
-  margin:0 auto;
-  align-items:start;
-}
-
-.app-main{
-  min-width:0;
-  display:grid;
-  gap:var(--surface-gap);
-}
-
-.side{
-  top:82px;
-  max-height:calc(100vh - 96px);
-  overflow:auto;
-}
-
-.dash-grid{
-  grid-template-columns:repeat(4,minmax(0,1fr));
-}
-
-.metric{
-  min-height:112px;
-  display:grid;
-  align-content:center;
-  gap:7px;
-}
-
-.metric strong{
-  font-size:clamp(25px,3vw,38px);
-  line-height:1;
-}
-
-.quick-links,
-.grid.three,
-.grid.four{
-  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-}
-
-.quick-link{
-  min-height:104px;
-  align-content:start;
-  border:1.5px solid var(--line2);
-}
-
-.quick-link strong{
-  font-size:15px;
-  line-height:1.2;
-}
-
-.quick-link span{
-  line-height:1.35;
-}
-
-.job-card{
-  grid-template-columns:56px minmax(0,1fr) minmax(150px,auto);
-  gap:14px;
-  align-items:stretch;
-}
-
-.job-card .logo{
-  width:56px;
-  height:56px;
-}
-
-.job-title{
-  display:inline-block;
-  max-width:100%;
-  line-height:1.15;
-  font-size:clamp(17px,2vw,21px);
-}
-
-.job-desc{
-  display:-webkit-box;
-  -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-
-.job-actions{
-  min-width:150px;
-  display:flex;
-  flex-direction:column;
-  align-items:stretch;
-  gap:7px;
-}
-
-.job-actions .btn,
-.job-actions .save-job-button,
-.job-actions button{
-  width:100%;
-}
-
-.deadline{
-  text-align:left;
-  background:var(--soft);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:8px 10px;
-}
-
-.table-card{
-  overflow:hidden;
-}
-
-.table-row{
-  grid-template-columns:minmax(0,1.2fr) minmax(120px,.7fr) minmax(120px,.7fr) auto;
-}
-
-.table-row > *{
-  min-width:0;
-}
-
-.admin-filters{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  background:var(--paper);
-  border:1.5px solid var(--line);
-  border-radius:18px;
-  padding:10px;
-  box-shadow:var(--shadow);
-}
-
-.admin-filters input,
-.admin-filters select{
-  min-height:var(--control-h);
-  background:var(--soft);
-  border:1.5px solid var(--line);
-  border-radius:12px;
-  padding:9px 12px;
-  font-weight:750;
-  min-width:180px;
-}
-
-.admin-card{
-  border-color:color-mix(in srgb,var(--ink) 80%,var(--line));
-}
-
-.admin-card-head{
-  align-items:center;
-}
-
-.admin-card-actions .btn,
-.admin-card-actions select{
-  min-width:104px;
-}
-
-.form-grid{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-}
-
-.form-card{
-  gap:16px;
-}
-
-.form-card > label,
-.auth-form > label{
-  min-width:0;
-}
-
-.auth-two{
-  grid-template-columns:minmax(0,.9fr) minmax(300px,1fr);
-}
-
-.live-hero{
-  position:relative;
-  overflow:hidden;
-}
-
-.live-hero:after{
-  content:"";
-  position:absolute;
-  right:-90px;
-  top:-90px;
-  width:240px;
-  height:240px;
-  border-radius:50%;
-  background:color-mix(in srgb,var(--lime) 18%,transparent);
-  pointer-events:none;
-}
-
-.live-search,
-.search-panel{
-  grid-template-columns:minmax(0,1.35fr) minmax(140px,.75fr) minmax(140px,.75fr) auto;
-}
-
-.live-search input,
-.live-search select,
-.search-panel input,
-.search-panel select{
-  min-width:0;
-}
-
-.live-paths{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-}
-
-.stat-mosaic{
-  grid-template-columns:repeat(4,minmax(0,1fr));
-}
-
-.cv-builder-grid,
-.detail-layout,
-.ats-layout,
-.ats-body{
-  grid-template-columns:minmax(0,1fr) minmax(300px,.42fr);
-}
-
-.ats-body{
-  align-items:start;
-}
-
-.ats-list-col,
-.ats-detail-col,
-.ats-detail-inner{
-  min-width:0;
-}
-
-.ats-pipeline{
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:3px;
-}
-
-.ats-pipeline-btn{
-  flex:0 0 auto;
-}
-
-.ats-card-footer{
-  gap:10px;
-}
-
-.ats-card-actions{
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.ats-detail-col{
-  position:sticky;
-  top:82px;
-  max-height:calc(100vh - 96px);
-  overflow:auto;
-}
-
-.banner-req-grid,
-.template-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:12px;
-}
-
-.banner-req-form,
-.template-card,
-.plan-status-banner{
-  max-width:100%;
-}
-
-.image-upload{
-  max-width:100%;
-}
-
-.image-upload-actions{
-  flex-wrap:wrap;
-}
-
-@media(max-width:980px){
-  .app-shell{
-    grid-template-columns:1fr;
-    padding-bottom:86px;
-  }
-
-  .side{
-    position:relative;
-    top:0;
-    max-height:none;
-    display:block;
-  }
-
-  .side-nav{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-    gap:6px;
-  }
-
-  .side-logout{
-    justify-content:center;
-  }
-
-  .dash-grid,
-  .stat-mosaic{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-
-  .job-card{
-    grid-template-columns:52px minmax(0,1fr);
-  }
-
-  .job-actions{
-    grid-column:1/-1;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-    min-width:0;
-  }
-
-  .detail-layout,
-  .cv-builder-grid,
-  .ats-layout,
-  .ats-body{
-    grid-template-columns:1fr;
-  }
-
-  .ats-detail-col{
-    position:relative;
-    top:0;
-    max-height:none;
-  }
-
-  .table-row{
-    grid-template-columns:1fr;
-    gap:8px;
-  }
-}
-
-@media(max-width:720px){
-  .wrap,
-  .top-in,
-  .app-shell{
-    width:min(100% - 24px,1180px);
-  }
-
-  .section-head{
-    display:grid;
-    align-items:start;
-    padding:14px;
-    margin:18px 0 12px;
-  }
-
-  .section-head h1{
-    font-size:32px;
-    letter-spacing:-.04em;
-  }
-
-  .head-actions,
-  .actions,
-  .auth-actions{
-    width:100%;
-  }
-
-  .head-actions .btn,
-  .actions .btn,
-  .auth-actions .btn{
-    flex:1 1 150px;
-  }
-
-  .form-grid,
-  .grid.two,
-  .live-paths{
-    grid-template-columns:1fr;
-  }
-
-  .live-search,
-  .search-panel{
-    grid-template-columns:1fr;
-  }
-
-  .live-search button,
-  .search-panel button{
-    width:100%;
-    min-height:44px;
-  }
-
-  .auth-two{
-    grid-template-columns:1fr;
-  }
-
-  .admin-filters input,
-  .admin-filters select,
-  .admin-filters .btn{
-    width:100%;
-    min-width:0;
-  }
-
-  .admin-card-actions .btn,
-  .admin-card-actions select,
-  .firm-job-actions .btn{
-    flex:1 1 130px;
-  }
-
-  .ats-card-top{
-    align-items:flex-start;
-  }
-
-  .ats-card-right{
-    align-items:flex-start;
-    width:100%;
-  }
-
-  .ats-card-footer{
-    display:grid;
-  }
-}
-
-@media(max-width:480px){
-  body{
-    font-size:13px;
-  }
-
-  .card,
-  .panel,
-  .form-card,
-  .live-hero,
-  .job-card,
-  .company-card,
-  .admin-card,
-  .firm-job-card{
-    border-radius:18px;
-    padding:14px;
-  }
-
-  .dash-grid,
-  .stat-mosaic{
-    grid-template-columns:1fr;
-  }
-
-  .btn{
-    white-space:normal;
-    min-height:42px;
-  }
-
-  .job-card{
-    grid-template-columns:1fr;
-  }
-
-  .job-card .logo{
-    width:48px;
-    height:48px;
-  }
 }
 
 /* ── INFO PAGES & LANDING ── */
@@ -3048,3 +2510,506 @@ textarea{
 .banner-req-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--ink);font-weight:900;font-size:12px;white-space:nowrap}
 .banner-req-table td{padding:9px 10px;border-bottom:1.5px solid var(--line);vertical-align:middle}
 .banner-req-table tr:hover td{background:var(--soft)}
+
+/* ==========================================================================
+   IMAPOSLA.ME BRANDBOOK REDESIGN OVERRIDES
+   Brand manual: navy/red identity, Poppins + Inter, clear professional UI.
+   This layer intentionally keeps existing React/Supabase logic untouched.
+   ========================================================================== */
+:root{
+  --brand-navy:#0D1B2A;
+  --brand-navy-2:#10243A;
+  --brand-red:#FF202B;
+  --brand-red-2:#E91924;
+  --brand-light:#F2F4F7;
+  --brand-gray:#6B7280;
+  --brand-blue:#0A5CF6;
+  --brand-green:#10B981;
+  --brand-orange:#F59E0B;
+  --brand-purple:#7C3AED;
+
+  --bg:#F2F4F7;
+  --ink:#0D1B2A;
+  --muted:#6B7280;
+  --soft:#F8FAFC;
+  --paper:#FFFFFF;
+  --line:#E1E6EF;
+  --line2:#C9D1DE;
+  --blue:#0A5CF6;
+  --lime:#FF202B;
+  --pink:#FF202B;
+  --orange:#F59E0B;
+  --green:#10B981;
+  --red:#FF202B;
+  --shadow:0 10px 30px rgba(13,27,42,.08);
+  --shadow2:0 18px 55px rgba(13,27,42,.12);
+  --r:14px;
+  --r2:22px;
+  --font:var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);
+  --display:var(--font-poppins, 'Poppins', 'Inter', system-ui, sans-serif);
+}
+
+[data-theme="dark"]{
+  --bg:#081522;
+  --paper:#0D1B2A;
+  --soft:#11243A;
+  --elev:#17314F;
+  --ink:#F8FAFC;
+  --muted:#B8C2D1;
+  --line:#203A57;
+  --line2:#2E4A68;
+  --blue:#4D8BFF;
+  --lime:#FF202B;
+  --pink:#FF5861;
+  --orange:#FBBF24;
+  --green:#34D399;
+  --red:#FF5861;
+  --shadow:0 16px 44px rgba(0,0,0,.32);
+  --shadow2:0 28px 70px rgba(0,0,0,.42);
+}
+
+*{box-sizing:border-box;min-width:0}
+html,body{max-width:100%;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(circle at 8% -10%, rgba(255,32,43,.08), transparent 30%),
+    linear-gradient(180deg,#fff 0%,var(--bg) 52%,#fff 100%);
+  color:var(--ink);
+  font-family:var(--font);
+  letter-spacing:0;
+}
+body:before{background:none!important}
+::selection{background:rgba(255,32,43,.18);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+img,svg,video,canvas{max-width:100%;height:auto}
+p,li,td,th,span,button,a,input,textarea,select{overflow-wrap:anywhere}
+h1,h2,h3,h4,.title,.section-title,.hero-title,.page-title,.dash-title{
+  font-family:var(--display);
+  letter-spacing:0!important;
+  color:var(--ink);
+}
+h1 strong,h2 strong,.brand-accent{color:var(--brand-red)}
+
+:focus-visible{
+  outline:3px solid rgba(255,32,43,.35);
+  outline-offset:3px;
+  border-radius:10px;
+}
+
+/* Brand, navigation and public shell */
+.topbar,.site-header,.header,.nav-shell{
+  background:rgba(255,255,255,.94)!important;
+  border-bottom:1px solid var(--line)!important;
+  box-shadow:0 10px 35px rgba(13,27,42,.06)!important;
+  backdrop-filter:blur(14px);
+}
+.brand,.logo,.brand-lockup{
+  font-family:var(--display)!important;
+  color:var(--brand-navy)!important;
+  letter-spacing:0!important;
+}
+.brand .dot,.logo .dot,.brand-lockup .dot{color:var(--brand-red)!important}
+.brand .mark,.brand-mark,.logo-mark{
+  background:var(--brand-navy)!important;
+  color:#fff!important;
+  border:0!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.brand .mark:after,.brand-mark:after,.logo-mark:after{
+  background:var(--brand-red)!important;
+  box-shadow:none!important;
+}
+.nav a,.topbar a,.menu a{
+  border-radius:999px;
+  color:var(--brand-navy);
+  font-weight:700;
+}
+.nav a:hover,.topbar a:hover,.menu a:hover,
+.nav a.active,.topbar a.active,.menu a.active{
+  background:rgba(255,32,43,.08)!important;
+  color:var(--brand-red)!important;
+}
+
+/* Buttons and interactive controls */
+.btn,button,.button,.cta,.submit-btn,.primary-btn,.secondary-btn,
+input[type="submit"],input[type="button"]{
+  min-height:42px;
+  border-radius:12px!important;
+  border:1px solid transparent!important;
+  box-shadow:none!important;
+  font-family:var(--font);
+  font-weight:800;
+  letter-spacing:0!important;
+  transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.btn:hover,button:hover,.button:hover,.cta:hover,.submit-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 26px rgba(13,27,42,.12)!important;
+}
+.btn:active,button:active,.button:active,.cta:active{transform:translateY(0)}
+.btn.blue,.btn.primary,.cta,.submit-btn,.primary-btn,
+button[type="submit"],input[type="submit"]{
+  background:var(--brand-red)!important;
+  color:#fff!important;
+  border-color:var(--brand-red)!important;
+}
+.btn.blue:hover,.btn.primary:hover,.cta:hover,.submit-btn:hover,.primary-btn:hover,
+button[type="submit"]:hover,input[type="submit"]:hover{
+  background:var(--brand-red-2)!important;
+  border-color:var(--brand-red-2)!important;
+}
+.btn.lime,.btn.dark,.secondary-btn{
+  background:var(--brand-navy)!important;
+  color:#fff!important;
+  border-color:var(--brand-navy)!important;
+}
+.btn.ghost,.btn.white,.tertiary-btn,.icon-btn{
+  background:#fff!important;
+  color:var(--brand-navy)!important;
+  border-color:var(--line2)!important;
+}
+.btn.ghost:hover,.btn.white:hover,.tertiary-btn:hover,.icon-btn:hover{
+  border-color:var(--brand-red)!important;
+  color:var(--brand-red)!important;
+}
+.btn[disabled],button[disabled],.btn.disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none!important;
+  box-shadow:none!important;
+}
+
+/* Cards, panels, tables and forms */
+.card,.panel,.box,.job-card,.company-card,.profile-card,.dash-card,
+.stat-card,.metric-card,.admin-card,.template-card,.banner-req-form,
+.candidate-card,.promote-modal,.modal,.toast,.empty-state,.auth-card,
+.cv-section,.cv-preview,.application-card,.saved-job-card{
+  background:var(--paper)!important;
+  border:1px solid var(--line)!important;
+  border-radius:18px!important;
+  box-shadow:var(--shadow)!important;
+}
+.card:hover,.job-card:hover,.company-card:hover,.candidate-card:hover,.template-card:hover{
+  border-color:rgba(255,32,43,.28)!important;
+  box-shadow:var(--shadow2)!important;
+}
+.card h2,.card h3,.panel h2,.panel h3,.job-card h2,.job-card h3,
+.admin-card h2,.admin-card h3{
+  line-height:1.15;
+}
+table,.table,.admin-table,.banner-req-table{
+  border-collapse:separate!important;
+  border-spacing:0;
+  width:100%;
+}
+th{
+  color:var(--brand-navy)!important;
+  background:var(--soft)!important;
+  border-bottom:1px solid var(--line)!important;
+  font-weight:800!important;
+}
+td{
+  border-bottom:1px solid var(--line)!important;
+  color:var(--ink);
+}
+tr:hover td{background:#FAFBFD!important}
+
+input,textarea,select,.input,.select{
+  width:100%;
+  min-height:44px;
+  background:#fff!important;
+  color:var(--ink)!important;
+  border:1px solid var(--line2)!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+  font-family:var(--font);
+}
+input:focus,textarea:focus,select:focus,.input:focus,.select:focus{
+  border-color:var(--brand-red)!important;
+  box-shadow:0 0 0 4px rgba(255,32,43,.12)!important;
+  outline:none;
+}
+label,.label{color:var(--brand-navy);font-weight:800;letter-spacing:0}
+.help,.hint,.muted,.subtle{color:var(--muted)!important}
+.error,.danger{color:var(--brand-red)!important}
+.success{color:var(--brand-green)!important}
+
+/* Status and chips */
+.badge,.pill,.chip,.tag,.skill-chip,.status-badge{
+  border:1px solid var(--line2)!important;
+  border-radius:999px!important;
+  box-shadow:none!important;
+  font-weight:800;
+  letter-spacing:0;
+  background:var(--soft)!important;
+  color:var(--brand-navy)!important;
+}
+.badge.blue,.pill.blue,.chip.blue{background:rgba(10,92,246,.09)!important;color:var(--brand-blue)!important;border-color:rgba(10,92,246,.22)!important}
+.badge.green,.pill.green,.chip.green,.badge.ok{background:rgba(16,185,129,.1)!important;color:#047857!important;border-color:rgba(16,185,129,.24)!important}
+.badge.orange,.pill.orange,.chip.orange,.badge.pending{background:rgba(245,158,11,.12)!important;color:#9A5B00!important;border-color:rgba(245,158,11,.28)!important}
+.badge.red,.pill.red,.chip.red,.badge.danger{background:rgba(255,32,43,.1)!important;color:var(--brand-red)!important;border-color:rgba(255,32,43,.25)!important}
+
+/* Homepage and public job discovery */
+.live-hero,.hero,.home-hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255,32,43,.22), transparent 24%),
+    linear-gradient(135deg,var(--brand-navy) 0%,#10243A 100%)!important;
+  color:#fff!important;
+  border:0!important;
+  border-radius:28px!important;
+  box-shadow:0 26px 70px rgba(13,27,42,.22)!important;
+}
+.live-hero:after,.hero:after,.home-hero:after{
+  content:"";
+  position:absolute;
+  inset:auto 34px 28px auto;
+  width:180px;
+  height:120px;
+  opacity:.45;
+  background-image:radial-gradient(rgba(255,32,43,.9) 1.7px,transparent 1.7px);
+  background-size:14px 14px;
+  pointer-events:none;
+}
+.live-hero h1,.hero h1,.home-hero h1,
+.live-hero .hero-title,.hero .hero-title,.home-hero .hero-title{
+  color:#fff!important;
+  font-weight:800;
+}
+.live-hero p,.hero p,.home-hero p{color:rgba(255,255,255,.82)!important}
+.hero-search,.search-card,.search-panel,.filters-card,.filters-shell{
+  background:#fff!important;
+  border:1px solid var(--line)!important;
+  border-radius:18px!important;
+  box-shadow:0 20px 45px rgba(13,27,42,.14)!important;
+}
+.job-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.job-card:before{
+  content:"";
+  position:absolute;
+  inset:18px auto 18px 0;
+  width:4px;
+  border-radius:999px;
+  background:var(--brand-red);
+}
+.job-card .meta,.job-meta,.candidate-meta,.company-meta{color:var(--muted)!important}
+.job-card__actions,.card-actions,.actions,.admin-card-actions,.template-card__actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+}
+
+/* Auth screens */
+.auth-page,.login-page,.register-page{
+  background:
+    radial-gradient(circle at top right, rgba(255,32,43,.1), transparent 28%),
+    linear-gradient(180deg,#fff 0%,var(--brand-light) 100%)!important;
+}
+.auth-card{
+  max-width:520px;
+  margin-inline:auto;
+  padding:clamp(20px,4vw,34px)!important;
+}
+.auth-card h1,.auth-card h2{font-size:clamp(26px,4vw,38px)}
+.role-tabs,.tabs,.segmented{
+  background:var(--soft)!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  padding:4px!important;
+}
+.role-tabs button.active,.tabs button.active,.segmented button.active{
+  background:#fff!important;
+  color:var(--brand-red)!important;
+  box-shadow:0 8px 20px rgba(13,27,42,.08)!important;
+}
+
+/* Candidate/company/admin dashboards */
+.app-shell,.dashboard-shell,.admin-shell{
+  background:var(--bg)!important;
+}
+.sidebar,.side-nav,.admin-sidebar{
+  background:var(--brand-navy)!important;
+  color:#fff!important;
+  border:0!important;
+  box-shadow:var(--shadow2)!important;
+}
+.sidebar a,.side-nav a,.admin-sidebar a{
+  color:rgba(255,255,255,.82)!important;
+  border-radius:12px!important;
+}
+.sidebar a:hover,.side-nav a:hover,.admin-sidebar a:hover,
+.sidebar a.active,.side-nav a.active,.admin-sidebar a.active{
+  background:rgba(255,255,255,.1)!important;
+  color:#fff!important;
+}
+.dash-grid,.stats-grid,.metrics-grid,.admin-grid{
+  display:grid;
+  gap:16px;
+}
+.metric-card,.stat-card{
+  border-left:4px solid var(--brand-red)!important;
+}
+.metric-card:nth-child(2n),.stat-card:nth-child(2n){border-left-color:var(--brand-blue)!important}
+.metric-card:nth-child(3n),.stat-card:nth-child(3n){border-left-color:var(--brand-green)!important}
+
+/* CV builder and profile forms */
+.cv-builder,.profile-layout,.company-layout{
+  gap:18px!important;
+}
+.cv-preview{
+  background:#fff!important;
+  color:var(--brand-navy)!important;
+  overflow:hidden;
+}
+.cv-preview *{overflow-wrap:anywhere}
+.cv-section{
+  padding:clamp(16px,3vw,24px)!important;
+}
+
+/* ATS / selection screen */
+.ats-board,.selection-board,.kanban-board{
+  display:grid;
+  gap:14px;
+  align-items:start;
+}
+.ats-column,.kanban-column,.stage-column{
+  background:var(--soft)!important;
+  border:1px solid var(--line)!important;
+  border-radius:18px!important;
+  padding:12px!important;
+  min-width:0;
+}
+.ats-card,.selection-card,.kanban-card{
+  background:#fff!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  box-shadow:0 8px 18px rgba(13,27,42,.06)!important;
+}
+.ats-detail,.candidate-detail,.selection-detail{
+  background:#fff!important;
+  border:1px solid var(--line)!important;
+  border-radius:18px!important;
+  box-shadow:var(--shadow)!important;
+  min-width:0;
+}
+.stage-dot,.timeline-dot{background:var(--brand-red)!important}
+
+/* Admin operational polish */
+.admin-header,.page-head,.section-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.admin-card,.admin-panel{
+  overflow:hidden;
+}
+.admin-table-wrap,.table-wrap,.responsive-table{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.admin-table-wrap table,.table-wrap table,.responsive-table table{min-width:720px}
+.admin-card-actions .btn,.actions .btn,.template-card__actions .btn{white-space:normal}
+.promote-modal-overlay{background:rgba(13,27,42,.58)!important;backdrop-filter:blur(8px)}
+.promote-modal{border:1px solid var(--line)!important}
+
+/* Email templates preview/static legacy files share the same visual tokens */
+.instagram-link:hover{border-color:var(--brand-red)!important;color:var(--brand-red)!important}
+.rating-tag.selected,.promo-type-btn.active{
+  background:rgba(255,32,43,.1)!important;
+  color:var(--brand-red)!important;
+  border-color:var(--brand-red)!important;
+  box-shadow:none!important;
+}
+
+/* Mobile and tablet hardening */
+@media (max-width:980px){
+  .live-hero,.hero,.home-hero{border-radius:22px!important}
+  .dashboard-layout,.profile-layout,.company-layout,.cv-builder,.ats-layout,.selection-layout{
+    grid-template-columns:1fr!important;
+  }
+  .sidebar,.side-nav,.admin-sidebar{
+    position:static!important;
+    width:100%!important;
+    border-radius:18px!important;
+  }
+  .candidate-search-bar{grid-template-columns:1fr 1fr!important}
+  .candidate-card{align-items:stretch}
+  .candidate-action{align-items:flex-start}
+}
+
+@media (max-width:720px){
+  body{font-size:15px}
+  .container,.wrap,.page,.main,.content{
+    padding-left:16px!important;
+    padding-right:16px!important;
+  }
+  .live-hero,.hero,.home-hero{
+    padding:24px!important;
+    min-height:auto!important;
+  }
+  .live-hero:after,.hero:after,.home-hero:after{opacity:.22;right:12px;bottom:12px}
+  h1,.hero-title{font-size:clamp(30px,10vw,44px)!important;line-height:1.05!important}
+  h2,.section-title,.page-title{font-size:clamp(22px,7vw,32px)!important}
+  .hero-search,.search-card,.search-panel,.filters-card,.filters-shell{
+    padding:14px!important;
+  }
+  .filters,.filter-grid,.search-grid,.form-grid,.admin-filters{
+    grid-template-columns:1fr!important;
+  }
+  .job-card,.company-card,.candidate-card,.card,.panel,.admin-card{
+    padding:16px!important;
+  }
+  .candidate-card{
+    display:grid!important;
+    grid-template-columns:auto 1fr!important;
+  }
+  .candidate-action{
+    grid-column:1 / -1;
+    flex-direction:row;
+    flex-wrap:wrap;
+  }
+  .promo-type-grid,.templates-grid,.stats-grid,.metrics-grid,.admin-grid{
+    grid-template-columns:1fr!important;
+  }
+  .credits-balance{font-size:32px}
+  .btn,button,.button,.cta,.submit-btn{width:auto;max-width:100%}
+}
+
+@media (max-width:480px){
+  .topbar,.site-header,.header{padding-inline:12px!important}
+  .brand,.logo,.brand-lockup{font-size:18px!important}
+  .nav,.menu,.topbar-actions,.header-actions{
+    gap:6px!important;
+  }
+  .btn,button,.button,.cta,.submit-btn,input,select,textarea{
+    font-size:14px!important;
+  }
+  .job-card__actions,.card-actions,.actions,.admin-card-actions,.template-card__actions,
+  .promote-modal__foot{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .job-card__actions .btn,.card-actions .btn,.actions .btn,
+  .admin-card-actions .btn,.template-card__actions .btn,.promote-modal__foot .btn,
+  .job-card__actions button,.card-actions button,.actions button{
+    width:100%;
+    justify-content:center;
+  }
+  .candidate-search-bar{grid-template-columns:1fr!important}
+  .banner-req-row,.tx-row,.promo-existing-row{
+    align-items:flex-start;
+  }
+  .modal,.promote-modal{border-radius:18px!important}
+}

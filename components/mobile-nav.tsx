@@ -102,6 +102,7 @@ const NAV_ICONS: Record<string, string> = {
   pretplata:  "◆",
   odjava:     "←",
   uplate:     "◇",
+  audit:      "◈",
   korisnici:  "◯",
   baneri:     "▣",
   paketi:     "⬡",

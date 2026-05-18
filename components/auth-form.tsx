@@ -56,10 +56,9 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
         else if (prof?.role === "admin") dest = "/admin";
         else dest = "/profil"; // candidate ili fallback
       } catch {
-        // Fallback na metadata ako DB nije dostupan
-        const metaRole = data.user.user_metadata?.role;
-        if (metaRole === "company") dest = "/firma";
-        else if (metaRole === "admin") dest = "/admin";
+        // DB unreachable — redirect to neutral /profil, client AuthContext will handle role
+        // Never use user_metadata for role decisions (it can be client-manipulated)
+        dest = "/";
       }
     }
 
