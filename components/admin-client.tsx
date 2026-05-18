@@ -184,11 +184,16 @@ export function AdminClient({ view }: { view: AdminView }) {
 
 
   async function changeUserRole(id: string, newRole: string) {
-    if (!window.confirm(`Promijeni rolu korisnika na "${newRole}"?`)) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user && user.id === id && newRole !== "admin") {
+      setMsg("Ne možeš sebi ukloniti admin rolu. Zatraži drugog admina.", "error");
+      return;
+    }
+    if (!window.confirm(`Promijeni rolu korisnika na "${newRole}"? Ovo utiče na pristup korisniku.`)) return;
     // Admin-only: direct profiles update is allowed by RLS "admin updates all profiles" policy
     const { error } = await supabase.from("profiles").update({ role: newRole }).eq("id", id);
     if (error) { logError("AdminClient.changeRole", error); setMsg(safeMessage(error, "save"), "error"); }
-    else { setMsg(`Rola promijenjena na "${newRole}".`, "success"); }
+    else { setMsg(`Rola promijenjena na "${newRole}". Korisnik treba ponovo da se prijavi.`, "success"); }
     await load();
   }
 
