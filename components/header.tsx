@@ -67,7 +67,7 @@ export function Header() {
               <Link className="btn red" href="/logout">Odjava</Link>
             </>
           )}
-          <button className="btn ghost sm hamb" type="button" onClick={() => setMobileOpen(o => !o)} aria-label="Meni">Meni</button>
+          <button className="icon-btn hamb" type="button" onClick={() => setMobileOpen(o => !o)} aria-label="Meni">☰</button>
         </div>
       </div>
 
