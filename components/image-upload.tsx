@@ -59,7 +59,7 @@ export function ImageUpload({
     setError("");
 
     if (!ALLOWED.includes(file.type)) {
-      setError("Dozvoljeni formati: JPG, PNG, WebP, GIF. Max " + (bucket === "banners" ? "5" : "2") + " MB.");
+      setError("Dozvoljeni formati: JPG, PNG, WebP, GIF, SVG.");
       return;
     }
     if (file.size > maxBytes) {
@@ -163,7 +163,7 @@ export function ImageUpload({
       </div>
 
       <p className="hint" style={{ margin: 0 }}>
-        {bucket === "banners" ? "JPG, PNG, WebP, GIF. Max 5 MB." : "JPG, PNG, WebP. Max 2 MB."}
+        {bucket === "banners" ? "JPG, PNG, WebP, SVG. Max 5 MB." : "JPG, PNG, WebP. Max 2 MB."}
       </p>
       {error && <p className="notice error" role="alert" style={{ marginTop: 6 }}>{error}</p>}
     </div>
