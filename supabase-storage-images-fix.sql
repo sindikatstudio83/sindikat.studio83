@@ -23,7 +23,7 @@ on conflict (id) do update set
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'company-logos', 'company-logos', true, 2097152,
-  array['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']
+  array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
 on conflict (id) do update set
   public = excluded.public,
@@ -34,7 +34,7 @@ on conflict (id) do update set
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'banners', 'banners', true, 5242880,
-  array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
+  array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
 on conflict (id) do update set
   public = excluded.public,

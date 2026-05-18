@@ -8,37 +8,25 @@ export type NavItem = {
 
 export const desktopNavItems: Record<UserRole, NavItem[]> = {
   guest: [
-    { icon: "oglasi",      label: "Oglasi",       href: "/oglasi" },
-    { icon: "gradovi",     label: "Gradovi",       href: "/gradovi" },
-    { icon: "kategorije",  label: "Kategorije",    href: "/kategorije" },
-    { icon: "firme",       label: "Firme",         href: "/firme" },
-    { icon: "za-firme",    label: "Za firme",      href: "/za-firme" }
+    { icon: "oglasi",      label: "Tražim posao",  href: "/oglasi" },
+    { icon: "za-firme",    label: "Nudim posao",   href: "/za-firme" },
+    { icon: "firme",       label: "Poslodavci",    href: "/firme" }
   ],
   candidate: [
     { icon: "oglasi",      label: "Oglasi",        href: "/oglasi" },
-    { icon: "profil",      label: "Moj profil",    href: "/profil" },
-    { icon: "biografija",  label: "Biografija",    href: "/profil/biografija" },
-    { icon: "prijave",     label: "Moje prijave",  href: "/profil/prijave" }
+    { icon: "profil",      label: "Profil",        href: "/profil" },
+    { icon: "prijave",     label: "Prijave",       href: "/profil/prijave" }
   ],
   company: [
-    { icon: "pregled",     label: "Pregled",       href: "/firma" },
-    { icon: "oglasi",      label: "Moji oglasi",   href: "/firma/oglasi" },
+    { icon: "pregled",     label: "Dashboard",     href: "/firma" },
     { icon: "novi",        label: "Novi oglas",    href: "/firma/novi-oglas" },
-    { icon: "selekcija",   label: "Selekcija",     href: "/firma/selekcija" },
-    { icon: "kandidati",   label: "Kandidati",     href: "/firma/kandidati" },
-    { icon: "baneri",      label: "Baneri",        href: "/firma/baneri" },
-    { icon: "pretplata",   label: "Pretplata",     href: "/firma/pretplata" }
+    { icon: "selekcija",   label: "Selekcija",     href: "/firma/selekcija" }
   ],
   admin: [
-    { icon: "pregled",     label: "Pregled",       href: "/admin" },
-    { icon: "uplate",      label: "Uplate",        href: "/admin/uplate" },
+    { icon: "pregled",     label: "Admin",         href: "/admin" },
     { icon: "oglasi",      label: "Oglasi",        href: "/admin/oglasi" },
     { icon: "firme",       label: "Firme",         href: "/admin/firme" },
-    { icon: "korisnici",   label: "Korisnici",     href: "/admin/korisnici" },
-    { icon: "baneri",      label: "Baneri",        href: "/admin/baneri" },
-    { icon: "banner-req",  label: "Banner zahtjevi", href: "/admin/banner-zahtjevi" },
-    { icon: "paketi",      label: "Paketi",        href: "/admin/paketi" },
-    { icon: "templates",   label: "Templates",     href: "/admin/templates" }
+    { icon: "uplate",      label: "Uplate",        href: "/admin/uplate" }
   ]
 };
 
@@ -69,6 +57,7 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "uplate",      label: "Uplate",    href: "/admin/uplate" },
     { icon: "oglasi",      label: "Oglasi",    href: "/admin/oglasi" },
     { icon: "firme",       label: "Firme",     href: "/admin/firme" },
-    { icon: "paketi",      label: "Paketi",    href: "/admin/paketi" }
+    { icon: "paketi",      label: "Paketi",    href: "/admin/paketi" },
+    { icon: "audit",       label: "Audit",     href: "/admin/audit-log" }
   ]
 };

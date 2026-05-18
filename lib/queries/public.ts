@@ -4,10 +4,6 @@ import type { Company, Job, Plan, HomepageData, JobWithPromotion, CompanyWithExt
 const jobSelect = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,companies(id,name,slug,logo_path),categories(id,name,slug),cities(id,name,slug)";
 const jobSelectQuick = "id,title,slug,description,contract_type,salary_text,deadline,status,featured,company_id,quick_job,urgent,daily_rate,companies(id,name,slug,logo_path),categories(id,name,slug),cities(id,name,slug)";
 
-function escapeIlike(value: string) {
-  return value.replace(/[%_,]/g, " ").trim();
-}
-
 export type JobFilters = {
   q?: string;
   city?: string;
@@ -49,13 +45,8 @@ export async function getPublicJobs(filters?: JobFilters): Promise<Job[]> {
   const { data, error } = await query;
   if (error) {
     if (error.code === "42703" || error.message?.includes("fts")) {
-      let fallbackQuery = db.from("jobs").select(jobSelect).eq("status", "active");
-      if (filters?.q) {
-        const likeTerm = escapeIlike(filters.q);
-        if (likeTerm) fallbackQuery = fallbackQuery.or(`title.ilike.%${likeTerm}%,description.ilike.%${likeTerm}%`);
-      }
-      const { data: fallback } = await fallbackQuery
-        .order("featured", { ascending: false }).order("created_at", { ascending: false }).limit(filters?.limit || 100);
+      const { data: fallback } = await db.from("jobs").select(jobSelect).eq("status", "active")
+        .order("featured", { ascending: false }).order("created_at", { ascending: false }).limit(100);
       return (fallback || []) as any as Job[];
     }
     console.error("[getPublicJobs]", error.message);
