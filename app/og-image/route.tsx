@@ -45,7 +45,7 @@ export async function GET(request: Request) {
             style={{
               width: "68px",
               height: "68px",
-              background: "#c8ff3d",
+              background: "#FF202B",
               borderRadius: "16px",
               display: "flex",
               alignItems: "center",
@@ -87,7 +87,7 @@ export async function GET(request: Request) {
         <div
           style={{
             fontSize: "18px",
-            color: "#c8ff3d",
+            color: "#FF202B",
             fontWeight: 700,
           }}
         >

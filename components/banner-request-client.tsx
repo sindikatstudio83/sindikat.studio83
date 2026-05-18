@@ -11,7 +11,6 @@ import { initials } from "@/lib/format";
 import { placementLabels } from "@/lib/banner-constants";
 import { ImageUpload } from "@/components/image-upload";
 import { supabaseUrl } from "@/lib/supabase/config";
-import { safeExternalUrl } from "@/lib/url";
 import type { BannerRequest, BannerPlacement } from "@/types/domain";
 
 type Notice = { text: string; type: "info" | "error" | "success" };
@@ -102,17 +101,11 @@ export function BannerRequestClient() {
   async function handleSubmit() {
     if (!form.title.trim()) { setNotice({ type: "error", text: "Naziv kampanje je obavezan." }); return; }
     if (!companyId) return;
-    const targetUrl = form.target_url.trim() ? safeExternalUrl(form.target_url) : null;
-    if (form.target_url.trim() && !targetUrl) {
-      setNotice({ type: "error", text: "Link mora biti validan http ili https URL." });
-      return;
-    }
 
     setSaving(true);
     setNotice(null);
     const { error } = await supabase.from("banner_requests").insert({
       ...form,
-      target_url: targetUrl || "",
       company_id: companyId,
       image_path: imagePath,
       status: "pending",

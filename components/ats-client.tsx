@@ -35,11 +35,11 @@ type Stage = typeof stageOrder[number];
 
 // ── Stage config ─────────────────────────────────────────────
 const STAGE_CONFIG: Record<Stage, { color: string; bg: string; emoji: string }> = {
-  applied:   { color: "#2148ff", bg: "rgba(33,72,255,.09)",   emoji: "📥" },
+  applied:   { color: "#0A5CF6", bg: "rgba(10,92,246,.09)",   emoji: "📥" },
   review:    { color: "#6d665f", bg: "rgba(109,102,95,.09)",  emoji: "🔍" },
   interview: { color: "#ff8a2a", bg: "rgba(255,138,42,.09)", emoji: "💬" },
   shortlist: { color: "#9333ea", bg: "rgba(147,51,234,.09)", emoji: "⭐" },
-  offer:     { color: "#ff4fa3", bg: "rgba(255,79,163,.09)", emoji: "📋" },
+  offer:     { color: "#FF202B", bg: "rgba(255,32,43,.09)", emoji: "📋" },
   hired:     { color: "#13b76d", bg: "rgba(19,183,109,.09)", emoji: "✅" },
   rejected:  { color: "#e5484d", bg: "rgba(229,72,77,.09)",  emoji: "✗"  },
 };

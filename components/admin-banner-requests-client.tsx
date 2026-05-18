@@ -79,6 +79,58 @@ export function AdminBannerRequestsClient() {
 
   async function updateStatus(id: number, status: BannerRequestStatus, note?: string) {
     setActing(id);
+
+    // When activating a banner request, also create a real banner in the banners table
+    if (status === "active") {
+      const req = rows.find(r => r.id === id);
+      if (req) {
+        // Create the actual banner
+        const { data: newBanner, error: bannerErr } = await supabase
+          .from("banners")
+          .insert({
+            company_id: req.companies?.id ?? null,
+            title: req.title,
+            image_path: req.image_path,
+            target_url: req.target_url,
+            placement: req.requested_placement || "homepage_top",
+            device: req.requested_device || "all",
+            target_audience: "all",
+            approved: true,
+            priority: 5,
+            start_date: req.requested_start_date ? new Date(req.requested_start_date).toISOString() : null,
+            end_date: req.requested_end_date ? new Date(req.requested_end_date).toISOString() : null,
+          })
+          .select("id")
+          .single();
+
+        if (bannerErr) {
+          logError("BannerReq.createBanner", bannerErr);
+          setNotice({ type: "error", text: "Greška pri kreiranju bannera: " + safeMessage(bannerErr, "save") });
+          setActing(null);
+          return;
+        }
+
+        // Link the created banner back to the request
+        await supabase
+          .from("banner_requests")
+          .update({
+            status,
+            admin_note: note || null,
+            reviewed_at: new Date().toISOString(),
+            approved_banner_id: newBanner?.id ?? null,
+          })
+          .eq("id", id);
+
+        setActing(null);
+        setNotice({ type: "success", text: `Banner je aktiviran i kreiran u sistemu (ID: ${newBanner?.id}).` });
+        setSelected(null);
+        setAdminNote("");
+        load();
+        return;
+      }
+    }
+
+    // For other status changes (approve/reject) — just update status
     const { error } = await supabase
       .from("banner_requests")
       .update({ status, admin_note: note || null, reviewed_at: new Date().toISOString() })

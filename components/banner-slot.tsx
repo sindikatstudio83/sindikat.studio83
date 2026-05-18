@@ -3,7 +3,6 @@ import { supabaseUrl } from "@/lib/supabase/config";
 import { BannerClickTracker } from "@/components/banner-click-tracker";
 import type { BannerPlacement, BannerAudience } from "@/types/domain";
 import { getMockBanner, type MockBanner } from "@/lib/mock-banners";
-import { safeExternalUrl } from "@/lib/url";
 
 /**
  * Server komponenta — fetch + render aktivnog banera za datu lokaciju.
@@ -55,13 +54,11 @@ export async function BannerSlot({
       />
     );
 
-    const targetUrl = safeExternalUrl(banner.target_url);
-
     return (
       <aside className={wrapperClass} aria-label="Reklamni banner">
         <span className="ad-label">Sponzorisano</span>
-        {targetUrl ? (
-          <BannerClickTracker bannerId={banner.id} href={targetUrl}>
+        {banner.target_url ? (
+          <BannerClickTracker bannerId={banner.id} href={banner.target_url}>
             {inner}
           </BannerClickTracker>
         ) : (

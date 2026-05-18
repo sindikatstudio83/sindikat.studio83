@@ -136,15 +136,7 @@ export function ApplyForm({ jobId }: { jobId: number }) {
     </div>
   );
 
-  if (state === "wrong-role") return (
-    <div className="empty">
-      <strong>Prijave su dostupne samo kandidatima</strong>
-      <p>Trenutno si prijavljen/a kao firma ili administrator. Za slanje prijave koristi kandidat nalog.</p>
-      <div className="actions">
-        <Link className="btn ghost sm" href="/oglasi">Nazad na oglase</Link>
-      </div>
-    </div>
-  );
+  if (state === "wrong-role") return null;
 
   if (state === "duplicate") return (
     <p className="notice success">

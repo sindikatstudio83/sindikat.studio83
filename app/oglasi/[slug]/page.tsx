@@ -7,6 +7,7 @@ import { BannerSlot } from "@/components/banner-slot";
 import { formatDate, initials, jobUrl, parseIdFromSlug } from "@/lib/format";
 import { getJobById, getPublicJobs } from "@/lib/queries/public";
 import { JobCard } from "@/components/job-card";
+import type { Job } from "@/types/domain";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -44,6 +45,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+function buildJobPostingSchema(job: Job) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://imaposla.me";
+  const url = `${siteUrl}${jobUrl(job)}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description,
+    url,
+    validThrough: job.deadline || undefined,
+    employmentType: job.contract_type || undefined,
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.companies?.name || "imaposla.me",
+      sameAs: job.companies?.slug ? `${siteUrl}/firme/${job.companies.slug}` : siteUrl,
+    },
+    jobLocation: job.cities?.name
+      ? {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: job.cities.name,
+            addressCountry: "ME",
+          },
+        }
+      : undefined,
+    directApply: true,
+  };
+}
+
 export default async function JobDetailPage({ params }: Props) {
   const { slug } = await params;
   const id = parseIdFromSlug(slug);
@@ -53,32 +85,13 @@ export default async function JobDetailPage({ params }: Props) {
 
   const co = job.companies;
   const similar = allJobs.filter(j => j.id !== job.id && (j.categories?.name === job.categories?.name || j.cities?.name === job.cities?.name)).slice(0, 2);
-  const jobPostingJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    title: job.title,
-    description: job.description,
-    validThrough: job.deadline || undefined,
-    employmentType: job.contract_type || undefined,
-    hiringOrganization: {
-      "@type": "Organization",
-      name: co?.name || "Poslodavac",
-    },
-    jobLocation: job.cities?.name ? {
-      "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: job.cities.name,
-        addressCountry: "ME",
-      },
-    } : undefined,
-  };
+  const jobPostingSchema = buildJobPostingSchema(job);
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema).replace(/</g, "\\u003c") }}
       />
       <div style={{ padding: "16px 0 0" }}>
         <Link className="btn ghost sm" href="/oglasi">← Nazad na oglase</Link>
@@ -112,7 +125,6 @@ export default async function JobDetailPage({ params }: Props) {
         </article>
 
         <aside className="sticky">
-          <BannerSlot placement="job_detail_top" />
           <div className="card" style={{ marginBottom: 10 }}>
             <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 14 }}>
               <div className="logo">{initials(co?.name)}</div>
@@ -131,7 +143,8 @@ export default async function JobDetailPage({ params }: Props) {
           <div className="card">
             <h2 style={{ fontSize: 22, marginBottom: 14 }}>Prijavi se</h2>
             <JobViewTracker jobId={job.id} />
-            <ApplyForm jobId={job.id} />
+      <BannerSlot placement="job_detail_top" />
+      <ApplyForm jobId={job.id} />
           </div>
         </aside>
       <BannerSlot placement="job_detail_bottom" />

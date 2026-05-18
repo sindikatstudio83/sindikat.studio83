@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
-import { safeExternalUrl } from "@/lib/url";
 
 /**
  * Klijent wrapper koji intercepta klik na banner i registruje ga u DB
@@ -15,10 +14,7 @@ export function BannerClickTracker({
   href: string;
   children: ReactNode;
 }) {
-  const safeHref = safeExternalUrl(href);
-
   function onClick() {
-    if (!safeHref) return;
     // Best effort — ne čekamo response, fire and forget
     try {
       const supabase = createBrowserSupabase();
@@ -30,12 +26,11 @@ export function BannerClickTracker({
 
   return (
     <a
-      href={safeHref || "#"}
+      href={href}
       target="_blank"
       rel="noopener noreferrer sponsored"
       onClick={onClick}
       className="ad-banner-link"
-      aria-disabled={!safeHref}
     >
       {children}
     </a>

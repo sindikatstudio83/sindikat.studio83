@@ -184,11 +184,17 @@ export function AdminClient({ view }: { view: AdminView }) {
 
 
   async function changeUserRole(id: string, newRole: string) {
-    if (!window.confirm(`Promijeni rolu korisnika na "${newRole}"?`)) return;
-    // Admin-only: direct profiles update is allowed by RLS "admin updates all profiles" policy
+    // Self-protection: prevent admin from removing their own admin role
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user && user.id === id && newRole !== "admin") {
+      setMsg("Ne možeš sebi ukloniti admin rolu. Zatraži drugog admina.", "error");
+      return;
+    }
+    if (!window.confirm(`Promijeni rolu ovog korisnika na "${newRole}"? Ovo utiče na pristup korisniku.`)) return;
+    // RLS "admin updates all profiles" policy ensures only admins can do this
     const { error } = await supabase.from("profiles").update({ role: newRole }).eq("id", id);
     if (error) { logError("AdminClient.changeRole", error); setMsg(safeMessage(error, "save"), "error"); }
-    else { setMsg(`Rola promijenjena na "${newRole}".`, "success"); }
+    else { setMsg(`Rola promijenjena na "${newRole}". Korisnik mora da se ponovo prijavi.`, "success"); }
     await load();
   }
 
@@ -289,6 +295,7 @@ export function AdminClient({ view }: { view: AdminView }) {
               <Link className="quick-link" href="/admin/banner-zahtjevi"><strong>Banner zahtjevi</strong><span>Zahtjevi firmi</span></Link>
               <Link className="quick-link" href="/admin/paketi"><strong>Paketi pretplate</strong><span>Kreiraj i uredi pakete</span></Link>
               <Link className="quick-link" href="/admin/templates"><strong>Canva Templates</strong><span>Linkovi za kreative</span></Link>
+              <Link className="quick-link" href="/admin/audit-log"><strong>Audit log</strong><span>Historija admin akcija</span></Link>
             </div>
             <div className="section-head compact-head"><div><h2>Uplate koje čekaju potvrdu</h2></div></div>
           </>
