@@ -17,7 +17,7 @@ export type MockBanner = {
 const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   homepage_hero: {
     imageUrl: "https://picsum.photos/seed/imaposla-hero/1200/280",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_hero",
+    targetUrl: "/za-firme",
     label: "1200×280",
     width: 1200,
     height: 280,
@@ -25,7 +25,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   homepage_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-home-top/970/250",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_home_top",
+    targetUrl: "/za-firme",
     label: "970×250",
     width: 970,
     height: 250,
@@ -33,7 +33,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   homepage_middle: {
     imageUrl: "https://picsum.photos/seed/imaposla-home-mid/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_home_mid",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -41,7 +41,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   homepage_bottom: {
     imageUrl: "https://picsum.photos/seed/imaposla-home-bot/970/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_home_bot",
+    targetUrl: "/za-firme",
     label: "970×90",
     width: 970,
     height: 90,
@@ -49,7 +49,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   jobs_list_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-jobs-top/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_jobs_top",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -57,7 +57,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   jobs_list_middle: {
     imageUrl: "https://picsum.photos/seed/imaposla-jobs-mid/300/250",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_jobs_mid",
+    targetUrl: "/za-firme",
     label: "300×250",
     width: 300,
     height: 250,
@@ -65,7 +65,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   jobs_list_bottom: {
     imageUrl: "https://picsum.photos/seed/imaposla-jobs-bot/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_jobs_bot",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -73,7 +73,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   job_detail_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-job-dtop/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_job_detail_top",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -81,7 +81,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   job_detail_bottom: {
     imageUrl: "https://picsum.photos/seed/imaposla-job-dbot/300/250",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_job_detail_bot",
+    targetUrl: "/za-firme",
     label: "300×250",
     width: 300,
     height: 250,
@@ -89,7 +89,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   company_pages_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-co-top/970/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_company_top",
+    targetUrl: "/za-firme",
     label: "970×90",
     width: 970,
     height: 90,
@@ -97,7 +97,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   company_pages_bottom: {
     imageUrl: "https://picsum.photos/seed/imaposla-co-bot/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_company_bot",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -105,7 +105,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   city_page_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-city-top/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_city_top",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -113,7 +113,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   category_page_top: {
     imageUrl: "https://picsum.photos/seed/imaposla-cat-top/728/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_category_top",
+    targetUrl: "/za-firme",
     label: "728×90",
     width: 728,
     height: 90,
@@ -121,7 +121,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   footer_banner: {
     imageUrl: "https://picsum.photos/seed/imaposla-footer/970/90",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_footer",
+    targetUrl: "/za-firme",
     label: "970×90",
     width: 970,
     height: 90,
@@ -129,7 +129,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   jobs_left_tower: {
     imageUrl: "https://picsum.photos/seed/imaposla-tower-left/160/600",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_tower_left",
+    targetUrl: "/za-firme",
     label: "160×600",
     width: 160,
     height: 600,
@@ -137,7 +137,7 @@ const MOCK_BANNERS: Record<BannerPlacement, MockBanner> = {
   },
   jobs_right_tower: {
     imageUrl: "https://picsum.photos/seed/imaposla-tower-right/160/600",
-    targetUrl: "https://example.com/?utm_source=imaposla&utm_medium=banner&utm_campaign=mock_tower_right",
+    targetUrl: "/za-firme",
     label: "160×600",
     width: 160,
     height: 600,

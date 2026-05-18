@@ -16,16 +16,24 @@ export type JobFilters = {
 export async function getPublicJobs(filters?: JobFilters): Promise<Job[]> {
   const db = createPublicSupabase();
   let query = db.from("jobs").select(jobSelect).eq("status", "active");
+  let cityId: number | null = null;
+  let categoryId: number | null = null;
 
   if (filters?.city) {
     const { data: cityData } = await db.from("cities").select("id").ilike("name", filters.city).maybeSingle();
-    if (cityData?.id) query = query.eq("city_id", cityData.id);
+    if (cityData?.id) {
+      cityId = cityData.id;
+      query = query.eq("city_id", cityData.id);
+    }
     else return [];
   }
 
   if (filters?.category) {
     const { data: catData } = await db.from("categories").select("id").ilike("name", filters.category).maybeSingle();
-    if (catData?.id) query = query.eq("category_id", catData.id);
+    if (catData?.id) {
+      categoryId = catData.id;
+      query = query.eq("category_id", catData.id);
+    }
     else return [];
   }
 
@@ -50,6 +58,61 @@ export async function getPublicJobs(filters?: JobFilters): Promise<Job[]> {
       return (fallback || []) as any as Job[];
     }
     console.error("[getPublicJobs]", error.message);
+  }
+  const jobs = (data || []) as any as Job[];
+  if (!filters?.q) return jobs;
+
+  const companyJobs = await getJobsByCompanySearch(filters.q, {
+    cityId,
+    categoryId,
+    featured: filters.featured,
+    quick: filters.quick,
+    limit: filters.limit || 100,
+  });
+
+  if (!companyJobs.length) return jobs;
+  const byId = new Map<number, Job>();
+  for (const job of [...jobs, ...companyJobs]) byId.set(job.id, job);
+  return Array.from(byId.values()).sort((a, b) => Number(b.featured) - Number(a.featured));
+}
+
+async function getJobsByCompanySearch(
+  value: string,
+  filters: { cityId: number | null; categoryId: number | null; featured?: boolean; quick?: boolean; limit: number }
+): Promise<Job[]> {
+  const db = createPublicSupabase();
+  const searchTerm = value.replace(/['"\\/]/g, " ").trim();
+  if (searchTerm.length < 2) return [];
+
+  const { data: companies, error: companyError } = await db
+    .from("companies")
+    .select("id")
+    .eq("approved", true)
+    .or(`name.ilike.%${searchTerm}%,slug.ilike.%${searchTerm}%`)
+    .limit(25);
+
+  if (companyError || !companies?.length) return [];
+  const companyIds = companies.map((company) => company.id);
+
+  let query = db
+    .from("jobs")
+    .select(jobSelect)
+    .eq("status", "active")
+    .in("company_id", companyIds);
+
+  if (filters.cityId) query = query.eq("city_id", filters.cityId);
+  if (filters.categoryId) query = query.eq("category_id", filters.categoryId);
+  if (filters.featured === true) query = query.eq("featured", true);
+  if (filters.quick === true) query = query.eq("quick_job", true);
+
+  const { data, error } = await query
+    .order("featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(filters.limit);
+
+  if (error) {
+    console.error("[getJobsByCompanySearch]", error.message);
+    return [];
   }
   return (data || []) as any as Job[];
 }
