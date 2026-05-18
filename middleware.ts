@@ -97,8 +97,12 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(new URL(dest, request.url));
         }
       } catch {
-        // DB unreachable — fail open (client guards + RLS are secondary protection)
-        // Don't break the app on transient DB errors
+        // DB unreachable — fail CLOSED: deny access to protected routes on error
+        // Better to ask for re-login than to accidentally expose protected content
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("next", pathname);
+        loginUrl.searchParams.set("error", "session");
+        return NextResponse.redirect(loginUrl);
       }
 
       break; // matched prefix, no need to continue loop

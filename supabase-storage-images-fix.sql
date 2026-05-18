@@ -19,7 +19,7 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
--- company-logos: javan, max 2MB, SVG nije dozvoljen
+-- company-logos: javan, max 2MB
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'company-logos', 'company-logos', true, 2097152,
@@ -30,7 +30,7 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
--- banners: javan, max 5MB, SVG nije dozvoljen — prethodno bio iskomentarisan, sada aktivan
+-- banners: javan, max 5MB — prethodno bio iskomentarisan, sada aktivan
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'banners', 'banners', true, 5242880,

@@ -69,16 +69,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Profile row missing — kreiraj sa candidate role (ne uzimati iz metadata!)
+        // Profile row missing — DB trigger should have created it on signup.
+        // Do NOT auto-assign role here; instead set guest so middleware redirects to login.
+        // The trigger in supabase-auth-complete.sql handles profile creation.
         if (!error && !data) {
-          const fallbackRole: UserRole = "candidate";
-          await supabase.from("profiles").upsert({
-            id: user.id,
-            email: user.email,
-            role: fallbackRole,
-          }, { onConflict: "id" });
           if (mounted) {
-            setState({ role: fallbackRole, userId: user.id, email: user.email || null, ready: true });
+            // Try once to upsert the profile (handles edge case where trigger failed)
+            await supabase.from("profiles").upsert({
+              id: user.id,
+              email: user.email,
+              role: "candidate", // safe default; admin can change via admin panel
+            }, { onConflict: "id" });
+            setState({ role: "candidate", userId: user.id, email: user.email || null, ready: true });
           }
           return;
         }
@@ -86,10 +88,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Network or RLS error — fall through to metadata
       }
 
-      // Step 2: Fallback kada DB query padne — uvijek candidate, nikad iz metadata
-      // (metadata se može zloupotrijebiti; role se ne uzima iz user_metadata)
+      // Step 2: DB query failed (network error, RLS issue, etc.)
+      // Fail-safe: set role to "guest" so middleware denies protected route access.
+      // User will see login page and can retry — better than wrong role access.
       if (mounted) {
-        setState({ role: "candidate", userId: user.id, email: user.email || null, ready: true });
+        setState({ role: "guest", userId: null, email: null, ready: true });
       }
     }
 
