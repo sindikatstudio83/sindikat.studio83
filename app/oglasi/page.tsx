@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
 import { JobCard } from "@/components/job-card";
-import { JobCardCompact } from "@/components/job-card-compact";
 import { BannerSlot } from "@/components/banner-slot";
-import { TowerBanner } from "@/components/tower-banner";
 import { EmptyState, SectionHead, Button } from "@/components/ui";
 import { getLookups, getPublicJobs } from "@/lib/queries/public";
 import { MobileFilterDrawer } from "@/components/mobile-filter-drawer";
-import type { Job, JobWithPromotion } from "@/types/domain";
+import type { Job } from "@/types/domain";
 
 export const metadata: Metadata = {
   title: "Oglasi za posao",
@@ -41,20 +39,10 @@ export default async function JobsPage({
   const regularJobs = !isFiltering ? jobs.filter((j: Job) => !j.featured) : jobs;
 
   const isQuickFilter = params.quick === "true" || params.quick === "1";
-  const BANNER_EVERY = 8;
+  const BANNER_EVERY = 10;
 
   return (
     <>
-      {/* Tower baneri — samo desktop */}
-      <div className="tower-banner-fixed tower-banner-fixed-left">
-        <TowerBanner side="left" />
-      </div>
-      <div className="tower-banner-fixed tower-banner-fixed-right">
-        <TowerBanner side="right" />
-      </div>
-
-      <BannerSlot placement="jobs_list_top" />
-
       <SectionHead
         label={isQuickFilter ? "Brzi poslovi" : "Oglasi"}
         title={isQuickFilter ? "Brzi i kratkoročni poslovi" : "Oglasi za posao"}
@@ -105,35 +93,35 @@ export default async function JobsPage({
           text="Promijeni filtere ili se vrati kasnije."
           action={<Button href="/oglasi" tone="blue">Resetuj filtere</Button>}
         />
-      ) : (
+          ) : (
         <>
           {/* Featured */}
           {featuredJobs.length > 0 && (
-            <div className="featured-section">
+            <section className="featured-section jobs-section-clean">
               <div className="featured-section-head">
                 <h2>Istaknuti oglasi</h2>
-                <span className="badge-featured">★ ISTAKNUTO</span>
+                <span className="badge-featured">Premium</span>
               </div>
-              <div className="job-list two-col">
+              <div className="job-list jobs-list-clean">
                 {featuredJobs.map((job: Job) => (
-                  <JobCardCompact key={job.id} job={job as JobWithPromotion} />
+                  <JobCard key={job.id} job={job} />
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           {featuredJobs.length > 0 && regularJobs.length > 0 && (
-            <div style={{ borderTop: "2px solid var(--line)", margin: "16px 0 14px", paddingTop: 12 }}>
-              <span className="kicker" style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".06em" }}>Svi oglasi</span>
+            <div className="jobs-divider">
+              <span>Svi oglasi</span>
             </div>
           )}
 
-          {/* Regular jobs — 2 col kompaktne kartice */}
+          {/* Regular jobs */}
           {regularJobs.length > 0 && (
-            <div className="job-list two-col">
+            <div className="job-list jobs-list-clean">
               {regularJobs.map((job: Job, idx: number) => (
                 <React.Fragment key={job.id}>
-                  <JobCardCompact job={job as JobWithPromotion} />
+                  <JobCard job={job} />
                   {(idx + 1) % BANNER_EVERY === 0 && idx < regularJobs.length - 1 && (
                     <div style={{ gridColumn: "1 / -1" }}>
                       <BannerSlot placement="jobs_list_middle" />
