@@ -18,7 +18,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: { default: "imaposla.me — Poslovi u Crnoj Gori", template: "%s | imaposla.me" },
   description: "Oglasi za posao, kandidati i poslodavci u Crnoj Gori. Pronađi posao ili objavi oglas.",
-  metadataBase: new URL("https://imaposla.me"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://imaposla.me"),
   openGraph: {
     siteName: "imaposla.me",
     locale: "sr_ME",
