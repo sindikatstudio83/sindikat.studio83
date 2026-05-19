@@ -3,22 +3,29 @@ import Link from "next/link";
 import React from "react";
 import { Avatar } from "@/components/avatar";
 import { BannerSlot } from "@/components/banner-slot";
-import { TowerBanner } from "@/components/tower-banner";
-import { Button, EmptyState } from "@/components/ui";
-import { MobileFilterDrawer } from "@/components/mobile-filter-drawer";
 import { getLookups, getPublicJobs } from "@/lib/queries/public";
-import { jobUrl } from "@/lib/format";
-import type { Job, JobWithPromotion } from "@/types/domain";
+import { jobUrl, formatDate } from "@/lib/format";
+import type { Job, LookupItem } from "@/types/domain";
 
 export const metadata: Metadata = {
   title: "Oglasi za posao — imaposla.me",
-  description: "Pretraži oglase za posao u Crnoj Gori. Filtriraj po gradu i kategoriji.",
+  description: "Pretraži oglase za posao u Crnoj Gori. Filtriraj po gradu, kategoriji i poslodavcu.",
 };
+
+// Days until deadline
+function daysLeft(deadline: string | null): string | null {
+  if (!deadline) return null;
+  const diff = Math.ceil((new Date(deadline).getTime() - Date.now()) / 86400000);
+  if (diff < 0) return "Istekao";
+  if (diff === 0) return "Ističe danas";
+  if (diff === 1) return "Ističe sutra";
+  return `Ističe za ${diff} dana`;
+}
 
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; city?: string; category?: string; quick?: string }>;
+  searchParams: Promise<{ q?: string; city?: string; category?: string; employer?: string }>;
 }) {
   const params = await searchParams;
 
@@ -27,116 +34,202 @@ export default async function JobsPage({
       q: params.q || undefined,
       city: params.city || undefined,
       category: params.category || undefined,
-      quick: params.quick === "true" || params.quick === "1" ? true : undefined,
       limit: 200,
     }),
     getLookups(),
   ]);
 
-  const isFiltering = Boolean(params.q || params.city || params.category || params.quick);
-  const activeFilterCount = [params.q, params.city, params.category].filter(Boolean).length;
-  const isQuickFilter = params.quick === "true" || params.quick === "1";
+  const isFiltering = Boolean(params.q || params.city || params.category);
 
-  // Featured odvojeni kad nema filtera
-  const featuredJobs = !isFiltering ? jobs.filter((j: Job) => j.featured) : [];
-  const regularJobs  = !isFiltering ? jobs.filter((j: Job) => !j.featured) : jobs;
+  // Count per city/category for sidebar
+  const cityCounts = jobs.reduce<Record<string, number>>((acc, j) => {
+    const name = j.cities?.name;
+    if (name) acc[name] = (acc[name] || 0) + 1;
+    return acc;
+  }, {});
+  const catCounts = jobs.reduce<Record<string, number>>((acc, j) => {
+    const name = j.categories?.name;
+    if (name) acc[name] = (acc[name] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalLabel = `${jobs.length} oglasa`;
+
+  // Build reset/filter URLs
+  function filterUrl(key: string, val: string) {
+    const p = new URLSearchParams();
+    if (params.q) p.set("q", params.q);
+    if (params.city) p.set("city", params.city);
+    if (params.category) p.set("category", params.category);
+    p.set(key, val);
+    return `/oglasi?${p.toString()}`;
+  }
+  function removeFilter(key: string) {
+    const p = new URLSearchParams();
+    if (params.q && key !== "q") p.set("q", params.q);
+    if (params.city && key !== "city") p.set("city", params.city);
+    if (params.category && key !== "category") p.set("category", params.category);
+    const s = p.toString();
+    return s ? `/oglasi?${s}` : "/oglasi";
+  }
 
   return (
     <>
-      {/* Tower baneri — samo desktop */}
-      <div className="tower-banner-fixed tower-banner-fixed-left">
-        <TowerBanner side="left" />
-      </div>
-      <div className="tower-banner-fixed tower-banner-fixed-right">
-        <TowerBanner side="right" />
+      {/* ── PAGE HEADER ── */}
+      <div className="jl-header">
+        <h1 className="jl-title">Oglasi za posao</h1>
       </div>
 
       <BannerSlot placement="jobs_list_top" />
 
-      {/* HEADER SEKCIJE */}
-      <div className="jobs-page-head">
-        <div>
-          <span className="kicker">{isQuickFilter ? "Brzi poslovi" : "Oglasi"}</span>
-          <h1>{isQuickFilter ? "Brzi i kratkoročni poslovi" : "Oglasi za posao"}</h1>
-          <p className="jobs-count">
-            {jobs.length === 0
-              ? "Nema oglasa za zadatu pretragu."
-              : `${jobs.length} ${jobs.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`}
-          </p>
-        </div>
-        <Link href="/registracija?role=company" className="btn red sm">+ Objavi oglas</Link>
-      </div>
+      <div className="jl-layout">
 
-      {/* SEARCH PANEL — desktop */}
-      <form className="search-panel desktop-only" method="get">
-        <input name="q" placeholder="Pozicija ili firma" defaultValue={params.q || ""} />
-        <select name="city" defaultValue={params.city || ""}>
-          <option value="">Svi gradovi</option>
-          {lookups.cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-        </select>
-        <select name="category" defaultValue={params.category || ""}>
-          <option value="">Sve kategorije</option>
-          {lookups.categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-        </select>
-        <button type="submit">Pretraži</button>
-      </form>
+        {/* ══════════════ SIDEBAR ══════════════ */}
+        <aside className="jl-sidebar">
 
-      {/* FILTER PILLS */}
-      <div className="filter-pills desktop-only">
-        <Link
-          href={isQuickFilter ? "/oglasi" : "/oglasi?quick=true"}
-          className={`filter-pill${isQuickFilter ? " active" : ""}`}
-        >
-          ⚡ Brzi poslovi
-        </Link>
-        {isFiltering && (
-          <Link href="/oglasi" className="filter-pill">
-            ✕ Resetuj filtere
-          </Link>
-        )}
-      </div>
+          {/* Mobile: search form (shown above list on mobile) */}
+          <form className="jl-mobile-search" method="get" action="/oglasi">
+            <div className="jl-field-wrap">
+              <span className="jl-field-icon">🔍</span>
+              <input
+                className="jl-field"
+                name="q"
+                placeholder="keyword"
+                defaultValue={params.q || ""}
+                aria-label="Pretraži"
+              />
+            </div>
+            <select className="jl-select" name="city" defaultValue={params.city || ""} aria-label="Region">
+              <option value="">Izaberi region</option>
+              {lookups.cities.map((c: LookupItem) => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <select className="jl-select" name="city" defaultValue={params.city || ""} aria-label="Grad">
+              <option value="">Izaberi grad</option>
+              {lookups.cities.map((c: LookupItem) => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <select className="jl-select" name="category" defaultValue={params.category || ""} aria-label="Kategorija">
+              <option value="">Izaberi kategoriju</option>
+              {lookups.categories.map((c: LookupItem) => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <button type="submit" className="jl-search-btn">Pretraži</button>
+          </form>
 
-      {/* MOBILE FILTER */}
-      <MobileFilterDrawer
-        cities={lookups.cities}
-        categories={lookups.categories}
-        currentQ={params.q || ""}
-        currentCity={params.city || ""}
-        currentCategory={params.category || ""}
-        activeFilterCount={activeFilterCount}
-      />
+          {/* Desktop sidebar filter panel */}
+          <div className="jl-filter-panel">
+            <div className="jl-filter-title">Filter</div>
 
-      {jobs.length === 0 ? (
-        <EmptyState
-          title="Nema oglasa"
-          text="Promijeni filtere ili se vrati kasnije."
-          action={<Button href="/oglasi" tone="blue">Resetuj filtere</Button>}
-        />
-      ) : (
-        <>
-          {/* ISTAKNUTI — kompaktni red na vrhu */}
-          {featuredJobs.length > 0 && (
-            <div className="jobs-featured-row">
-              <div className="jobs-featured-label">
-                <span className="badge red">★ Istaknuto</span>
+            {/* Search */}
+            <form method="get" action="/oglasi" className="jl-sidebar-search">
+              <div className="jl-field-wrap">
+                <span className="jl-field-icon">🔍</span>
+                <input
+                  className="jl-field"
+                  name="q"
+                  placeholder="keyword"
+                  defaultValue={params.q || ""}
+                />
               </div>
-              <div className="jobs-dense-grid">
-                {featuredJobs.map((job: Job) => (
-                  <JobTile key={job.id} job={job as JobWithPromotion} />
+              {params.city && <input type="hidden" name="city" value={params.city} />}
+              {params.category && <input type="hidden" name="category" value={params.category} />}
+              <button type="submit" className="jl-search-btn">Pretraži</button>
+            </form>
+
+            {/* By City */}
+            <div className="jl-filter-group">
+              <div className="jl-filter-group-label">Po gradu</div>
+              {lookups.cities
+                .filter((c: LookupItem) => (cityCounts[c.name] || 0) > 0)
+                .sort((a: LookupItem, b: LookupItem) => (cityCounts[b.name] || 0) - (cityCounts[a.name] || 0))
+                .map((c: LookupItem) => (
+                  <label key={c.id} className="jl-filter-item">
+                    <Link
+                      href={params.city === c.name ? removeFilter("city") : filterUrl("city", c.name)}
+                      className={`jl-filter-link${params.city === c.name ? " active" : ""}`}
+                    >
+                      <span className="jl-filter-check">{params.city === c.name ? "✓" : ""}</span>
+                      <span className="jl-filter-name">{c.name}</span>
+                      <span className="jl-filter-count">({cityCounts[c.name] || 0})</span>
+                    </Link>
+                  </label>
                 ))}
-              </div>
-              {regularJobs.length > 0 && <div className="jobs-divider" />}
+            </div>
+
+            {/* By Category */}
+            <div className="jl-filter-group">
+              <div className="jl-filter-group-label">Po kategoriji</div>
+              {lookups.categories
+                .filter((c: LookupItem) => (catCounts[c.name] || 0) > 0)
+                .sort((a: LookupItem, b: LookupItem) => (catCounts[b.name] || 0) - (catCounts[a.name] || 0))
+                .map((c: LookupItem) => (
+                  <label key={c.id} className="jl-filter-item">
+                    <Link
+                      href={params.category === c.name ? removeFilter("category") : filterUrl("category", c.name)}
+                      className={`jl-filter-link${params.category === c.name ? " active" : ""}`}
+                    >
+                      <span className="jl-filter-check">{params.category === c.name ? "✓" : ""}</span>
+                      <span className="jl-filter-name">{c.name}</span>
+                      <span className="jl-filter-count">({catCounts[c.name] || 0})</span>
+                    </Link>
+                  </label>
+                ))}
+            </div>
+          </div>
+        </aside>
+
+        {/* ══════════════ MAIN LISTA ══════════════ */}
+        <main className="jl-main">
+
+          {/* Count + reset */}
+          <div className="jl-main-head">
+            <span className="jl-count">Oglasi za posao {totalLabel} / {jobs.length}</span>
+            {isFiltering && (
+              <Link href="/oglasi" className="jl-reset">
+                ↺ Poništi pretragu
+              </Link>
+            )}
+          </div>
+
+          {/* Active filter tags */}
+          {isFiltering && (
+            <div className="jl-active-filters">
+              {params.q && (
+                <Link href={removeFilter("q")} className="jl-active-tag">
+                  „{params.q}" ×
+                </Link>
+              )}
+              {params.city && (
+                <Link href={removeFilter("city")} className="jl-active-tag">
+                  {params.city} ×
+                </Link>
+              )}
+              {params.category && (
+                <Link href={removeFilter("category")} className="jl-active-tag">
+                  {params.category} ×
+                </Link>
+              )}
             </div>
           )}
 
-          {/* SVI OGLASI — dense grid kao zaposli.me */}
-          {regularJobs.length > 0 && (
-            <div className="jobs-dense-grid">
-              {regularJobs.map((job: Job, idx: number) => (
+          {/* Job list */}
+          {jobs.length === 0 ? (
+            <div className="jl-empty">
+              <strong>Nema oglasa za zadatu pretragu.</strong>
+              <p>Pokušaj s drugim ključnim riječima ili poništi filtere.</p>
+              <Link href="/oglasi" className="btn red sm" style={{ marginTop: 12 }}>Poništi pretragu</Link>
+            </div>
+          ) : (
+            <div className="jl-list">
+              {jobs.map((job: Job, idx: number) => (
                 <React.Fragment key={job.id}>
-                  <JobTile job={job as JobWithPromotion} />
-                  {(idx + 1) % 12 === 0 && idx < regularJobs.length - 1 && (
-                    <div className="jobs-dense-banner">
+                  <JobRow job={job} />
+                  {(idx + 1) % 15 === 0 && idx < jobs.length - 1 && (
+                    <div className="jl-banner-slot">
                       <BannerSlot placement="jobs_list_middle" />
                     </div>
                   )}
@@ -144,44 +237,77 @@ export default async function JobsPage({
               ))}
             </div>
           )}
-        </>
-      )}
+
+        </main>
+      </div>
 
       <BannerSlot placement="jobs_list_bottom" />
     </>
   );
 }
 
-/* ── Tile komponenta — logo + naziv + grad (zaposli.me stil) ── */
-function JobTile({ job }: { job: JobWithPromotion }) {
+/* ── JOB ROW — zaposli.me stil ── */
+function JobRow({ job }: { job: Job }) {
   const co = job.companies;
   const url = jobUrl(job);
-  const jobExt = job as JobWithPromotion & { cities?: { name: string } | null };
-  const isUrgent = job.promotion_type === "urgent";
-  const isFeatured = job.featured || job.promotion_type === "paid_top" || job.promotion_type === "featured";
+  const expires = daysLeft(job.deadline);
+  const isFeatured = job.featured;
+  const isExpiringSoon = expires?.includes("danas") || expires?.includes("sutra") || expires?.includes("3 dana") || expires?.includes("2 dana");
 
   return (
     <Link
       href={url}
-      className={`job-tile${isFeatured ? " job-tile--featured" : ""}${isUrgent ? " job-tile--urgent" : ""}`}
+      className={`jl-row${isFeatured ? " jl-row--featured" : ""}`}
     >
-      <div className="job-tile__logo">
+      {/* Logo */}
+      <div className="jl-row-logo">
         <Avatar
           bucket="company-logos"
           path={co?.logo_path ?? null}
           fallback={co?.name ?? ""}
-          size={48}
+          size={56}
           shape="rounded"
         />
       </div>
-      <div className="job-tile__body">
-        <span className="job-tile__title">{job.title}</span>
-        <span className="job-tile__company">{co?.name}</span>
-        {jobExt.cities?.name && (
-          <span className="job-tile__city">{jobExt.cities.name}</span>
+
+      {/* Info */}
+      <div className="jl-row-body">
+        <div className="jl-row-title">{job.title}</div>
+        <div className="jl-row-company">{co?.name || "Poslodavac"}</div>
+        <div className="jl-row-meta">
+          {job.deadline && (
+            <span className="jl-row-meta-item jl-row-date">
+              <span className="jl-meta-icon" aria-hidden>🕐</span>
+              {formatDate(job.deadline)}
+            </span>
+          )}
+          {job.cities?.name && (
+            <span className="jl-row-meta-item jl-row-city">
+              <span className="jl-meta-icon" aria-hidden>📍</span>
+              {job.cities.name}
+            </span>
+          )}
+          {expires && (
+            <span className={`jl-row-meta-item jl-row-expires${isExpiringSoon ? " jl-row-expires--soon" : ""}`}>
+              <span className="jl-meta-icon" aria-hidden>⏳</span>
+              {expires}
+            </span>
+          )}
+          {job.salary_text && (
+            <span className="jl-row-meta-item jl-row-salary">
+              {job.salary_text}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Right: badges */}
+      <div className="jl-row-right">
+        {isFeatured && <span className="jl-badge-featured">★ Istaknuto</span>}
+        {job.contract_type && (
+          <span className="jl-badge-contract">{job.contract_type}</span>
         )}
       </div>
-      {isUrgent && <span className="job-tile__urgent">Hitno</span>}
     </Link>
   );
 }
