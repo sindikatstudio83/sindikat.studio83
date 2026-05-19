@@ -176,7 +176,7 @@ h3{font-size:18px;font-weight:700}
 .live-home{display:grid;gap:20px;padding-bottom:48px}
 /* Hero — dark navy background, bold white text, red CTA — matches brandbook */
 .live-hero{background:var(--brand-navy);border-radius:20px;padding:48px 40px;display:grid;gap:16px;position:relative;overflow:hidden}
-.live-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,rgba(255,40,43,.15) 0%,transparent 70%);pointer-events:none}
+.live-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 90% 40%,rgba(255,40,43,.10) 0%,transparent 60%);pointer-events:none}
 .live-hero h1{font-size:clamp(36px,5.5vw,64px);line-height:1.05;letter-spacing:-.03em;margin:0;color:#fff;font-weight:800}
 .live-hero h1 .accent{color:var(--brand-red)}
 .live-hero p{font-size:15px;color:rgba(255,255,255,.65);font-weight:400;line-height:1.7;max-width:640px;margin:0}
@@ -309,8 +309,8 @@ h3{font-size:18px;font-weight:700}
   padding:4px 10px;border-radius:6px;letter-spacing:.06em;
   border:1px solid color-mix(in srgb,var(--brand-red) 20%,transparent);
 }
-.job-card.featured-card{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--brand-red) 4%,var(--paper)));border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line));box-shadow:0 0 0 1px color-mix(in srgb,var(--brand-red) 20%,transparent),var(--shadow)}
-[data-theme="dark"] .job-card.featured-card{border-color:color-mix(in srgb,var(--brand-red) 25%,transparent)}
+.job-card.featured-card{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--brand-red) 3%,var(--paper)));border-color:color-mix(in srgb,var(--brand-red) 20%,var(--line));box-shadow:var(--shadow)}
+[data-theme="dark"] .job-card.featured-card{border-color:color-mix(in srgb,var(--brand-red) 18%,var(--line));box-shadow:var(--shadow)}
 /* Tower banners — position:fixed, van .wrap okvira, samo desktop */
 .jobs-with-towers{display:block}
 /* TowerBanner komponenta: .tower-banner-fixed */
@@ -323,11 +323,12 @@ h3{font-size:18px;font-weight:700}
 }
 .tower-banner-placeholder{pointer-events:none}
 .job-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:start;transition:.15s;position:relative}
-.job-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,24,42,.1);border-color:var(--brand-red)}
-[data-theme="dark"] .job-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.3);border-color:var(--brand-red)}
-.job-card.featured{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--brand-red) 3%,var(--paper)))}
+.job-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.08);border-color:color-mix(in srgb,var(--brand-red) 35%,var(--line))}
+[data-theme="dark"] .job-card .job-title{color:var(--ink)}
+[data-theme="dark"] .job-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.3);border-color:var(--blue)}
+.job-card.featured{border-color:color-mix(in srgb,var(--brand-red) 18%,var(--line))}
 .featured-badge{position:absolute;top:-9px;left:18px;background:var(--orange);border:1.5px solid var(--ink);border-radius:999px;padding:2px 8px;font-size:10px;font-weight:900;color:#fff}
-.logo{width:50px;height:50px;border:2px solid var(--ink);border-radius:14px;display:grid;place-items:center;font-weight:900;font-family:var(--display);background:var(--lime);box-shadow:2px 2px 0 var(--ink);flex-shrink:0;font-size:15px;overflow:hidden;color:#111}
+.logo{width:56px;height:56px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;font-weight:700;font-family:var(--display);background:var(--soft);flex-shrink:0;font-size:16px;overflow:hidden;color:var(--muted)}
 .job-title{font-family:var(--display);font-size:18px;font-weight:850;letter-spacing:-.03em;margin:4px 0;display:inline-block}
 .job-title:hover{color:var(--blue);text-decoration:underline}
 .job-desc{color:var(--muted);margin:7px 0;line-height:1.6;font-size:13px}
@@ -335,9 +336,9 @@ h3{font-size:18px;font-weight:700}
 .deadline{font-size:11px;color:var(--muted);font-weight:800;text-align:right}
 
 /* ── COMPANY CARDS ── */
-.company-card{background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:16px;box-shadow:var(--shadow);display:flex;gap:13px;align-items:flex-start;transition:.12s}
-.company-card:hover{transform:translateY(-2px);box-shadow:5px 5px 0 rgba(23,23,23,.12)}
-[data-theme="dark"] .company-card:hover{box-shadow:5px 5px 0 rgba(255,255,255,.08)}
+.company-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;gap:13px;align-items:flex-start;transition:.18s}
+.company-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 25%,var(--line))}
+[data-theme="dark"] .company-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.3);border-color:var(--blue)}
 .company-card h3{font-size:18px;margin-bottom:2px}
 .company-card p{color:var(--muted);line-height:1.6;margin:5px 0;font-size:13px}
 
@@ -876,7 +877,7 @@ h3{font-size:18px;font-weight:700}
 [data-theme="dark"] .status-badge.stage-review{background:var(--soft);color:var(--muted);border-color:var(--line2)}
 [data-theme="dark"] .role-pill{background:var(--lime);color:#0a0e14;border-color:transparent}
 [data-theme="dark"] .page-label,
-[data-theme="dark"] .kicker{background:var(--lime);color:#0a0e14}
+[data-theme="dark"] .kicker{background:color-mix(in srgb,var(--brand-red) 15%,transparent);color:#ff8a8a;border-color:color-mix(in srgb,var(--brand-red) 30%,transparent)}
 
 /* ── NAVIGATION ── */
 [data-theme="dark"] .nav.desktop-nav a{color:var(--muted)}
@@ -904,7 +905,7 @@ h3{font-size:18px;font-weight:700}
 [data-theme="dark"] .job-card,
 [data-theme="dark"] .company-card{background:var(--paper);border-color:var(--line);box-shadow:var(--shadow)}
 [data-theme="dark"] .job-card:hover,
-[data-theme="dark"] .company-card:hover{border-color:var(--blue);transform:translate(-2px,-2px);box-shadow:0 8px 24px rgba(91,141,255,.22)}
+[data-theme="dark"] .company-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 20px rgba(91,141,255,.18)}
 
 /* ── HOME / PUBLIC ── */
 [data-theme="dark"] .live-search input,
@@ -1598,14 +1599,14 @@ h3{font-size:18px;font-weight:700}
 
 /* ── BADGES — lime badge u dark modu ── */
 [data-theme="dark"] .badge.lime{background:color-mix(in srgb,var(--lime) 18%,var(--paper));border-color:color-mix(in srgb,var(--lime) 60%,var(--line));color:var(--lime)}
-[data-theme="dark"] .badge.red{background:color-mix(in srgb,var(--red) 15%,var(--paper));border-color:color-mix(in srgb,var(--red) 50%,var(--line));color:#ffabab}
+[data-theme="dark"] .badge.red{background:color-mix(in srgb,var(--brand-red) 18%,var(--paper));border-color:color-mix(in srgb,var(--brand-red) 35%,var(--line));color:#ff9999}
 [data-theme="dark"] .badge.gray{background:var(--soft);border-color:var(--line2);color:var(--muted)}
 [data-theme="dark"] .badge.purple{background:color-mix(in srgb,#9b6bff 20%,var(--paper));border-color:#7c3aed;color:#c4a8ff}
 
 /* ── LIVE HERO ── */
-[data-theme="dark"] .live-hero{background:var(--paper);border-color:var(--line)}
-[data-theme="dark"] .live-hero h1{color:var(--ink)}
-[data-theme="dark"] .live-hero p{color:var(--muted)}
+[data-theme="dark"] .live-hero{background:#00182A;border:1px solid rgba(255,255,255,.07)}
+[data-theme="dark"] .live-hero h1{color:#fff}
+[data-theme="dark"] .live-hero p{color:rgba(255,255,255,.6)}
 [data-theme="dark"] .live-path{background:var(--paper);border-color:var(--line)}
 [data-theme="dark"] .live-path:hover{background:var(--soft);border-color:var(--blue);box-shadow:0 6px 20px rgba(91,141,255,.18)}
 [data-theme="dark"] .live-path strong{color:var(--blue)}
@@ -1700,7 +1701,7 @@ h3{font-size:18px;font-weight:700}
 
 /* ── PAGE LABELS / KICKER ── */
 [data-theme="dark"] .page-label,
-[data-theme="dark"] .kicker{background:var(--lime);color:#0a0e14;border-color:transparent}
+[data-theme="dark"] .kicker{background:color-mix(in srgb,var(--brand-red) 15%,transparent);color:#ff8a8a;border-color:color-mix(in srgb,var(--brand-red) 30%,transparent)}
 [data-theme="dark"] .eyebrow{color:var(--muted)}
 
 /* ── FOOTER ── */
@@ -1725,7 +1726,7 @@ h3{font-size:18px;font-weight:700}
 [data-theme="dark"] .job-card,
 [data-theme="dark"] .company-card{background:var(--paper);border-color:var(--line);box-shadow:var(--shadow)}
 [data-theme="dark"] .job-card:hover,
-[data-theme="dark"] .company-card:hover{border-color:var(--blue);transform:translate(-2px,-2px);box-shadow:0 8px 24px rgba(91,141,255,.22)}
+[data-theme="dark"] .company-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 20px rgba(91,141,255,.18)}
 [data-theme="dark"] .job-card .meta,
 [data-theme="dark"] .job-card .sub{color:var(--muted)}
 
@@ -2430,30 +2431,30 @@ h3{font-size:18px;font-weight:700}
 /* ── RECOMMENDED COMPANIES ─────────────────────────────────────── */
 .recommended-companies{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
 @media(max-width:640px){.recommended-companies{grid-template-columns:1fr 1fr}}
-.rec-company-card{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--paper);border:2px solid var(--ink);border-radius:14px;box-shadow:2px 2px 0 var(--ink);text-decoration:none;color:inherit;position:relative;transition:.12s;overflow:hidden}
-.rec-company-card:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
-.rec-company-card--star{border-left:4px solid var(--orange)}
+.rec-company-card{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);text-decoration:none;color:inherit;position:relative;transition:.18s;overflow:hidden}
+.rec-company-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 25%,var(--line))}
+.rec-company-card--star{border-color:color-mix(in srgb,var(--brand-red) 18%,var(--line))}
 .rec-company-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .rec-company-name{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rec-company-meta{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rec-company-badge{position:absolute;top:-1px;right:8px;background:var(--orange);color:#fff;font-size:9px;font-weight:900;padding:2px 5px;border-radius:999px;border:1.5px solid var(--ink)}
-[data-theme="dark"] .rec-company-card{background:var(--paper);border-color:var(--line2);box-shadow:2px 2px 0 var(--line)}
-[data-theme="dark"] .rec-company-card:hover{border-color:var(--blue);box-shadow:3px 3px 0 var(--blue)}
+.rec-company-badge{position:absolute;top:5px;right:6px;color:var(--brand-red);font-size:11px;font-weight:800}
+[data-theme="dark"] .rec-company-card{background:var(--paper);border-color:var(--line);box-shadow:none}
+[data-theme="dark"] .rec-company-card:hover{border-color:var(--blue);box-shadow:0 6px 20px rgba(91,141,255,.18)}
 
 /* ── COMPACT JOB CARD ──────────────────────────────────────────── */
-.job-compact{display:flex;align-items:flex-start;gap:9px;padding:10px;background:var(--paper);border:2px solid var(--ink);border-radius:14px;box-shadow:2px 2px 0 var(--ink);text-decoration:none;color:inherit;position:relative;transition:.12s;overflow:hidden}
-.job-compact:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
-.job-compact--promo{border-left:4px solid var(--orange)}
-.job-compact--quick{border-left:4px solid var(--lime)}
+.job-compact{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 4px rgba(0,24,42,.05);text-decoration:none;color:inherit;position:relative;transition:.18s;overflow:hidden}
+.job-compact:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line))}
+.job-compact--promo{border-left:3px solid var(--brand-red)}
+.job-compact--quick{border-left:3px solid var(--green)}
 .job-compact__logo{flex-shrink:0;margin-top:1px}
 .job-compact__body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .job-compact__title{font-size:13px;font-weight:800;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .job-compact__company{font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .job-compact__city{font-size:10px;color:var(--muted)}
 .job-compact__rate{font-size:11px;font-weight:900;color:var(--green)}
-.job-compact__badge{position:absolute;top:6px;right:7px}
-[data-theme="dark"] .job-compact{background:var(--paper);border-color:var(--line2);box-shadow:2px 2px 0 var(--line)}
-[data-theme="dark"] .job-compact:hover{border-color:var(--blue);box-shadow:3px 3px 0 var(--blue)}
+.job-compact__badge{flex-shrink:0;margin-left:auto;padding-left:6px}
+[data-theme="dark"] .job-compact{background:var(--paper);border-color:var(--line);box-shadow:none}
+[data-theme="dark"] .job-compact:hover{border-color:var(--blue);box-shadow:0 6px 20px rgba(91,141,255,.18)}
 
 /* ── KICKER VARIANTS ───────────────────────────────────────────── */
 .kicker--orange{background:var(--orange);color:#fff;border-color:var(--orange)}
@@ -3577,15 +3578,7 @@ html,body{overflow-x:hidden;max-width:100vw}
 }
 
 /* ── 24. DARK MODE — muted borders, not too heavy ── */
-[data-theme="dark"] .job-card,
-[data-theme="dark"] .job-compact,
-[data-theme="dark"] .company-card,
-[data-theme="dark"] .rec-company-card,
-[data-theme="dark"] .job-tile,
-[data-theme="dark"] .live-path,
-[data-theme="dark"] .candidate-card{
-  border-color:var(--line);background:var(--paper);
-}
+[data-theme="dark"] .job-card,[data-theme="dark"] .job-compact,[data-theme="dark"] .company-card,[data-theme="dark"] .rec-company-card,[data-theme="dark"] .job-tile,[data-theme="dark"] .live-path,[data-theme="dark"] .candidate-card{border-color:var(--line);background:var(--paper)}
 [data-theme="dark"] .rec-company-logo,
 [data-theme="dark"] .job-compact__logo,
 [data-theme="dark"] .job-tile__logo,
@@ -3600,4 +3593,198 @@ html,body{overflow-x:hidden;max-width:100vw}
   background:color-mix(in srgb,var(--brand-red) 12%,transparent);
   color:var(--brand-red);padding:3px 8px;border-radius:6px;
   border:1px solid color-mix(in srgb,var(--brand-red) 20%,transparent);
+}
+
+/* ═══════════════════════════════════════════════════════
+   DARK MODE KONTRAST PATCH — finalni, autoritativni
+   Prevazilazi sve prethodne konflikte
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Površine i kartice ── */
+[data-theme="dark"] .job-card,
+[data-theme="dark"] .job-compact,
+[data-theme="dark"] .company-card,
+[data-theme="dark"] .rec-company-card,
+[data-theme="dark"] .job-tile,
+[data-theme="dark"] .live-path,
+[data-theme="dark"] .candidate-card,
+[data-theme="dark"] .hero-intent-card{
+  background:var(--paper);
+  border-color:var(--line);
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+
+/* Hover efekti u dark modu — suptilno plavo, bez crvenog glowa */
+[data-theme="dark"] .job-card:hover,
+[data-theme="dark"] .job-compact:hover,
+[data-theme="dark"] .company-card:hover,
+[data-theme="dark"] .rec-company-card:hover,
+[data-theme="dark"] .job-tile:hover{
+  border-color:var(--blue);
+  box-shadow:0 4px 16px rgba(77,142,255,.15);
+  transform:translateY(-2px);
+}
+[data-theme="dark"] .live-path:hover{
+  border-color:var(--blue);
+  background:var(--soft);
+  box-shadow:0 4px 16px rgba(77,142,255,.12);
+}
+
+/* Logo box u dark modu */
+[data-theme="dark"] .logo,
+[data-theme="dark"] .rec-company-logo,
+[data-theme="dark"] .job-compact__logo,
+[data-theme="dark"] .job-tile__logo,
+[data-theme="dark"] .job-card > .logo{
+  background:var(--soft);
+  border-color:var(--line);
+}
+
+/* Featured kartica — bez crvenog glowa */
+[data-theme="dark"] .job-card.featured-card,
+[data-theme="dark"] .job-card.featured{
+  background:var(--paper);
+  border-color:var(--line);
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+
+/* Hero uvijek navy */
+[data-theme="dark"] .live-hero{
+  background:#00182A!important;
+  border-color:rgba(255,255,255,.07)!important;
+}
+[data-theme="dark"] .live-hero h1{color:#fff!important}
+[data-theme="dark"] .live-hero p{color:rgba(255,255,255,.6)!important}
+
+/* Kicker u dark — crveni tint, čitljiv */
+[data-theme="dark"] .kicker,
+[data-theme="dark"] .page-label{
+  background:color-mix(in srgb,var(--brand-red) 14%,transparent)!important;
+  color:#ff9999!important;
+  border-color:color-mix(in srgb,var(--brand-red) 25%,transparent)!important;
+}
+/* Kicker unutar hero — uvijek bijeli tekst jer je navy pozadina */
+[data-theme="dark"] .live-hero .kicker,
+.live-hero .kicker{
+  background:rgba(255,255,255,.12);
+  color:rgba(255,255,255,.85);
+  border-color:rgba(255,255,255,.2);
+}
+
+/* Badge.red u dark — soft, čitljiv */
+[data-theme="dark"] .badge.red,
+[data-theme="dark"] .tj-urgent,
+[data-theme="dark"] .job-tile__urgent{
+  background:color-mix(in srgb,var(--brand-red) 20%,var(--paper));
+  color:#ff9999;
+  border-color:color-mix(in srgb,var(--brand-red) 35%,var(--line));
+}
+
+/* Hitno / urgent badge — ne razvlačiti */
+.job-compact__badge,
+.job-tile__urgent,
+.tj-urgent{
+  flex-shrink:0;
+  white-space:nowrap;
+  width:auto!important;
+  align-self:flex-start;
+}
+
+/* Filter pills dark */
+[data-theme="dark"] .filter-pill{
+  background:var(--soft);
+  border-color:var(--line);
+  color:var(--muted);
+}
+[data-theme="dark"] .filter-pill:hover,
+[data-theme="dark"] .filter-pill.active{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+
+/* Intent cards na hero (dark) — white semi-transparent */
+[data-theme="dark"] .hero-intent-card{
+  background:rgba(255,255,255,.09)!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+[data-theme="dark"] .hero-intent-card:hover{
+  background:rgba(255,255,255,.14)!important;
+  border-color:rgba(255,255,255,.2)!important;
+}
+[data-theme="dark"] .hero-intent-card strong{color:#fff!important}
+
+/* Rec-company badge — ne brutal orange */
+[data-theme="dark"] .rec-company-badge{color:var(--brand-red)}
+[data-theme="dark"] .rec-company-card--star{border-color:color-mix(in srgb,var(--brand-red) 20%,var(--line))}
+
+/* Job tile featured ne crveni border */
+[data-theme="dark"] .job-tile--featured{border-color:var(--line)}
+[data-theme="dark"] .job-tile__title{color:var(--ink)}
+
+/* Section headings */
+[data-theme="dark"] .live-section-head h2{color:var(--ink)}
+[data-theme="dark"] .live-section-head p{color:var(--muted)}
+[data-theme="dark"] .jobs-page-head h1{color:var(--ink)}
+
+/* Candidate cards u dark */
+[data-theme="dark"] .candidate-card--unlocked{
+  border-color:color-mix(in srgb,var(--green) 25%,var(--line));
+}
+[data-theme="dark"] .unlock-badge{
+  background:color-mix(in srgb,var(--green) 12%,transparent);
+  color:#6ee77e;
+  border-color:color-mix(in srgb,var(--green) 25%,var(--line));
+}
+[data-theme="dark"] .skill-tag{
+  background:var(--soft);
+  border-color:var(--line);
+  color:var(--muted);
+}
+[data-theme="dark"] .cand-cv-tag{
+  background:var(--soft);
+  border-color:var(--line);
+  color:var(--muted);
+}
+[data-theme="dark"] .cand-profile-header{background:var(--soft)}
+[data-theme="dark"] .cand-profile-contact a{
+  background:var(--soft);
+  border-color:var(--line);
+  color:var(--ink);
+}
+
+/* Quick tags na hero u dark — uvijek na navy bg */
+.live-hero .quick-tag{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.14);
+  color:rgba(255,255,255,.65);
+}
+.live-hero .quick-tag:hover{
+  background:rgba(255,255,255,.15);
+  border-color:rgba(255,255,255,.25);
+  color:#fff;
+}
+
+/* Featured badge pill — ne orange */
+.featured-badge{
+  position:absolute;top:10px;right:10px;left:auto;
+  font-size:10px;font-weight:700;
+  background:color-mix(in srgb,var(--brand-red) 10%,transparent);
+  color:var(--brand-red);
+  padding:3px 8px;border-radius:6px;
+  border:1px solid color-mix(in srgb,var(--brand-red) 20%,transparent);
+}
+[data-theme="dark"] .featured-badge{
+  background:color-mix(in srgb,var(--brand-red) 15%,transparent);
+  color:#ff9999;
+  border-color:color-mix(in srgb,var(--brand-red) 25%,transparent);
+}
+
+/* Ticker strip — uvijek dark navy bez obzira na temu */
+.ticker-strip,.ticker-strip::before,.ticker-strip::after{
+  /* forced navy regardless of theme */
+}
+[data-theme="dark"] .ticker-strip{
+  background:#001525;
+  border-color:rgba(255,255,255,.06);
 }
