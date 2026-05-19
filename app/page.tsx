@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { JobCard } from "@/components/job-card";
-import { JobCardCompact } from "@/components/job-card-compact";
 import { CompanyCard } from "@/components/company-card";
 import { RecommendedCompanies } from "@/components/recommended-companies";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
@@ -10,7 +9,6 @@ import { BannerSlot } from "@/components/banner-slot";
 import { TickerStripFromDB } from "@/components/ticker-strip";
 import { getLookups, getHomepageData, getCompanies } from "@/lib/queries/public";
 import { getActiveBanners } from "@/lib/queries/banners";
-import type { JobWithPromotion } from "@/types/domain";
 
 export const metadata: Metadata = {
   title: "imaposla.me — Poslovi u Crnoj Gori",
@@ -35,7 +33,7 @@ export default async function HomePage() {
     getLookups(),
   ]);
 
-  const { paidTopJobs, featuredJobs, regularJobs, quickJobs, recommendedCompanies } = homepageData;
+  const { regularJobs, recommendedCompanies } = homepageData;
 
   // Fallback za firme ako nema preporučenih
   const fallbackCompanies = recommendedCompanies.length === 0 ? await getCompanies(4) : [];
@@ -91,18 +89,12 @@ export default async function HomePage() {
           <Button href="/profil/biografija" tone="ghost">Napravi CV</Button>
         </div>
 
-        <div className="hero-stats">
-          <div className="hero-stat"><strong>12.000+</strong><span>aktivnih kandidata</span></div>
-          <div className="hero-stat-sep" />
-          <div className="hero-stat"><strong>340+</strong><span>novih oglasa sedmično</span></div>
-          <div className="hero-stat-sep" />
-          <div className="hero-stat"><strong>500+</strong><span>kompanija</span></div>
-        </div>
+
       </div>
 
-      {/* ── TICKER STRIP — animated jobs + companies ──────── */}
+      {/* ── TICKER STRIP ──────────────────────────────────── */}
       <TickerStripFromDB
-        jobs={[...paidTopJobs, ...featuredJobs, ...regularJobs].slice(0, 16)}
+        jobs={regularJobs.slice(0, 16)}
         companies={recommendedCompanies.slice(0, 12)}
       />
 
@@ -119,88 +111,16 @@ export default async function HomePage() {
           <div className="live-section-head">
             <div>
               <span className="kicker">Poslodavci</span>
-              <h2>Preporučeni poslodavci</h2>
-              <p>Firme koje aktivno zapošljavaju.</p>
+              <h2>Istaknuti poslodavci</h2>
+              <p>Firme koje aktivno zapošljavaju i imaju javne profile na platformi.</p>
             </div>
-            <Button href="/firme" size="sm">Sve firme</Button>
+            <Button href="/firme" size="sm">Svi poslodavci</Button>
           </div>
           <RecommendedCompanies companies={recommendedCompanies} />
         </div>
       )}
 
-      {/* ── TOP POZICIJE ───────────────────────────────── */}
-      {paidTopJobs.length > 0 && (
-        <div>
-          <div className="live-section-head">
-            <div>
-              <span className="kicker">★ Top pozicije</span>
-              <h2>Plaćene pozicije</h2>
-              <p>Istaknuti oglasi koji se promoviraju na platformi.</p>
-            </div>
-          </div>
-          <div className="job-list two-col">
-            {paidTopJobs.map((job: JobWithPromotion) => (
-              <JobCardCompact key={job.id} job={job} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── ISTAKNUTI OGLASI ───────────────────────────── */}
-      {featuredJobs.length > 0 && (
-        <div>
-          <div className="live-section-head">
-            <div>
-              <span className="kicker">★ Istaknuto</span>
-              <h2>Istaknuti poslovi</h2>
-              <p>Oglasi koje firme posebno ističu.</p>
-            </div>
-            <Button href="/oglasi" size="sm" tone="ghost">Svi oglasi</Button>
-          </div>
-          <div className="job-list two-col">
-            {featuredJobs.map((job: JobWithPromotion) => (
-              <JobCardCompact key={job.id} job={job} />
-            ))}
-          </div>
-        </div>
-      )}
-
       <BannerSlot placement="homepage_middle" />
-
-      {/* ── BRZI POSLOVI ──────────────────────────────── */}
-      {quickJobs.length > 0 && (
-        <div>
-          <div className="live-section-head">
-            <div>
-              <span className="kicker">Brzo</span>
-              <h2>Brzi poslovi</h2>
-              <p>Kratkoročni angažmani, eventi, sezonski rad.</p>
-            </div>
-            <Button href="/oglasi?quick=true" size="sm">Svi brzi</Button>
-          </div>
-          <div className="job-list two-col">
-            {quickJobs.map(job => (
-              <JobCardCompact key={job.id} job={job as JobWithPromotion} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── PATHS ─────────────────────────────────────── */}
-      <div className="live-paths">
-        <Link className="live-path" href="/oglasi">
-          <span>Kandidat</span>
-          <h2>Pronađi posao</h2>
-          <p>Otvori oglas, pročitaj uslove, dopuni biografiju i pošalji prijavu bez upload fajlova.</p>
-          <strong>Otvori oglase →</strong>
-        </Link>
-        <Link className="live-path" href="/registracija?role=company">
-          <span>Firma</span>
-          <h2>Objavi oglas</h2>
-          <p>Napravi profil firme, pošalji oglas na pregled i vodi kandidate kroz selekciju.</p>
-          <strong>Kreni kao firma →</strong>
-        </Link>
-      </div>
 
       {/* ── NAJNOVIJI OGLASI ──────────────────────────── */}
       <div>
@@ -214,7 +134,7 @@ export default async function HomePage() {
         </div>
         <div className="job-list two-col">
           {regularJobs.length
-            ? regularJobs.map(j => <JobCard job={j} key={j.id} />)
+            ? regularJobs.slice(0, 8).map(j => <JobCard job={j} key={j.id} />)
             : <EmptyState
                 title="Još nema aktivnih oglasa"
                 text="Kada firma pošalje oglas i bude odobren, pojaviće se ovdje."
@@ -229,14 +149,29 @@ export default async function HomePage() {
         )}
       </div>
 
-      {/* ── ODOBRENI POSLODAVCI (ako nema preporučenih) ── */}
+      {/* ── CTA PATHS ─────────────────────────────────── */}
+      <div className="live-paths">
+        <Link className="live-path" href="/oglasi">
+          <span>Kandidat</span>
+          <h2>Tražim posao</h2>
+          <p>Otvori oglas, pročitaj uslove, dopuni biografiju i pošalji prijavu bez upload fajlova.</p>
+          <strong>Otvori oglase →</strong>
+        </Link>
+        <Link className="live-path" href="/registracija?role=company">
+          <span>Firma</span>
+          <h2>Nudim posao</h2>
+          <p>Napravi profil firme, pošalji oglas na pregled i vodi kandidate kroz selekciju.</p>
+          <strong>Kreni kao firma →</strong>
+        </Link>
+      </div>
+
+      {/* ── FALLBACK FIRME ── */}
       {recommendedCompanies.length === 0 && fallbackCompanies.length > 0 && (
         <div>
           <div className="live-section-head">
             <div>
               <span className="kicker">Firme</span>
               <h2>Odobreni poslodavci</h2>
-              <p>Firme koje imaju javni profil na platformi.</p>
             </div>
             <Button href="/firme" size="sm">Sve firme</Button>
           </div>
