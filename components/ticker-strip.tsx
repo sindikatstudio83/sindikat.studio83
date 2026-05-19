@@ -128,24 +128,24 @@ export function TickerStripFromDB({
   jobs,
   companies,
 }: {
-  jobs: Array<{ id: string; title: string; slug?: string; salary_text?: string; cities?: { name: string } | null; companies?: { name: string; slug?: string } | null; }>;
-  companies: Array<{ id: string; name: string; slug?: string; job_count?: number }>;
+  jobs: Array<{ id: string | number; title: string; slug?: string; salary_text?: string; cities?: { name: string } | null; companies?: { name: string; slug?: string } | null; }>;
+  companies: Array<{ id: string | number; name: string; slug?: string; job_count?: number }>;
 }) {
   const mappedJobs: TickerJob[] = jobs.map(j => ({
-    id: j.id,
+    id: String(j.id),
     title: j.title,
     company: j.companies?.name ?? "Poslodavac",
     city: j.cities?.name ?? "Crna Gora",
     salary: j.salary_text ?? undefined,
-    slug: j.slug ?? j.id,
+    slug: j.slug ?? String(j.id),
   }));
 
   const mappedCos: TickerCompany[] = companies.map(c => ({
-    id: c.id,
+    id: String(c.id),
     name: c.name,
     jobs: c.job_count ?? 0,
     initials: c.name.slice(0, 2).toUpperCase(),
-    slug: c.slug ?? c.id,
+    slug: c.slug ?? String(c.id),
   }));
 
   return <TickerStrip jobs={mappedJobs} companies={mappedCos} />;
