@@ -42,8 +42,9 @@ export function Header() {
     <header className="top">
       <div className="top-in">
         <Link className="brand" href="/">
+          {/* ip mark: dark navy square with red dot — brandbook logo */}
           <span className="mark">ip</span>
-          <span>imaposla.me</span>
+          <span>imaposla<span className="brand-dot">.me</span></span>
         </Link>
 
         <nav className="nav desktop-nav" aria-label="Navigacija">

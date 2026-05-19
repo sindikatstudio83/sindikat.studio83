@@ -7,6 +7,7 @@ import { RecommendedCompanies } from "@/components/recommended-companies";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
 import { Button, EmptyState, PageLabel } from "@/components/ui";
 import { BannerSlot } from "@/components/banner-slot";
+import { TickerStripFromDB } from "@/components/ticker-strip";
 import { getLookups, getHomepageData, getCompanies } from "@/lib/queries/public";
 import { getActiveBanners } from "@/lib/queries/banners";
 import type { JobWithPromotion } from "@/types/domain";
@@ -45,10 +46,10 @@ export default async function HomePage() {
       {/* ── HERO ─────────────────────────────────────────── */}
       <div className="live-hero">
         <PageLabel>imaposla.me</PageLabel>
-        <h1>Posao u Crnoj Gori, jasno od prvog klika.</h1>
+        <h1>Pravi ljudi.<br /><span className="accent">Prave prilike.</span></h1>
         <p>
-          Kandidat pretražuje oglase, pravi biografiju i šalje prijavu.
-          Firma objavljuje oglas, prati prijave i vodi selekciju.
+          Połezujemo talente i poslodavce na najjednostavniji način.
+          Kandidat se prijavljuje za minuta, firma vodi selekciju na jednom mjestu.
         </p>
 
         <form className="live-search" action="/oglasi">
@@ -61,7 +62,7 @@ export default async function HomePage() {
             <option value="">Sve kategorije</option>
             {lookups.categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
           </select>
-          <button type="submit">Traži</button>
+          <button type="submit">Pronađi posao →</button>
         </form>
 
         <div className="quick-tags">
@@ -79,6 +80,12 @@ export default async function HomePage() {
           <Button href="/profil/biografija" tone="ghost">Napravi CV</Button>
         </div>
       </div>
+
+      {/* ── TICKER STRIP — animated jobs + companies ──────── */}
+      <TickerStripFromDB
+        jobs={[...paidTopJobs, ...featuredJobs, ...regularJobs].slice(0, 16)}
+        companies={recommendedCompanies.slice(0, 12)}
+      />
 
       {/* ── HERO CAROUSEL ─────────────────────────────────── */}
       {heroBanners.length > 0 && (

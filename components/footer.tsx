@@ -17,7 +17,7 @@ export async function Footer() {
         <div>
           <Link className="brand footer-brand" href="/">
             <span className="mark">ip</span>
-            <span>imaposla.me</span>
+            <span>imaposla<span style={{ color: "var(--brand-red)" }}>.me</span></span>
           </Link>
           <p>Platforma za oglase, prijave i jednostavnije zapošljavanje u Crnoj Gori.</p>
           <p style={{ marginTop: 12, fontSize: 12 }}>© 2026 imaposla.me</p>

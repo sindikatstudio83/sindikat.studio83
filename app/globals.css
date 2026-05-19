@@ -1,49 +1,48 @@
-/* ── GOOGLE FONTS — browser-side load, ne blokira build ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* ── GOOGLE FONTS — imaposla.me brand: Poppins + Inter ── */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
 
-/* ── TOKENS ── */
+/* ── TOKENS — imaposla.me brand ── */
 :root{
-  --bg:#f5f1e8;--ink:#171717;--muted:#6d665f;--soft:#fff7e8;--paper:#fffdf8;
-  --line:#ded5c6;--line2:#cabcaa;
-  --blue:#2148ff;--lime:#c8ff3d;--pink:#ff4fa3;--orange:#ff8a2a;--green:#13b76d;--red:#e5484d;
-  --shadow:0 4px 24px rgba(28,22,12,.10);--shadow2:0 8px 40px rgba(28,22,12,.14);
-  --r:16px;--r2:24px;
-  --font:var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);--display:var(--font-space, 'Space Grotesk', 'Inter', system-ui, sans-serif);
+  /* imaposla.me light mode: crisp white base, navy accents, red CTAs */
+  --bg:#f4f6f8;--ink:#00182A;--muted:#6B7280;--soft:#EEF2F7;--paper:#ffffff;
+  --line:#E2E8F0;--line2:#CBD5E1;
+  --blue:#0A5CF6;--lime:#10B961;--pink:#F59E0B;--orange:#F59E0B;--green:#10B961;--red:#FF282B;
+  --shadow:0 2px 12px rgba(0,24,42,.08);--shadow2:0 8px 32px rgba(0,24,42,.12);
+  --r:12px;--r2:16px;
+  /* imaposla.me brandbook fonts */
+  --font:'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+  --display:'Poppins', system-ui, sans-serif;
+  /* brand identity colours */
+  --brand-navy:#00182A;
+  --brand-red:#FF282B;
+  --brand-light:#F2F4F7;
+  --brand-gray:#6B7280;
 }
 [data-theme="dark"]{
-  /* ─────────────────────────────────────────────────
-     PREMIUM DARK TOKEN SYSTEM
-     Deep navy base, layered surfaces, controlled accents
-     ───────────────────────────────────────────────── */
-  /* Surfaces — deep navy, not pure black, slight elevation system */
-  --bg:#0a0e14;            /* app/page background — deepest */
-  --paper:#141923;         /* cards, panels — elevated */
-  --soft:#1a2030;          /* inputs, secondary surfaces — more elevation */
-  --elev:#222838;          /* hover/active surfaces */
-  /* Text */
-  --ink:#e8eef5;           /* primary text — high contrast (WCAG AAA on bg) */
-  --muted:#9aa5b8;         /* secondary text — readable on all surfaces */
-  --faint:#6b7588;         /* placeholder, helper text */
-  /* Borders */
-  --line:#252b3a;          /* subtle border */
-  --line2:#363d4f;         /* stronger border, focus underline */
-  /* Accents — keep brand identity but slightly desaturated for dark eyes */
-  --blue:#5b8dff;
-  --lime:#c0ff45;
-  --pink:#ff7ec0;
-  --orange:#ffa358;
-  --green:#46c65a;
-  --red:#ff5b5b;
-  --yellow:#e0a82e;
-  /* Semantic states */
-  --info:#5b8dff;
-  --success:#46c65a;
-  --warning:#ffa358;
-  --danger:#ff5b5b;
-  /* Shadows — soft for depth, not harsh black */
-  --shadow:0 4px 14px rgba(0,0,0,.40),0 1px 3px rgba(0,0,0,.30);
-  --shadow2:0 14px 40px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.35);
-  --ring:0 0 0 3px color-mix(in srgb,var(--blue) 32%,transparent);
+  /* imaposla.me dark: deep navy surfaces, red/white accents */
+  --bg:#000d18;
+  --paper:#00182A;
+  --soft:#002440;
+  --elev:#003056;
+  --ink:#F0F4F8;
+  --muted:#8FA4BA;
+  --faint:#56748A;
+  --line:#002033;
+  --line2:#003050;
+  --blue:#4D8EFF;
+  --lime:#34D399;
+  --pink:#FCD34D;
+  --orange:#FBBF24;
+  --green:#34D399;
+  --red:#FF4A4D;
+  --yellow:#FBBF24;
+  --info:#4D8EFF;
+  --success:#34D399;
+  --warning:#FBBF24;
+  --danger:#FF4A4D;
+  --shadow:0 4px 14px rgba(0,0,0,.50),0 1px 3px rgba(0,0,0,.35);
+  --shadow2:0 14px 40px rgba(0,0,0,.65),0 4px 12px rgba(0,0,0,.40);
+  --ring:0 0 0 3px color-mix(in srgb,var(--red) 28%,transparent);
 }
 
 /* ── RESET ── */
@@ -71,27 +70,33 @@ img{display:block;max-width:100%}
 .meta{color:var(--muted);font-size:12px;font-weight:700}
 .muted{color:var(--muted);font-size:12px;font-weight:700}
 
-/* ── TYPOGRAPHY ── */
-h1,h2,h3{font-family:var(--display);line-height:.98;letter-spacing:-.045em}
-h1{font-size:clamp(40px,6.5vw,76px);margin-bottom:16px}
-h2{font-size:clamp(26px,4vw,40px)}
-h3{font-size:20px}
+/* ── TYPOGRAPHY — Poppins brand ── */
+h1,h2,h3{font-family:var(--display);line-height:1.1;letter-spacing:-.03em}
+h1{font-size:clamp(36px,6vw,68px);margin-bottom:16px;font-weight:800}
+h2{font-size:clamp(24px,3.5vw,36px);font-weight:700}
+h3{font-size:18px;font-weight:700}
 .lead{font-size:16px;color:var(--muted);max-width:680px;line-height:1.75;margin-bottom:22px}
 .sub{color:var(--muted);font-size:13px;font-weight:650;margin-top:5px}
 .hint{font-size:12px;color:var(--muted);font-weight:700}
 .grad-text{background:linear-gradient(90deg,var(--blue),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
 
-/* ── TOP NAV ── */
-.top{position:sticky;top:0;z-index:40;background:rgba(245,241,232,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-[data-theme="dark"] .top{background:rgba(13,17,23,.92);backdrop-filter:saturate(160%) blur(12px)}
-.top-in{height:64px;width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;align-items:center;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-family:var(--display);letter-spacing:-.04em;font-size:19px;white-space:nowrap}
-.mark{width:34px;height:34px;border-radius:12px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-weight:900;font-size:13px;box-shadow:3px 3px 0 var(--blue);transform:rotate(-3deg)}
-.nav.desktop-nav{display:flex;align-items:center;gap:2px;margin-left:14px}
-.nav.desktop-nav a{padding:8px 11px;border-radius:999px;font-size:13px;font-weight:750;color:var(--muted);transition:.15s}
-.nav.desktop-nav a:hover{background:var(--soft);color:var(--ink)}
+/* ── TOP NAV — imaposla.me brand ── */
+.top{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+[data-theme="dark"] .top{background:rgba(0,24,42,.96);backdrop-filter:saturate(180%) blur(14px);border-bottom-color:var(--line)}
+.top-in{height:68px;width:min(1180px,calc(100% - 32px));margin:0 auto;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-family:var(--display);letter-spacing:-.03em;font-size:20px;white-space:nowrap;color:var(--brand-navy)}
+[data-theme="dark"] .brand{color:#fff}
+/* ip mark: round dark navy with red dot — matches brandbook */
+.mark{width:36px;height:36px;border-radius:10px;background:var(--brand-navy);color:#fff;display:grid;place-items:center;font-weight:900;font-size:15px;position:relative}
+.mark::after{content:'';position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--brand-red);border-radius:50%}
+[data-theme="dark"] .mark{background:var(--brand-red)}
+.brand-dot{color:var(--brand-red)}
+.nav.desktop-nav{display:flex;align-items:center;gap:2px;margin-left:16px}
+.nav.desktop-nav a{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);transition:.15s}
+.nav.desktop-nav a:hover{background:var(--soft);color:var(--brand-navy)}
+[data-theme="dark"] .nav.desktop-nav a:hover{background:var(--soft);color:#fff}
 .top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
-.role-pill{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;background:var(--lime);color:#111;border:1.5px solid var(--ink);border-radius:999px;padding:5px 10px}
+.role-pill{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;background:var(--brand-red);color:#fff;border-radius:6px;padding:4px 10px}
 
 /* hamburger — ONLY mobile */
 .hamb{display:none!important}
@@ -105,49 +110,49 @@ h3{font-size:20px}
 .mobile-nav a{border:1.5px solid var(--line2);border-radius:13px;background:var(--soft);padding:11px;font-weight:800;text-align:center;color:var(--ink);font-size:13px;transition:.15s}
 .mobile-nav a:hover{border-color:var(--blue);color:var(--blue)}
 
-/* ── BUTTONS ── */
-.btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:2px solid var(--ink);background:var(--paper);box-shadow:3px 3px 0 var(--ink);border-radius:999px;font-weight:900;font-size:13px;padding:8px 15px;transition:.12s;cursor:pointer;white-space:nowrap;min-height:38px;line-height:1}
-.icon-btn{width:38px;height:38px;padding:0;font-size:16px}
-.btn:hover,.icon-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
-.btn:active,.icon-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+/* ── BUTTONS — imaposla.me brand ── */
+.btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;background:var(--soft);border-radius:8px;font-weight:600;font-size:13px;padding:9px 18px;transition:.15s;cursor:pointer;white-space:nowrap;min-height:40px;line-height:1;font-family:var(--display)}
+.icon-btn{width:40px;height:40px;padding:0;font-size:17px}
+.btn:hover,.icon-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn:active,.icon-btn:active{transform:translateY(0);filter:brightness(.97)}
 .btn:disabled{opacity:.5;pointer-events:none}
-.btn.blue{background:var(--blue);color:#fff;border-color:var(--blue)}
-.btn.lime{background:var(--lime);color:#111;border-color:var(--ink)}
-.btn.red{background:var(--red);color:#fff;border-color:var(--red)}
-.btn.green{background:var(--green);color:#fff;border-color:var(--green)}
-.btn.ghost{background:transparent;box-shadow:none;border-color:var(--line2);color:var(--muted)}
-.btn.ghost:hover{background:var(--soft);transform:none;box-shadow:none;color:var(--ink)}
-.btn.sm{padding:6px 12px;font-size:12px;min-height:32px}
-.btn.xs{padding:4px 8px;font-size:11px;min-height:26px;box-shadow:2px 2px 0 var(--ink)}
+/* primary = brand red */
+.btn.blue,.btn.red{background:var(--brand-red);color:#fff}
+.btn.lime{background:var(--brand-red);color:#fff}
+.btn.green{background:var(--green);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line2);color:var(--muted)}
+.btn.ghost:hover{background:var(--soft);transform:none;color:var(--ink)}
+.btn.sm{padding:6px 14px;font-size:12px;min-height:34px;border-radius:7px}
+.btn.xs{padding:4px 9px;font-size:11px;min-height:28px;border-radius:6px}
 
-/* ── SURFACES ── */
-.card{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r2);padding:20px;box-shadow:var(--shadow)}
-.panel{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r2);padding:28px;box-shadow:var(--shadow2)}
-.soft-card{background:var(--soft);border:1.5px solid var(--line2);border-radius:18px;padding:14px}
-.form-card{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r2);padding:18px;box-shadow:var(--shadow);display:grid;gap:13px}
-.notice-card{background:var(--soft);border:1.5px dashed var(--line2);border-radius:18px;padding:14px;display:grid;gap:8px}
+/* ── SURFACES — imaposla.me brand: clean cards, subtle shadows ── */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r2);padding:20px;box-shadow:var(--shadow)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r2);padding:28px;box-shadow:var(--shadow2)}
+.soft-card{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px}
+.form-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r2);padding:18px;box-shadow:var(--shadow);display:grid;gap:13px}
+.notice-card{background:var(--soft);border:1px dashed var(--line2);border-radius:12px;padding:14px;display:grid;gap:8px}
 .notice-card.warn{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 8%,var(--paper))}
 .notice-card strong{font-size:14px}
 .notice-card p{color:var(--muted);font-size:13px;margin:0}
-.empty{border:2px dashed var(--line2);border-radius:var(--r2);padding:28px;text-align:center;display:grid;gap:10px}
+.empty{border:1.5px dashed var(--line2);border-radius:var(--r2);padding:28px;text-align:center;display:grid;gap:10px}
 .empty strong{font-size:16px}
 .empty p{color:var(--muted);font-size:13px;margin:0}
 .loading-panel{padding:40px;text-align:center;color:var(--muted)}
 
-/* ── BADGES & LABELS ── */
-.page-label,.kicker,.eyebrow{display:inline-flex;width:max-content;align-items:center;border:2px solid var(--ink);background:var(--lime);color:#111;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:900;margin-bottom:14px;box-shadow:2px 2px 0 var(--ink);text-transform:uppercase;letter-spacing:.07em}
-.badge,.tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;border:1.5px solid var(--ink);font-size:11px;font-weight:900;white-space:nowrap}
-.tag{border-color:var(--line2);background:var(--soft);color:var(--muted)}
-.badge.blue{background:var(--blue);color:#fff;border-color:var(--blue)}
-.badge.lime{background:var(--lime);color:#111}
-.badge.green{background:var(--green);color:#fff;border-color:var(--green)}
-.badge.red{background:var(--red);color:#fff;border-color:var(--red)}
-.badge.orange{background:var(--orange);color:#fff;border-color:var(--orange)}
-.badge.gray{border-color:var(--line2);color:var(--muted);background:transparent}
-.badge.purple{background:#7c3aed;color:#fff;border-color:#7c3aed}
-.status-badge{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:900;border:1.5px solid}
-.status-badge.stage-applied{background:var(--blue);color:#fff;border-color:var(--blue)}
-.status-badge.stage-review{background:var(--soft);color:var(--muted);border-color:var(--line2)}
+/* ── BADGES & LABELS — imaposla.me ── */
+.page-label,.kicker,.eyebrow{display:inline-flex;width:max-content;align-items:center;background:color-mix(in srgb,var(--brand-red) 10%,transparent);color:var(--brand-red);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em;border:1px solid color-mix(in srgb,var(--brand-red) 20%,transparent)}
+.badge,.tag{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
+.tag{background:var(--soft);color:var(--muted)}
+.badge.blue{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue)}
+.badge.lime{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)}
+.badge.green{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)}
+.badge.red{background:color-mix(in srgb,var(--brand-red) 12%,transparent);color:var(--brand-red)}
+.badge.orange{background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--orange)}
+.badge.gray{color:var(--muted);background:var(--soft)}
+.badge.purple{background:color-mix(in srgb,#7c3aed 12%,transparent);color:#7c3aed}
+.status-badge{display:inline-flex;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.status-badge.stage-applied{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue)}
+.status-badge.stage-review{background:var(--soft);color:var(--muted)}
 .status-badge.stage-interview{background:var(--orange);color:#fff;border-color:var(--orange)}
 .status-badge.stage-shortlist,.status-badge.stage-offer{background:#7c3aed;color:#fff;border-color:#7c3aed}
 .status-badge.stage-hired{background:var(--green);color:#fff;border-color:var(--green)}
@@ -168,26 +173,38 @@ h3{font-size:20px}
 .notice.success{background:color-mix(in srgb,var(--green) 8%,var(--paper));border-color:var(--green);color:var(--green)}
 
 /* ── HOME PAGE ── */
-.live-home{display:grid;gap:18px;padding-bottom:40px}
-.live-hero{background:var(--paper);border:2px solid var(--ink);border-radius:28px;padding:32px;box-shadow:var(--shadow2);display:grid;gap:14px}
-.live-hero h1{font-size:clamp(38px,6vw,72px);line-height:.94;letter-spacing:-.07em;margin:0}
-.live-hero p{font-size:16px;color:var(--muted);font-weight:700;line-height:1.6;max-width:720px;margin:0}
-.live-search{display:grid;grid-template-columns:minmax(0,1.3fr) .8fr .8fr auto;gap:6px;background:var(--ink);border-radius:18px;padding:8px;box-shadow:5px 5px 0 var(--blue)}
-.live-search input,.live-search select{background:var(--paper);border-radius:10px;padding:11px 13px;font-weight:700;color:var(--ink)}
-[data-theme="dark"] .live-search input,[data-theme="dark"] .live-search select{background:var(--paper);border-color:var(--line)}
-.live-search button{border-radius:10px;background:var(--lime);border:0;padding:0 16px;color:#111;font-weight:900;font-size:13px;cursor:pointer;min-height:42px}
-.live-actions{display:flex;flex-wrap:wrap;gap:8px}
-.live-paths{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.live-path{display:grid;gap:8px;min-height:180px;padding:20px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r2);box-shadow:var(--shadow);transition:.12s}
-.live-path:hover{transform:translateY(-2px);box-shadow:5px 5px 0 rgba(23,23,23,.12)}
-[data-theme="dark"] .live-path:hover{box-shadow:5px 5px 0 rgba(255,255,255,.06);border-color:var(--blue)}
-.live-path span{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
-.live-path h2{margin:0;font-size:28px}
-.live-path p{color:var(--muted);font-weight:700;line-height:1.45;font-size:13px;margin:0}
-.live-path strong{color:var(--blue);font-size:13px}
+.live-home{display:grid;gap:20px;padding-bottom:48px}
+/* Hero — dark navy background, bold white text, red CTA — matches brandbook */
+.live-hero{background:var(--brand-navy);border-radius:20px;padding:48px 40px;display:grid;gap:16px;position:relative;overflow:hidden}
+.live-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,rgba(255,40,43,.15) 0%,transparent 70%);pointer-events:none}
+.live-hero h1{font-size:clamp(36px,5.5vw,64px);line-height:1.05;letter-spacing:-.03em;margin:0;color:#fff;font-weight:800}
+.live-hero h1 .accent{color:var(--brand-red)}
+.live-hero p{font-size:15px;color:rgba(255,255,255,.65);font-weight:400;line-height:1.7;max-width:640px;margin:0}
+[data-theme="dark"] .live-hero{background:var(--brand-navy);border:1px solid rgba(255,255,255,.06)}
+.live-search{display:grid;grid-template-columns:minmax(0,1.3fr) .8fr .8fr auto;gap:6px;background:rgba(255,255,255,.1);border-radius:12px;padding:6px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15)}
+.live-search input,.live-search select{background:rgba(255,255,255,.12);border-radius:8px;padding:11px 14px;font-weight:500;color:#fff;border:1px solid rgba(255,255,255,.1)}
+.live-search input::placeholder{color:rgba(255,255,255,.5)}
+.live-search input:focus,.live-search select:focus{outline:none;background:rgba(255,255,255,.18)}
+.live-search select option{color:var(--ink);background:#fff}
+[data-theme="dark"] .live-search input,[data-theme="dark"] .live-search select{background:rgba(255,255,255,.08)}
+.live-search button{border-radius:8px;background:var(--brand-red);border:0;padding:0 20px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;min-height:44px;font-family:var(--display);letter-spacing:.01em;transition:.15s}
+.live-search button:hover{background:#e01f22;transform:translateY(-1px)}
+.live-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.live-actions .btn.blue{background:var(--brand-red);color:#fff;font-weight:600}
+.live-actions .btn.lime{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(4px)}
+.live-actions .btn.lime:hover{background:rgba(255,255,255,.22)}
+.live-actions .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
+.live-actions .btn.ghost:hover{background:rgba(255,255,255,.1);color:#fff}
+.live-paths{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.live-path{display:grid;gap:10px;min-height:160px;padding:24px;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);transition:.15s}
+.live-path:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,24,42,.12);border-color:var(--brand-red)}
+.live-path span{color:var(--brand-red);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.live-path h2{margin:0;font-size:26px;color:var(--ink);font-weight:800}
+.live-path p{color:var(--muted);font-weight:400;line-height:1.55;font-size:13px;margin:0}
+.live-path strong{color:var(--brand-red);font-size:13px;font-weight:600}
 .live-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:4px}
-.live-section-head h2{margin:4px 0;font-size:28px}
-.live-section-head p{max-width:580px;color:var(--muted);font-weight:700;font-size:13px}
+.live-section-head h2{margin:4px 0;font-size:26px;font-weight:700;color:var(--ink)}
+.live-section-head p{max-width:580px;color:var(--muted);font-weight:400;font-size:13px}
 .stat-mosaic{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .stat{background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
 .stat:nth-child(2){background:var(--blue);color:#fff}
@@ -266,8 +283,8 @@ h3{font-size:20px}
 .featured-section-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .featured-section-head h2{font-size:18px;font-weight:800;margin:0}
 .featured-section-head .badge-featured{background:var(--orange);color:#fff;font-size:11px;font-weight:900;padding:3px 8px;border-radius:999px;letter-spacing:.04em}
-.job-card.featured-card{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--lime) 10%,var(--paper)));border-color:var(--lime);box-shadow:0 2px 0 var(--lime),5px 5px 0 rgba(23,23,23,.1)}
-[data-theme="dark"] .job-card.featured-card{box-shadow:0 2px 0 var(--lime),5px 5px 0 rgba(255,255,255,.06)}
+.job-card.featured-card{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--brand-red) 4%,var(--paper)));border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line));box-shadow:0 0 0 1px color-mix(in srgb,var(--brand-red) 20%,transparent),var(--shadow)}
+[data-theme="dark"] .job-card.featured-card{border-color:color-mix(in srgb,var(--brand-red) 25%,transparent)}
 /* Tower banners — position:fixed, van .wrap okvira, samo desktop */
 .jobs-with-towers{display:block}
 /* TowerBanner komponenta: .tower-banner-fixed */
@@ -279,10 +296,10 @@ h3{font-size:20px}
   .tower-banner-fixed-right{right:calc(50% - 590px - 10px - 160px)}
 }
 .tower-banner-placeholder{pointer-events:none}
-.job-card{background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:start;transition:.12s;position:relative}
-.job-card:hover{transform:translateY(-2px);box-shadow:5px 5px 0 rgba(23,23,23,.12)}
-[data-theme="dark"] .job-card:hover{box-shadow:5px 5px 0 rgba(255,255,255,.08)}
-.job-card.featured{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--lime) 12%,var(--paper)))}
+.job-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:start;transition:.15s;position:relative}
+.job-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,24,42,.1);border-color:var(--brand-red)}
+[data-theme="dark"] .job-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.3);border-color:var(--brand-red)}
+.job-card.featured{background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--brand-red) 3%,var(--paper)))}
 .featured-badge{position:absolute;top:-9px;left:18px;background:var(--orange);border:1.5px solid var(--ink);border-radius:999px;padding:2px 8px;font-size:10px;font-weight:900;color:#fff}
 .logo{width:50px;height:50px;border:2px solid var(--ink);border-radius:14px;display:grid;place-items:center;font-weight:900;font-family:var(--display);background:var(--lime);box-shadow:2px 2px 0 var(--ink);flex-shrink:0;font-size:15px;overflow:hidden;color:#111}
 .job-title{font-family:var(--display);font-size:18px;font-weight:850;letter-spacing:-.03em;margin:4px 0;display:inline-block}
@@ -639,7 +656,7 @@ h3{font-size:20px}
 .cv-skill-list span{padding:4px 8px;border:1.5px solid #151515;border-radius:999px;background:#f5f5f5;font-size:11px;font-weight:850;color:#151515}
 
 /* ── FOOTER ── */
-.footer{margin-top:36px;background:var(--ink);color:var(--soft);border-radius:28px 28px 0 0;padding:28px 0}
+.footer{margin-top:40px;background:var(--brand-navy);color:rgba(255,255,255,.65);border-radius:20px 20px 0 0;padding:40px 0 32px}
 .footer-banner-slot{border-radius:0;margin:0;padding:0;width:100%;overflow:hidden}
 /* Edit job notice — inline inside table-card */
 .edit-job-notice{background:color-mix(in srgb,var(--orange) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--orange) 40%,var(--line));color:var(--ink);border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:12px}
@@ -2510,3 +2527,140 @@ h3{font-size:20px}
 .banner-req-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--ink);font-weight:900;font-size:12px;white-space:nowrap}
 .banner-req-table td{padding:9px 10px;border-bottom:1.5px solid var(--line);vertical-align:middle}
 .banner-req-table tr:hover td{background:var(--soft)}
+
+/* ── TICKER STRIP — imaposla.me animated jobs/companies marquee ── */
+.ticker-strip{
+  background:var(--brand-navy);
+  border-radius:14px;
+  padding:0;
+  overflow:hidden;
+  position:relative;
+}
+.ticker-strip::before,.ticker-strip::after{
+  content:'';position:absolute;top:0;width:80px;height:100%;z-index:2;pointer-events:none;
+}
+.ticker-strip::before{left:0;background:linear-gradient(to right,var(--brand-navy),transparent)}
+.ticker-strip::after{right:0;background:linear-gradient(to left,var(--brand-navy),transparent)}
+
+.ticker-row{
+  display:flex;
+  gap:0;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.ticker-row:last-child{border-bottom:none;padding-top:8px}
+
+.ticker-label{
+  flex-shrink:0;width:130px;padding:0 16px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);
+  display:flex;align-items:center;gap:6px;border-right:1px solid rgba(255,255,255,.08);
+}
+.ticker-label svg{opacity:.5}
+
+.ticker-track{
+  flex:1;overflow:hidden;display:flex;align-items:center;
+}
+.ticker-inner{
+  display:flex;gap:6px;align-items:center;
+  animation:ticker-scroll 32s linear infinite;
+  will-change:transform;
+}
+.ticker-inner.slow{animation-duration:48s}
+.ticker-inner:hover{animation-play-state:paused}
+
+@keyframes ticker-scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+
+.ticker-job{
+  display:inline-flex;align-items:center;gap:8px;
+  flex-shrink:0;
+  padding:6px 14px;border-radius:8px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  color:#fff;font-size:12px;font-weight:500;
+  transition:.15s;text-decoration:none;white-space:nowrap;
+}
+.ticker-job:hover{background:rgba(255,40,43,.25);border-color:rgba(255,40,43,.5)}
+.ticker-job .tj-title{font-weight:600;color:#fff}
+.ticker-job .tj-co{color:rgba(255,255,255,.5);font-size:11px}
+.ticker-job .tj-salary{
+  font-size:11px;font-weight:700;color:var(--brand-red);
+  background:rgba(255,40,43,.12);padding:2px 7px;border-radius:5px;
+}
+.ticker-job .tj-city{color:rgba(255,255,255,.4);font-size:11px}
+.ticker-sep{color:rgba(255,255,255,.15);font-size:16px;flex-shrink:0;margin:0 2px}
+
+.ticker-company{
+  display:inline-flex;align-items:center;gap:8px;
+  flex-shrink:0;
+  padding:5px 12px;border-radius:8px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.7);font-size:12px;font-weight:600;
+  white-space:nowrap;text-decoration:none;
+  transition:.15s;
+}
+.ticker-company:hover{background:rgba(255,255,255,.12)}
+.ticker-company .tc-logo{
+  width:24px;height:24px;border-radius:5px;background:rgba(255,255,255,.15);
+  display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;
+}
+.ticker-company .tc-jobs{
+  font-size:10px;font-weight:700;color:var(--brand-red);
+  background:rgba(255,40,43,.15);padding:1px 6px;border-radius:4px;
+}
+
+/* HITNO badge for ticker */
+.tj-urgent{
+  font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--brand-red);color:#fff;padding:2px 5px;border-radius:4px;
+}
+
+/* ── HERO overrides — quick tags / actions on dark bg ── */
+.live-hero .quick-tags__label{color:rgba(255,255,255,.4)}
+.live-hero .quick-tag{
+  border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6);
+  background:rgba(255,255,255,.06);
+}
+.live-hero .quick-tag:hover{
+  border-color:var(--brand-red);color:#fff;background:rgba(255,40,43,.15);
+}
+
+/* ── Detail page — imaposla.me brand ── */
+.detail-layout .panel{border:1px solid var(--line)}
+.detail-layout .card{border:1px solid var(--line)}
+.detail-layout .logo{
+  width:52px;height:52px;border-radius:10px;background:var(--soft);
+  border:1px solid var(--line);display:grid;place-items:center;
+  font-weight:800;font-size:18px;color:var(--brand-navy);
+}
+.detail-text{line-height:1.75;color:var(--muted);white-space:pre-wrap;font-size:14px}
+
+/* ── Section kicker links ── */
+.live-section-head .kicker{color:var(--brand-red)}
+
+/* ── Mobile nav overrides ── */
+.mobile-nav{background:var(--brand-navy);border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 40px rgba(0,0,0,.3);border-radius:14px}
+.mobile-nav a{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.8)}
+.mobile-nav a:hover{border-color:var(--brand-red);color:#fff}
+
+/* ── Hamb icon — visible on mobile ── */
+.hamb{display:none!important}
+@media(max-width:860px){
+  .hamb{display:inline-flex!important}
+  .nav.desktop-nav{display:none}
+  .top-actions .btn.ghost,.top-actions .btn.red,.top-actions .btn.blue,.role-pill{display:none}
+}
+
+/* ── job-list ── */
+.job-list.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:680px){.job-list.two-col{grid-template-columns:1fr}}
+
+/* ── Ticker mobile ── */
+@media(max-width:600px){
+  .ticker-label{width:90px;font-size:9px}
+  .ticker-job{padding:5px 10px;font-size:11px}
+}
