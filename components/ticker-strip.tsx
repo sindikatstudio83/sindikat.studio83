@@ -128,7 +128,7 @@ export function TickerStripFromDB({
   jobs,
   companies,
 }: {
-  jobs: Array<{ id: string | number; title: string; slug?: string; salary_text?: string; cities?: { name: string } | null; companies?: { name: string; slug?: string } | null; }>;
+  jobs: Array<{ id: string | number; title: string; slug?: string; salary_text?: string | null; cities?: { name: string } | null; companies?: { name: string; slug?: string } | null; }>;
   companies: Array<{ id: string | number; name: string; slug?: string; job_count?: number }>;
 }) {
   const mappedJobs: TickerJob[] = jobs.map(j => ({
