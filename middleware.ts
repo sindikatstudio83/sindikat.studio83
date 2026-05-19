@@ -53,9 +53,12 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // ── Get session (fast — no DB query, just JWT) ────────────────────────
-  const { data: { session } } = await supabase.auth.getSession();
-  const isLoggedIn = Boolean(session?.user);
+  // ── Get user — validated server-side (not just from JWT cookie) ────────
+  // FIX P0: getSession() reads JWT from cookie without server validation.
+  // getUser() sends the JWT to Supabase Auth server for proper validation.
+  // This prevents forged/expired tokens from bypassing route protection.
+  const { data: { user } } = await supabase.auth.getUser();
+  const isLoggedIn = Boolean(user);
 
   // ── Redirect logged-in users away from login/register ────────────────
   if (isLoggedIn && AUTH_ONLY_PATHS.some(p => pathname === p || pathname.startsWith(p + "/"))) {
@@ -76,7 +79,7 @@ export async function middleware(request: NextRequest) {
 
       // Logged in — check role from DB (one query per protected request)
       try {
-        const userId = session!.user.id;
+        const userId = user!.id;
         const { data: profile } = await supabase
           .from("profiles")
           .select("role")

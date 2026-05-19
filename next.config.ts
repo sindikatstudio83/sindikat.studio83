@@ -7,17 +7,21 @@ const securityHeaders = [
   { key: "Permissions-Policy",        value: "camera=(), microphone=(), geolocation=()" },
   { key: "X-DNS-Prefetch-Control",    value: "on" },
   {
-    key: "Content-Security-Policy-Report-Only",
+    // FIX P2: Aktiviran enforcement (bez -Report-Only).
+    // unsafe-eval uklonjen — Next.js 15 ne zahtijeva eval u produkciji.
+    // unsafe-inline ostaje jer Next.js inline skripte koristi za hydration.
+    // Ako se pojave probleme s fontovima ili ikonama, dodati odgovarajuće src-ove.
+    key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "form-action 'self'",
       "object-src 'none'",
-      "img-src 'self' data: blob: https://*.supabase.co",
+      "img-src 'self' data: blob: https://*.supabase.co https://preview.redd.it",
       "font-src 'self' data: https://fonts.gstatic.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "script-src 'self' 'unsafe-inline'",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
       "upgrade-insecure-requests",
     ].join("; "),
@@ -43,6 +47,18 @@ const nextConfig: NextConfig = {
         hostname: "picsum.photos",
       }] : []),
     ],
+  },
+
+  // FIX P2: /profil/sacuvano → trajni redirect na /profil/sacuvani
+  // Bolje od client-side redirect komponente — 308 Permanent na nivou Next.js
+  async redirects() {
+    return [
+      {
+        source: "/profil/sacuvano",
+        destination: "/profil/sacuvani",
+        permanent: true,
+      },
+    ];
   },
 
   experimental: {

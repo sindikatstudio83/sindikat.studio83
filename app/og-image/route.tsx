@@ -10,12 +10,13 @@ export async function GET(request: Request) {
   const safeTitle = title.length > 50 ? title.slice(0, 50) + "\u2026" : title;
   const safeSubtitle = subtitle.length > 90 ? subtitle.slice(0, 90) + "\u2026" : subtitle;
 
+  // FIX P2: Updated to imaposla.me brandbook colours (navy + red, not lime)
   return new ImageResponse(
     <div
       style={{
         width: "1200px",
         height: "630px",
-        background: "#0a0e14",
+        background: "#00182A",
         display: "flex",
         alignItems: "stretch",
         justifyContent: "stretch",
@@ -25,14 +26,15 @@ export async function GET(request: Request) {
         style={{
           margin: "40px",
           flex: 1,
-          background: "#1a1f2e",
-          borderRadius: "32px",
-          border: "2px solid #252b3a",
+          background: "#001f35",
+          borderRadius: "28px",
+          border: "1.5px solid rgba(255,255,255,0.08)",
           display: "flex",
           flexDirection: "column",
           padding: "50px 60px",
         }}
       >
+        {/* Logo mark */}
         <div
           style={{
             display: "flex",
@@ -45,25 +47,34 @@ export async function GET(request: Request) {
             style={{
               width: "68px",
               height: "68px",
-              background: "#c8ff3d",
+              background: "#00182A",
               borderRadius: "16px",
+              border: "1.5px solid rgba(255,255,255,0.15)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "26px",
+              fontSize: "24px",
               fontWeight: 900,
-              color: "#0a0e14",
+              color: "#fff",
+              position: "relative",
             }}
           >
             ip
           </div>
-          <span style={{ fontSize: "26px", fontWeight: 700, color: "#e8eef5" }}>
-            imaposla.me
-          </span>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "0px" }}>
+            <span style={{ fontSize: "26px", fontWeight: 700, color: "#ffffff" }}>
+              imaposla
+            </span>
+            <span style={{ fontSize: "26px", fontWeight: 700, color: "#FF282B" }}>
+              .me
+            </span>
+          </div>
         </div>
+
+        {/* Main title */}
         <div
           style={{
-            fontSize: "60px",
+            fontSize: "58px",
             fontWeight: 900,
             color: "#ffffff",
             lineHeight: 1.1,
@@ -74,24 +85,30 @@ export async function GET(request: Request) {
         >
           {safeTitle}
         </div>
+
+        {/* Subtitle */}
         <div
           style={{
-            fontSize: "26px",
-            color: "#9aa5b8",
+            fontSize: "24px",
+            color: "rgba(255,255,255,0.55)",
             marginBottom: "16px",
             marginTop: "24px",
           }}
         >
           {safeSubtitle}
         </div>
+
+        {/* Tagline */}
         <div
           style={{
-            fontSize: "18px",
-            color: "#c8ff3d",
+            fontSize: "16px",
+            color: "#FF282B",
             fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
           }}
         >
-          imaposla.me
+          PRAVI LJUDI. PRAVE PRILIKE.
         </div>
       </div>
     </div>,
