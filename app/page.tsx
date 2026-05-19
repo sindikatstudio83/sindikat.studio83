@@ -48,9 +48,20 @@ export default async function HomePage() {
         <PageLabel>imaposla.me</PageLabel>
         <h1>Pravi ljudi.<br /><span className="accent">Prave prilike.</span></h1>
         <p>
-          Połezujemo talente i poslodavce na najjednostavniji način.
-          Kandidat se prijavljuje za minuta, firma vodi selekciju na jednom mjestu.
+          Povezujemo talente i poslodavce na najjednostavniji način.
+          Kandidat se prijavljuje za minute, firma vodi selekciju na jednom mjestu.
         </p>
+
+        <div className="hero-intent-cards">
+          <Link href="/registracija?role=company" className="hero-intent-card">
+            <span className="hero-intent-label">Nudim posao</span>
+            <strong>Objavi oglas i pronađi kandidate</strong>
+          </Link>
+          <Link href="/oglasi" className="hero-intent-card">
+            <span className="hero-intent-label">Tražim posao</span>
+            <strong>Pretraži oglase i pošalji prijavu</strong>
+          </Link>
+        </div>
 
         <form className="live-search" action="/oglasi">
           <input name="q" placeholder="Naziv posla, firma ili vještina" />
@@ -78,6 +89,14 @@ export default async function HomePage() {
           <Button href="/oglasi" tone="lime">Pronađi posao</Button>
           <Button href="/registracija?role=company" tone="blue">Objavi oglas</Button>
           <Button href="/profil/biografija" tone="ghost">Napravi CV</Button>
+        </div>
+
+        <div className="hero-stats">
+          <div className="hero-stat"><strong>12.000+</strong><span>aktivnih kandidata</span></div>
+          <div className="hero-stat-sep" />
+          <div className="hero-stat"><strong>340+</strong><span>novih oglasa sedmično</span></div>
+          <div className="hero-stat-sep" />
+          <div className="hero-stat"><strong>500+</strong><span>kompanija</span></div>
         </div>
       </div>
 

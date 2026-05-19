@@ -20,7 +20,8 @@ export const desktopNavItems: Record<UserRole, NavItem[]> = {
   company: [
     { icon: "pregled",     label: "Dashboard",     href: "/firma" },
     { icon: "novi",        label: "Novi oglas",    href: "/firma/novi-oglas" },
-    { icon: "selekcija",   label: "Selekcija",     href: "/firma/selekcija" }
+    { icon: "selekcija",   label: "Selekcija",     href: "/firma/selekcija" },
+    { icon: "baneri",      label: "Reklame",       href: "/firma/baneri" }
   ],
   admin: [
     { icon: "pregled",     label: "Admin",         href: "/admin" },
@@ -50,7 +51,8 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "novi",        label: "Novi oglas", href: "/firma/novi-oglas" },
     { icon: "selekcija",   label: "Selekcija", href: "/firma/selekcija" },
     { icon: "kandidati",   label: "Kandidati", href: "/firma/kandidati" },
-    { icon: "pretplata",   label: "Pretplata", href: "/firma/pretplata" }
+    { icon: "pretplata",   label: "Pretplata", href: "/firma/pretplata" },
+    { icon: "baneri",      label: "Reklame",   href: "/firma/baneri" }
   ],
   admin: [
     { icon: "home",        label: "Pregled",   href: "/admin" },
