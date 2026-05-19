@@ -325,9 +325,18 @@ export function CvUnlockClient() {
                   )}
                 </div>
                 <div className="candidate-card__action">
-                  {isUnlocked
-                    ? <span className="unlock-badge">✓ Otključano</span>
-                    : (
+                  {isUnlocked ? (
+                    <>
+                      <span className="unlock-badge">✓ Otključano</span>
+                      <Link
+                        href={`/firma/kandidati/${c.id}`}
+                        className="btn blue xs"
+                        style={{ marginTop: 6 }}
+                      >
+                        📄 Otvori profil / CV
+                      </Link>
+                    </>
+                  ) : (
                       <button
                         className="btn blue sm"
                         disabled={unlocking === c.id}

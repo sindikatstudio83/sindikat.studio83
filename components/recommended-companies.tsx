@@ -18,10 +18,11 @@ export function RecommendedCompanies({ companies }: Props) {
           href={companyUrl(c)}
           className={`rec-company-card${c.recommended ? " rec-company-card--star" : ""}`}
         >
+          {/* Logo — 52px, centered */}
           <div className="rec-company-logo">
-            <Avatar bucket="company-logos" path={c.logo_path} fallback={c.name} size={40} shape="rounded" />
+            <Avatar bucket="company-logos" path={c.logo_path} fallback={c.name} size={48} shape="rounded" />
           </div>
-          <div className="rec-company-info">
+          <div className="rec-company-info" style={{ width: "100%", minWidth: 0 }}>
             <span className="rec-company-name">{c.name}</span>
             {(c.city || c.industry) && (
               <span className="rec-company-meta">

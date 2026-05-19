@@ -3142,3 +3142,462 @@ h3{font-size:18px;font-weight:700}
   color:var(--brand-red);
 }
 .hero-intent-card strong{font-size:15px;font-weight:700;color:#fff;line-height:1.3}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMAPOSLA.ME — COMPREHENSIVE UI POLISH v5
+   Mobile-first, premium, legible, brand-consistent
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. HERO INTENT CARDS — light, prominent, mobile-first ── */
+.hero-intent-cards{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;
+}
+.hero-intent-card{
+  display:flex;flex-direction:column;gap:5px;
+  padding:16px 20px;border-radius:14px;text-decoration:none;transition:.18s;
+  background:#fff;border:1.5px solid rgba(255,255,255,.3);
+  box-shadow:0 2px 12px rgba(0,0,0,.15);
+}
+.hero-intent-card:hover{background:#fff;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.hero-intent-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--brand-red);
+}
+.hero-intent-card strong{
+  font-size:14px;font-weight:700;color:var(--brand-navy);line-height:1.35;
+}
+@media(max-width:600px){
+  .hero-intent-cards{grid-template-columns:1fr}
+  .hero-intent-card{padding:14px 16px}
+  .hero-intent-card strong{font-size:15px}
+}
+
+/* ── 2. HERO REFINEMENTS ── */
+.live-hero{padding:40px 36px 32px;gap:14px}
+@media(max-width:860px){
+  .live-hero{padding:28px 22px 24px;border-radius:16px;gap:12px}
+  .live-hero h1{font-size:clamp(26px,7vw,42px)}
+  .live-hero p{font-size:14px}
+}
+@media(max-width:430px){
+  .live-hero{padding:22px 16px 20px}
+  .live-hero h1{font-size:clamp(24px,8vw,34px)}
+}
+
+/* ── 3. SEARCH FORM — mobile collapse ── */
+@media(max-width:860px){
+  .live-search{grid-template-columns:1fr auto;gap:6px}
+  .live-search select:not(:first-of-type){display:none}
+}
+@media(max-width:480px){
+  .live-search{grid-template-columns:1fr}
+  .live-search button{min-height:48px;border-radius:10px}
+}
+
+/* ── 4. QUICK TAGS — mobile scroll ── */
+.quick-tags{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;padding-bottom:2px;
+}
+.quick-tags::-webkit-scrollbar{display:none}
+.quick-tag{flex-shrink:0;min-height:30px;display:inline-flex;align-items:center;padding:5px 12px}
+
+/* ── 5. JOB CARD — polished, bigger logo, readable ── */
+.job-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:60px 1fr;gap:14px;
+  align-items:start;transition:.18s;position:relative;overflow:hidden;
+}
+.job-card > .logo{
+  width:56px;height:56px;flex-shrink:0;border-radius:12px;overflow:hidden;
+  background:var(--soft);border:1px solid var(--line);
+  display:grid;place-items:center;
+}
+.job-card .job-title{
+  font-size:16px;font-weight:700;color:var(--ink);line-height:1.3;
+  display:block;margin-bottom:5px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.job-card .meta{
+  display:flex;gap:5px;flex-wrap:wrap;align-items:center;
+  font-size:12px;color:var(--muted);font-weight:500;
+}
+.job-card .job-desc{
+  font-size:12px;color:var(--muted);line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:6px;
+}
+.job-card .job-actions{
+  grid-column:1/-1;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding-top:10px;border-top:1px solid var(--line);margin-top:4px;
+}
+.job-card .deadline{font-size:11px;color:var(--muted)}
+.job-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 40%,var(--line))}
+
+/* Full-width on mobile */
+@media(max-width:640px){
+  .job-card{grid-template-columns:48px 1fr;gap:10px;padding:12px 14px}
+  .job-card > .logo{width:44px;height:44px}
+  .job-card .job-title{font-size:15px}
+  .job-card .job-actions{gap:6px}
+  .job-card .job-actions .btn{padding:6px 12px;font-size:12px}
+}
+
+/* ── 6. JOB CARD COMPACT — bigger logo, better spacing ── */
+.job-compact{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 1px 4px rgba(0,24,42,.05);
+  text-decoration:none;color:inherit;position:relative;transition:.18s;
+}
+.job-compact:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 35%,var(--line))}
+.job-compact--promo{border-left:3px solid var(--brand-red)}
+.job-compact--quick{border-left:3px solid var(--green)}
+.job-compact__logo{
+  flex-shrink:0;width:48px;height:48px;border-radius:10px;overflow:hidden;
+  background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;
+}
+.job-compact__body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.job-compact__title{font-size:14px;font-weight:700;color:var(--ink);line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.job-compact__company{font-size:12px;color:var(--muted);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.job-compact__city{font-size:11px;color:var(--muted)}
+.job-compact__rate{font-size:11px;font-weight:700;color:var(--green)}
+.job-compact__badge{flex-shrink:0;margin-left:auto;padding-left:6px}
+
+@media(max-width:480px){
+  .job-compact{padding:10px 12px;gap:10px}
+  .job-compact__logo{width:42px;height:42px}
+  .job-compact__title{font-size:13px}
+}
+
+/* ── 7. JOB TILE (oglasi grid) — bigger logo, clean ── */
+.job-tile{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:8px;padding:14px 10px 12px;
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  text-decoration:none;color:inherit;transition:.18s;position:relative;overflow:hidden;
+  min-height:130px;
+}
+.job-tile:hover{border-color:color-mix(in srgb,var(--brand-red) 40%,var(--line));
+  transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1)}
+.job-tile--featured{border-color:color-mix(in srgb,var(--brand-red) 25%,var(--line))}
+.job-tile--urgent::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--brand-red);border-radius:12px 12px 0 0}
+.job-tile__logo{
+  width:56px;height:56px;border-radius:10px;overflow:hidden;
+  background:var(--soft);border:1px solid var(--line);
+  display:grid;place-items:center;flex-shrink:0;
+}
+.job-tile__title{
+  font-size:12px;font-weight:700;line-height:1.3;color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.job-tile__company{font-size:11px;color:var(--muted);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.job-tile__city{font-size:10px;color:var(--muted)}
+.job-tile__urgent{position:absolute;top:6px;right:6px;font-size:9px;font-weight:700;
+  text-transform:uppercase;background:var(--brand-red);color:#fff;
+  padding:2px 5px;border-radius:4px;letter-spacing:.04em}
+
+@media(max-width:480px){
+  .job-tile{padding:10px 6px;gap:6px;min-height:110px}
+  .job-tile__logo{width:44px;height:44px}
+  .job-tile__title{font-size:11px}
+}
+
+/* ── 8. COMPANY CARD — polished, no heavy border ── */
+.company-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:16px;box-shadow:var(--shadow);display:flex;gap:14px;
+  align-items:flex-start;transition:.18s;
+}
+.company-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,24,42,.1);
+  border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line))}
+.company-card > .logo{
+  width:56px;height:56px;flex-shrink:0;border-radius:12px;overflow:hidden;
+  background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;
+}
+.company-card h3{font-size:16px;margin-bottom:3px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.company-card p{color:var(--muted);line-height:1.55;margin:4px 0;font-size:13px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ── 9. RECOMMENDED COMPANIES — horizontal scroll on mobile ── */
+.recommended-companies{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;
+}
+@media(max-width:640px){
+  .recommended-companies{
+    display:flex;overflow-x:auto;gap:10px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding-bottom:4px;
+  }
+  .recommended-companies::-webkit-scrollbar{display:none}
+}
+.rec-company-card{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:8px;padding:14px 10px;
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  text-decoration:none;color:inherit;transition:.18s;position:relative;
+  min-width:0;
+}
+.rec-company-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1);
+  border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line))}
+.rec-company-card--star{border-color:color-mix(in srgb,var(--brand-red) 20%,var(--line))}
+.rec-company-logo{
+  width:52px;height:52px;border-radius:10px;overflow:hidden;
+  background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;
+  flex-shrink:0;
+}
+.rec-company-name{font-size:13px;font-weight:700;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rec-company-meta{font-size:11px;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rec-company-badge{
+  position:absolute;top:6px;right:6px;
+  font-size:10px;color:var(--brand-red);font-weight:800;
+}
+@media(max-width:640px){
+  .rec-company-card{min-width:120px;padding:12px 8px}
+  .rec-company-logo{width:44px;height:44px}
+}
+
+/* ── 10. ATS DETAIL PANEL — full CV view ── */
+.cand-cv-section{margin-top:10px;border-top:1px solid var(--line);padding-top:12px}
+.cand-cv-section-title{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);margin-bottom:6px;
+}
+.cand-cv-row{font-size:13px;line-height:1.6;color:var(--ink);margin-bottom:4px;
+  white-space:pre-wrap;word-break:break-word}
+.cand-cv-tag{
+  display:inline-flex;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;
+  background:var(--soft);color:var(--muted);margin:2px 3px 2px 0;border:1px solid var(--line);
+}
+.cand-profile-header{
+  display:flex;gap:12px;align-items:center;margin-bottom:14px;
+  padding:14px;background:var(--soft);border-radius:12px;
+}
+.cand-profile-av{
+  width:48px;height:48px;border-radius:12px;background:color-mix(in srgb,var(--brand-red) 15%,var(--paper));
+  color:var(--brand-red);font-size:18px;font-weight:800;
+  display:grid;place-items:center;flex-shrink:0;border:2px solid var(--paper);
+}
+.cand-profile-name{font-size:16px;font-weight:800;color:var(--ink)}
+.cand-profile-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.cand-profile-contact{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cand-profile-contact a{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 10px;
+  background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  font-size:12px;font-weight:600;color:var(--ink);transition:.15s;
+}
+.cand-profile-contact a:hover{border-color:var(--brand-red);color:var(--brand-red)}
+
+/* ATS detail panel — mobile bottom sheet */
+@media(max-width:860px){
+  .ats-detail-col{
+    position:fixed!important;bottom:0;left:0;right:0;
+    max-height:85vh;overflow-y:auto;
+    background:var(--paper);border-radius:20px 20px 0 0;
+    border-top:2px solid var(--line);
+    box-shadow:0 -8px 32px rgba(0,0,0,.18);
+    z-index:50;
+    transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.32,.72,0,1);
+  }
+  .ats-detail-col.visible{transform:translateY(0)}
+  .ats-body{position:relative}
+  .ats-overlay-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:49;
+    backdrop-filter:blur(2px);
+  }
+}
+
+/* ── 11. CANDIDATE CARD (CV unlock page) ── */
+.candidate-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin-bottom:10px;transition:.18s;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.candidate-card:hover{box-shadow:var(--shadow);border-color:var(--line2)}
+.candidate-card--unlocked{border-color:color-mix(in srgb,var(--green) 30%,var(--line))}
+.candidate-card__avatar{flex-shrink:0;margin-top:2px}
+.candidate-card__info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.candidate-card__name{font-size:15px;font-weight:700;color:var(--ink)}
+.candidate-card__headline{font-size:13px;color:var(--muted);font-weight:500}
+.candidate-card__meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted)}
+.candidate-card__skills{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.skill-tag{
+  display:inline-flex;padding:3px 8px;background:var(--soft);
+  border-radius:6px;font-size:11px;font-weight:600;color:var(--muted);
+  border:1px solid var(--line);
+}
+.candidate-card__contact{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;font-size:12px;color:var(--muted);
+}
+.candidate-card__action{flex-shrink:0;display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:120px}
+.unlock-badge{font-size:12px;font-weight:700;color:var(--green);
+  background:color-mix(in srgb,var(--green) 10%,transparent);
+  padding:4px 10px;border-radius:6px;border:1px solid color-mix(in srgb,var(--green) 20%,transparent)}
+
+@media(max-width:600px){
+  .candidate-card{flex-wrap:wrap;gap:10px}
+  .candidate-card__action{width:100%;min-width:unset;align-items:flex-start}
+}
+
+/* ── 12. TOUCH TARGETS — ensure 44px minimum ── */
+.btn,.icon-btn,.filter-pill,.quick-tag,.nav.desktop-nav a,
+.ats-pipeline-btn,.ats-card,.job-tile,.rec-company-card,.ticker-job{
+  min-height:36px; /* buttons managed separately */
+}
+.btn,.btn.sm{min-height:40px}
+.btn.xs{min-height:32px}
+@media(max-width:860px){
+  .btn,.btn.sm{min-height:44px;padding-top:10px;padding-bottom:10px}
+  .filter-pill{min-height:38px}
+}
+
+/* ── 13. NO HORIZONTAL SCROLL — global fix ── */
+html,body{overflow-x:hidden;max-width:100vw}
+.live-home,.app,.wrap{max-width:100%;overflow-x:hidden}
+.jobs-dense-grid,.job-list,.recommended-companies{max-width:100%}
+
+/* ── 14. JOBS PAGE — search panel mobile ── */
+@media(max-width:860px){
+  .search-panel{grid-template-columns:1fr auto;gap:6px;padding:8px}
+  .search-panel select{display:none}
+}
+@media(max-width:480px){
+  .search-panel{grid-template-columns:1fr;padding:8px}
+  .search-panel button{min-height:48px}
+}
+
+/* ── 15. LIVE SECTION HEAD — consistent spacing ── */
+.live-section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:12px;margin-bottom:14px;margin-top:8px;flex-wrap:wrap;
+}
+.live-section-head h2{font-size:22px;font-weight:700;margin:2px 0 0;color:var(--ink)}
+.live-section-head p{font-size:12px;color:var(--muted);margin:3px 0 0;font-weight:400}
+@media(max-width:600px){
+  .live-section-head h2{font-size:18px}
+}
+
+/* ── 16. JOBS DENSE GRID — better mobile ── */
+.jobs-dense-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:10px;
+}
+@media(max-width:1100px){.jobs-dense-grid{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:860px) {.jobs-dense-grid{grid-template-columns:repeat(4,1fr);gap:8px}}
+@media(max-width:640px) {.jobs-dense-grid{grid-template-columns:repeat(3,1fr);gap:7px}}
+@media(max-width:400px) {.jobs-dense-grid{grid-template-columns:repeat(2,1fr);gap:6px}}
+
+/* ── 17. AVATAR — stable fallback initials ── */
+.av-fallback{
+  width:100%;height:100%;background:color-mix(in srgb,var(--brand-red) 12%,var(--soft));
+  color:var(--brand-red);font-weight:800;letter-spacing:.02em;
+  display:grid;place-items:center;font-size:.4em;border-radius:inherit;
+  text-transform:uppercase;
+}
+
+/* ── 18. FOOTER — brand polish ── */
+.footer{margin-top:40px;background:var(--brand-navy);border-radius:20px 20px 0 0;padding:40px 0 32px;color:rgba(255,255,255,.65)}
+.footer .brand,.footer-brand{color:#fff}
+.footer a:hover{color:#fff}
+.footer-brand .brand-dot,.footer-brand .mark::after{background:var(--brand-red)}
+
+/* ── 19. MOBILE APP SHELL fix (firma/kandidat dashboards) ── */
+@media(max-width:860px){
+  .app-shell{flex-direction:column}
+  .side{display:none}  /* replaced by mobile-nav bottom bar */
+  .app-main{padding:16px;padding-bottom:80px}
+  
+  /* ATS pipeline horizontal scroll */
+  .ats-pipeline{
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;padding-bottom:2px;
+    flex-wrap:nowrap;
+  }
+  .ats-pipeline::-webkit-scrollbar{display:none}
+  .ats-pipeline-btn{flex-shrink:0;min-width:80px}
+  
+  /* ATS list col full width */
+  .ats-body{display:block!important}
+  .ats-list-col{width:100%}
+  
+  /* No horizontal overflow on tables */
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* ── 20. KICKER label — brand consistent ── */
+.kicker{
+  display:inline-flex;align-items:center;
+  background:color-mix(in srgb,var(--brand-red) 8%,transparent);
+  color:var(--brand-red);border-radius:6px;padding:4px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid color-mix(in srgb,var(--brand-red) 15%,transparent);
+  margin-bottom:6px;
+}
+
+/* ── 21. LIVE HOME spacing ── */
+.live-home{display:grid;gap:24px;padding-bottom:56px}
+@media(max-width:860px){.live-home{gap:18px;padding-bottom:40px}}
+
+/* ── 22. LIVE PATHS — fix mobile ── */
+.live-paths{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.live-paths{grid-template-columns:1fr;gap:10px}}
+.live-path{
+  background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:22px 20px;display:grid;gap:8px;text-decoration:none;transition:.18s;
+}
+.live-path:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line))}
+.live-path span{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--brand-red)}
+.live-path h2{font-size:22px;font-weight:700;margin:0;color:var(--ink)}
+.live-path p{font-size:13px;color:var(--muted);line-height:1.55;margin:0;font-weight:400}
+.live-path strong{font-size:13px;font-weight:600;color:var(--brand-red)}
+@media(max-width:600px){
+  .live-path{padding:18px 16px}
+  .live-path h2{font-size:18px}
+}
+
+/* ── 23. MOBILE NAV — fix overlap ── */
+.mobile-nav-wrap,.mobile-bottom-nav{
+  z-index:45;
+}
+/* Ensure content isn't hidden behind bottom nav */
+@media(max-width:860px){
+  body{padding-bottom:0}
+  .app{padding-bottom:80px}
+}
+
+/* ── 24. DARK MODE — muted borders, not too heavy ── */
+[data-theme="dark"] .job-card,
+[data-theme="dark"] .job-compact,
+[data-theme="dark"] .company-card,
+[data-theme="dark"] .rec-company-card,
+[data-theme="dark"] .job-tile,
+[data-theme="dark"] .live-path,
+[data-theme="dark"] .candidate-card{
+  border-color:var(--line);background:var(--paper);
+}
+[data-theme="dark"] .rec-company-logo,
+[data-theme="dark"] .job-compact__logo,
+[data-theme="dark"] .job-tile__logo,
+[data-theme="dark"] .job-card > .logo{
+  background:var(--soft);border-color:var(--line);
+}
+
+/* ── 25. FEATURED BADGE ── */
+.featured-badge{
+  position:absolute;top:10px;right:10px;
+  font-size:10px;font-weight:700;
+  background:color-mix(in srgb,var(--brand-red) 12%,transparent);
+  color:var(--brand-red);padding:3px 8px;border-radius:6px;
+  border:1px solid color-mix(in srgb,var(--brand-red) 20%,transparent);
+}

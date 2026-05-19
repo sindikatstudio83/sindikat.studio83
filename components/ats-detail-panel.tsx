@@ -5,15 +5,47 @@ import { createBrowserSupabase } from "@/lib/supabase/client";
 import { logError, safeMessage } from "@/lib/errors";
 import { initials } from "@/lib/format";
 import { stageLabels } from "@/lib/labels";
-import type { ApplicationComment, ApplicationLabel, ApplicationEvent, JobApplication } from "@/types/domain";
+import type { ApplicationComment, ApplicationLabel, ApplicationEvent, JobApplication, CvData } from "@/types/domain";
 
 const LABEL_OPTS = [
-  { key: "top" as const, label: "Top kandidat", color: "#22c55e" },
-  { key: "interview" as const, label: "Za intervju", color: "#f59e0b" },
-  { key: "rejected" as const, label: "Ne odgovara", color: "#ef4444" },
-  { key: "followup" as const, label: "Provjeri kasnije", color: "#a78bfa" },
-  { key: "star" as const, label: "Zvjezdica", color: "#3b82f6" },
+  { key: "top" as const,       label: "Top kandidat",     color: "#22c55e" },
+  { key: "interview" as const, label: "Za intervju",      color: "#f59e0b" },
+  { key: "rejected" as const,  label: "Ne odgovara",      color: "#ef4444" },
+  { key: "followup" as const,  label: "Provjeri kasnije", color: "#a78bfa" },
+  { key: "star" as const,      label: "Zvjezdica",        color: "#3b82f6" },
 ];
+
+type ExtProfile = {
+  full_name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  city?: string | null;
+  cv_data?: CvData | null;
+  cv_updated_at?: string | null;
+};
+
+function CvSection({ title, content }: { title: string; content: string | null | undefined }) {
+  if (!content?.trim()) return null;
+  return (
+    <div className="cand-cv-section">
+      <div className="cand-cv-section-title">{title}</div>
+      <div className="cand-cv-row">{content}</div>
+    </div>
+  );
+}
+
+function SkillTags({ skills }: { skills: string | null | undefined }) {
+  if (!skills?.trim()) return null;
+  const tags = skills.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+  return (
+    <div className="cand-cv-section">
+      <div className="cand-cv-section-title">Vještine</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 4 }}>
+        {tags.map(t => <span key={t} className="cand-cv-tag">{t}</span>)}
+      </div>
+    </div>
+  );
+}
 
 export function AtsDetailPanel({ application, onClose }: { application: JobApplication; onClose: () => void }) {
   const [comments, setComments] = useState<ApplicationComment[]>([]);
@@ -23,6 +55,7 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [cvOpen, setCvOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -87,31 +120,102 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
     }
   }
 
-  const prof = (application as { profiles?: { full_name?: string; email?: string; phone?: string; city?: string; cv_data?: { summary?: string } } }).profiles;
+  const prof = (application as { profiles?: ExtProfile }).profiles;
   const name = prof?.full_name || prof?.email || "Kandidat";
+  const cv = prof?.cv_data;
+
+  const hasCv = Boolean(
+    cv?.summary || cv?.experience || cv?.education ||
+    cv?.skills || cv?.languages || cv?.certificates
+  );
 
   return (
     <div className="ats-detail-panel-body">
-      <div className="soft-card" style={{ marginBottom: 12, fontSize: 13, lineHeight: 1.8 }}>
-        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10 }}>
-          <div className="cand-av" style={{ width: 40, height: 40, borderRadius: 12, background: "var(--lime)", color: "var(--bg)", fontSize: 15, border: "none", flexShrink: 0 }}>{initials(name)}</div>
-          <div>
-            <div style={{ fontWeight: 850, fontSize: 15 }}>{name}</div>
-            {prof?.city && <div className="sub" style={{ fontSize: 12 }}>{prof.city}</div>}
-          </div>
+
+      {/* ── PROFIL KANDIDATA ── */}
+      <div className="cand-profile-header">
+        <div className="cand-profile-av">{initials(name)}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="cand-profile-name">{name}</div>
+          {cv?.title && <div className="cand-profile-sub">{cv.title}</div>}
+          {prof?.city && !cv?.title && <div className="cand-profile-sub">📍 {prof.city}</div>}
         </div>
-        {prof?.email && <div>📧 <a href={`mailto:${prof.email}`}>{prof.email}</a></div>}
-        {prof?.phone && <div>📞 <a href={`tel:${prof.phone}`}>{prof.phone}</a></div>}
-        {prof?.cv_data?.summary && <div style={{ marginTop: 8, color: "var(--muted)", lineHeight: 1.55, fontSize: 12 }}>{prof.cv_data.summary}</div>}
       </div>
 
-      {application.cover_letter && (
-        <div className="soft-card" style={{ marginBottom: 12 }}>
-          <div className="label">Propratni tekst</div>
-          <p style={{ fontSize: 13, lineHeight: 1.6, margin: "6px 0 0", color: "var(--ink)" }}>{application.cover_letter}</p>
+      {/* Kontakt */}
+      <div className="cand-profile-contact" style={{ marginBottom: 12 }}>
+        {(prof?.email || cv?.email) && (
+          <a href={`mailto:${prof?.email || cv?.email}`}>
+            📧 {prof?.email || cv?.email}
+          </a>
+        )}
+        {(prof?.phone || cv?.phone) && (
+          <a href={`tel:${prof?.phone || cv?.phone}`}>
+            📞 {prof?.phone || cv?.phone}
+          </a>
+        )}
+        {(prof?.city || cv?.city) && (
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 10px", background: "var(--soft)", borderRadius: 8, fontSize: 12, color: "var(--muted)" }}>
+            📍 {prof?.city || cv?.city}
+          </span>
+        )}
+      </div>
+
+      {/* ── CV TOGGLE ── */}
+      {hasCv && (
+        <button
+          type="button"
+          className="btn blue sm"
+          style={{ width: "100%", marginBottom: 12, justifyContent: "center" }}
+          onClick={() => setCvOpen(o => !o)}
+        >
+          {cvOpen ? "▲ Sakrij CV" : "📄 Pogledaj CV / Biografiju"}
+        </button>
+      )}
+
+      {/* ── CV SADRŽAJ ── */}
+      {hasCv && cvOpen && (
+        <div style={{ background: "var(--soft)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+          {cv?.summary && (
+            <div className="cand-cv-section">
+              <div className="cand-cv-section-title">O kandidatu</div>
+              <div className="cand-cv-row">{cv.summary}</div>
+            </div>
+          )}
+          <SkillTags skills={cv?.skills} />
+          <CvSection title="Iskustvo" content={cv?.experience} />
+          <CvSection title="Obrazovanje" content={cv?.education} />
+          <CvSection title="Jezici" content={cv?.languages} />
+          <CvSection title="Sertifikati" content={cv?.certificates} />
+          {cv?.availability && (
+            <div className="cand-cv-section">
+              <div className="cand-cv-section-title">Dostupnost</div>
+              <div>
+                <span className="cand-cv-tag" style={{ background: "color-mix(in srgb,var(--green) 12%,transparent)", color: "var(--green)", borderColor: "color-mix(in srgb,var(--green) 20%,transparent)" }}>
+                  ✓ {cv.availability}
+                </span>
+              </div>
+            </div>
+          )}
+          {prof?.cv_updated_at && (
+            <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--line)" }}>
+              CV ažuriran: {new Date(prof.cv_updated_at).toLocaleDateString("sr-ME")}
+            </div>
+          )}
         </div>
       )}
 
+      {/* ── PROPRATNI TEKST ── */}
+      {application.cover_letter && (
+        <div className="soft-card" style={{ marginBottom: 12 }}>
+          <div className="label">Propratni tekst prijave</div>
+          <p style={{ fontSize: 13, lineHeight: 1.65, margin: "8px 0 0", color: "var(--ink)", fontStyle: "italic" }}>
+            &ldquo;{application.cover_letter}&rdquo;
+          </p>
+        </div>
+      )}
+
+      {/* ── OZNAKE ── */}
       <div style={{ marginBottom: 14 }}>
         <div className="label">Oznake</div>
         <div className="label-picker">
@@ -129,9 +233,10 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
         </div>
       </div>
 
+      {/* ── ISTORIJA ── */}
       {events.length > 0 && (
         <div style={{ marginBottom: 14 }}>
-          <div className="label">Istorija</div>
+          <div className="label">Istorija kretanja</div>
           <div className="ats-timeline">
             {events.slice(0, 5).map(ev => (
               <div className="ats-timeline-item" key={ev.id}>
@@ -146,6 +251,7 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
         </div>
       )}
 
+      {/* ── KOMENTARI ── */}
       <div className="comments-section">
         <div className="label">Komentari tima ({comments.length})</div>
         {loading && <p className="hint">Učitavanje...</p>}
@@ -171,6 +277,12 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
           </button>
         </div>
         {error && <p className="notice error" role="alert">{error}</p>}
+      </div>
+
+      <div style={{ paddingTop: 12 }}>
+        <button type="button" className="btn ghost sm" style={{ width: "100%" }} onClick={onClose}>
+          Zatvori panel
+        </button>
       </div>
     </div>
   );
