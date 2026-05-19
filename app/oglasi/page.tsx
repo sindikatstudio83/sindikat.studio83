@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
-import { JobCard } from "@/components/job-card";
-import { JobCardCompact } from "@/components/job-card-compact";
+import { Avatar } from "@/components/avatar";
 import { BannerSlot } from "@/components/banner-slot";
 import { TowerBanner } from "@/components/tower-banner";
-import { EmptyState, SectionHead, Button } from "@/components/ui";
-import { getLookups, getPublicJobs } from "@/lib/queries/public";
+import { Button, EmptyState } from "@/components/ui";
 import { MobileFilterDrawer } from "@/components/mobile-filter-drawer";
+import { getLookups, getPublicJobs } from "@/lib/queries/public";
+import { jobUrl } from "@/lib/format";
 import type { Job, JobWithPromotion } from "@/types/domain";
 
 export const metadata: Metadata = {
-  title: "Oglasi za posao",
+  title: "Oglasi za posao — imaposla.me",
   description: "Pretraži oglase za posao u Crnoj Gori. Filtriraj po gradu i kategoriji.",
 };
 
@@ -28,20 +28,18 @@ export default async function JobsPage({
       city: params.city || undefined,
       category: params.category || undefined,
       quick: params.quick === "true" || params.quick === "1" ? true : undefined,
-      limit: 100,
+      limit: 200,
     }),
     getLookups(),
   ]);
 
   const isFiltering = Boolean(params.q || params.city || params.category || params.quick);
   const activeFilterCount = [params.q, params.city, params.category].filter(Boolean).length;
-
-  // Sortiranje: featured prvi, zatim ostali — u okviru istog statusa po datumu
-  const featuredJobs = !isFiltering ? jobs.filter((j: Job) => j.featured) : [];
-  const regularJobs = !isFiltering ? jobs.filter((j: Job) => !j.featured) : jobs;
-
   const isQuickFilter = params.quick === "true" || params.quick === "1";
-  const BANNER_EVERY = 8;
+
+  // Featured odvojeni kad nema filtera
+  const featuredJobs = !isFiltering ? jobs.filter((j: Job) => j.featured) : [];
+  const regularJobs  = !isFiltering ? jobs.filter((j: Job) => !j.featured) : jobs;
 
   return (
     <>
@@ -55,17 +53,21 @@ export default async function JobsPage({
 
       <BannerSlot placement="jobs_list_top" />
 
-      <SectionHead
-        label={isQuickFilter ? "Brzi poslovi" : "Oglasi"}
-        title={isQuickFilter ? "Brzi i kratkoročni poslovi" : "Oglasi za posao"}
-        text={
-          jobs.length === 0
-            ? "Nema oglasa za zadatu pretragu."
-            : `${jobs.length} ${jobs.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`
-        }
-      />
+      {/* HEADER SEKCIJE */}
+      <div className="jobs-page-head">
+        <div>
+          <span className="kicker">{isQuickFilter ? "Brzi poslovi" : "Oglasi"}</span>
+          <h1>{isQuickFilter ? "Brzi i kratkoročni poslovi" : "Oglasi za posao"}</h1>
+          <p className="jobs-count">
+            {jobs.length === 0
+              ? "Nema oglasa za zadatu pretragu."
+              : `${jobs.length} ${jobs.length === 1 ? "oglas" : "oglasa"} u Crnoj Gori`}
+          </p>
+        </div>
+        <Link href="/registracija?role=company" className="btn red sm">+ Objavi oglas</Link>
+      </div>
 
-      {/* Desktop search panel */}
+      {/* SEARCH PANEL — desktop */}
       <form className="search-panel desktop-only" method="get">
         <input name="q" placeholder="Pozicija ili firma" defaultValue={params.q || ""} />
         <select name="city" defaultValue={params.city || ""}>
@@ -76,10 +78,10 @@ export default async function JobsPage({
           <option value="">Sve kategorije</option>
           {lookups.categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
         </select>
-        <button type="submit">Traži</button>
+        <button type="submit">Pretraži</button>
       </form>
 
-      {/* Quick filter pill */}
+      {/* FILTER PILLS */}
       <div className="filter-pills desktop-only">
         <Link
           href={isQuickFilter ? "/oglasi" : "/oglasi?quick=true"}
@@ -87,9 +89,14 @@ export default async function JobsPage({
         >
           ⚡ Brzi poslovi
         </Link>
+        {isFiltering && (
+          <Link href="/oglasi" className="filter-pill">
+            ✕ Resetuj filtere
+          </Link>
+        )}
       </div>
 
-      {/* Mobile filter drawer */}
+      {/* MOBILE FILTER */}
       <MobileFilterDrawer
         cities={lookups.cities}
         categories={lookups.categories}
@@ -107,35 +114,29 @@ export default async function JobsPage({
         />
       ) : (
         <>
-          {/* Featured */}
+          {/* ISTAKNUTI — kompaktni red na vrhu */}
           {featuredJobs.length > 0 && (
-            <div className="featured-section">
-              <div className="featured-section-head">
-                <h2>Istaknuti oglasi</h2>
-                <span className="badge-featured">★ ISTAKNUTO</span>
+            <div className="jobs-featured-row">
+              <div className="jobs-featured-label">
+                <span className="badge red">★ Istaknuto</span>
               </div>
-              <div className="job-list two-col">
+              <div className="jobs-dense-grid">
                 {featuredJobs.map((job: Job) => (
-                  <JobCardCompact key={job.id} job={job as JobWithPromotion} />
+                  <JobTile key={job.id} job={job as JobWithPromotion} />
                 ))}
               </div>
+              {regularJobs.length > 0 && <div className="jobs-divider" />}
             </div>
           )}
 
-          {featuredJobs.length > 0 && regularJobs.length > 0 && (
-            <div style={{ borderTop: "2px solid var(--line)", margin: "16px 0 14px", paddingTop: 12 }}>
-              <span className="kicker" style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".06em" }}>Svi oglasi</span>
-            </div>
-          )}
-
-          {/* Regular jobs — 2 col kompaktne kartice */}
+          {/* SVI OGLASI — dense grid kao zaposli.me */}
           {regularJobs.length > 0 && (
-            <div className="job-list two-col">
+            <div className="jobs-dense-grid">
               {regularJobs.map((job: Job, idx: number) => (
                 <React.Fragment key={job.id}>
-                  <JobCardCompact job={job as JobWithPromotion} />
-                  {(idx + 1) % BANNER_EVERY === 0 && idx < regularJobs.length - 1 && (
-                    <div style={{ gridColumn: "1 / -1" }}>
+                  <JobTile job={job as JobWithPromotion} />
+                  {(idx + 1) % 12 === 0 && idx < regularJobs.length - 1 && (
+                    <div className="jobs-dense-banner">
                       <BannerSlot placement="jobs_list_middle" />
                     </div>
                   )}
@@ -148,5 +149,39 @@ export default async function JobsPage({
 
       <BannerSlot placement="jobs_list_bottom" />
     </>
+  );
+}
+
+/* ── Tile komponenta — logo + naziv + grad (zaposli.me stil) ── */
+function JobTile({ job }: { job: JobWithPromotion }) {
+  const co = job.companies;
+  const url = jobUrl(job);
+  const jobExt = job as JobWithPromotion & { cities?: { name: string } | null };
+  const isUrgent = job.promotion_type === "urgent";
+  const isFeatured = job.featured || job.promotion_type === "paid_top" || job.promotion_type === "featured";
+
+  return (
+    <Link
+      href={url}
+      className={`job-tile${isFeatured ? " job-tile--featured" : ""}${isUrgent ? " job-tile--urgent" : ""}`}
+    >
+      <div className="job-tile__logo">
+        <Avatar
+          bucket="company-logos"
+          path={co?.logo_path ?? null}
+          fallback={co?.name ?? ""}
+          size={48}
+          shape="rounded"
+        />
+      </div>
+      <div className="job-tile__body">
+        <span className="job-tile__title">{job.title}</span>
+        <span className="job-tile__company">{co?.name}</span>
+        {jobExt.cities?.name && (
+          <span className="job-tile__city">{jobExt.cities.name}</span>
+        )}
+      </div>
+      {isUrgent && <span className="job-tile__urgent">Hitno</span>}
+    </Link>
   );
 }
