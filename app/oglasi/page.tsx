@@ -200,7 +200,7 @@ export default async function JobsPage({
             <div className="jl-active-filters">
               {params.q && (
                 <Link href={removeFilter("q")} className="jl-active-tag">
-                  „{params.q}" ×
+                  {`„${params.q}" ×`}
                 </Link>
               )}
               {params.city && (
