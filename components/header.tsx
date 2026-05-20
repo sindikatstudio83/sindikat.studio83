@@ -68,21 +68,19 @@ export function Header() {
               <Link className="btn red" href="/logout">Odjava</Link>
             </>
           )}
-          <button className="icon-btn hamb" type="button" onClick={() => setMobileOpen(o => !o)} aria-label="Meni">☰</button>
+          {/* Hamburger — vidljiv samo na mobilnom, za neregovirane korisnike */}
+          {!isLoggedIn && (
+            <button className="icon-btn hamb" type="button" onClick={() => setMobileOpen(o => !o)} aria-label="Meni">☰</button>
+          )}
         </div>
       </div>
 
-      {mobileOpen && (
+      {/* Mobile dropdown — samo za neregistrovane (za registrovane je bottom nav) */}
+      {mobileOpen && !isLoggedIn && (
         <div className="mobile-nav open" ref={mobileRef}>
           {navItems.map(item => <Link href={item.href} key={item.href} onClick={() => setMobileOpen(false)}>{item.label}</Link>)}
-          {!isLoggedIn ? (
-            <>
-              <Link href="/login" onClick={() => setMobileOpen(false)}>Prijava</Link>
-              <Link href="/registracija" onClick={() => setMobileOpen(false)}>Registracija</Link>
-            </>
-          ) : (
-            <Link href="/logout" onClick={() => setMobileOpen(false)}>Odjava</Link>
-          )}
+          <Link href="/login" onClick={() => setMobileOpen(false)}>Prijava</Link>
+          <Link href="/registracija" onClick={() => setMobileOpen(false)}>Registracija</Link>
         </div>
       )}
     </header>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { logError, safeMessage } from "@/lib/errors";
@@ -140,6 +141,18 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
           {cv?.title && <div className="cand-profile-sub">{cv.title}</div>}
           {prof?.city && !cv?.title && <div className="cand-profile-sub">📍 {prof.city}</div>}
         </div>
+        {/* FIX: Link ka punom profilu kandidata — candidate_id iz application objekta */}
+        {application.candidate_id && (
+          <Link
+            href={`/firma/kandidati/${application.candidate_id}`}
+            className="btn ghost xs"
+            style={{ flexShrink: 0, whiteSpace: "nowrap" }}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Puni profil ↗
+          </Link>
+        )}
       </div>
 
       {/* Kontakt */}

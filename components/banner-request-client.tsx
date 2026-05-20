@@ -109,6 +109,7 @@ export function BannerRequestClient() {
       company_id: companyId,
       image_path: imagePath,
       status: "pending",
+      created_by: userId,   // FIX: needed for RLS WITH CHECK policy
     });
     setSaving(false);
 

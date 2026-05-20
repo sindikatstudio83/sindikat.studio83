@@ -4311,3 +4311,406 @@ html,body{overflow-x:hidden;max-width:100vw}
   .jl-row-logo{width:42px;height:42px}
   .jl-row-title{font-size:13px}
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOBILE POLISH v2 — imaposla.me
+   Autoritetni blok koji override-uje sve prethodne mobile definicije.
+   Pokriva: 360px, 375px, 390px, 430px, tablet, landscape.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. GLOBALNI ANTI-OVERFLOW ── */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+* {
+  min-width: 0; /* sprečava flex/grid overflow */
+}
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── 2. TOP NAV MOBILE ── */
+@media (max-width: 860px) {
+  .top-in {
+    height: 56px;
+    gap: 8px;
+    padding: 0 4px;
+  }
+  .brand {
+    font-size: 17px;
+    gap: 7px;
+  }
+  .mark {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  /* Sakrij sve osim brand + hamb + notifications */
+  .top-actions .btn,
+  .top-actions .role-pill,
+  .nav.desktop-nav {
+    display: none !important;
+  }
+  .hamb {
+    display: inline-flex !important;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  /* Hamburger dropdown ne prelazi sa ekrana */
+  .mobile-nav.open {
+    left: 8px;
+    right: 8px;
+    top: 60px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+}
+
+/* ── 3. BOTTOM NAV — sve veličine ── */
+@media (max-width: 860px) {
+  /* Fiksni padding da sadržaj ne ide ispod nav bara */
+  .app {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-app-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 70;
+    display: grid;
+    /* Dinamičan broj kolona po broju stavki — max 5 */
+    grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+    gap: 2px;
+    padding: 6px 4px;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.97);
+    border-top: 1px solid var(--line);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  [data-theme="dark"] .mobile-app-nav {
+    background: rgba(0, 24, 42, 0.97);
+    border-top-color: var(--line);
+  }
+
+  .mobile-app-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 48px;      /* iOS HIG minimum touch target */
+    min-width: 44px;
+    padding: 6px 4px;
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    transition: background 0.12s, color 0.12s;
+    overflow: hidden;
+  }
+  .mobile-app-nav .nav-icon {
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .mobile-app-nav .nav-label {
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1;
+  }
+  .mobile-app-nav a.active {
+    background: var(--brand-red);
+    color: #fff;
+    border-radius: 10px;
+  }
+  [data-theme="dark"] .mobile-app-nav a.active {
+    background: var(--brand-red);
+    color: #fff;
+  }
+
+  /* iOS Safari floating dock — aktivira se JS klasom */
+  .mobile-app-nav.ios-safari-nav {
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    border: none;
+    border-top: none;
+    border-radius: 18px;
+    background: rgba(248, 248, 248, 0.92);
+    backdrop-filter: saturate(180%) blur(24px);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    outline: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.14);
+    padding: 6px 6px calc(6px);
+  }
+  [data-theme="dark"] .mobile-app-nav.ios-safari-nav {
+    background: rgba(0, 20, 38, 0.92);
+    outline: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  }
+  .mobile-app-nav.ios-safari-nav a {
+    border-radius: 12px;
+    min-height: 50px;
+    min-width: 44px;
+  }
+}
+
+/* ── 4. BREAKPOINT: 430px (iPhone 15 Pro Max, large Android) ── */
+@media (max-width: 430px) {
+  h1 { font-size: clamp(24px, 8vw, 32px); }
+  h2 { font-size: clamp(18px, 6vw, 24px); }
+  .wrap { width: calc(100% - 24px); }
+  .live-hero { padding: 20px 16px 18px; border-radius: 14px; }
+  .live-hero h1 { font-size: clamp(24px, 7.5vw, 30px); margin-bottom: 10px; }
+  .home-intent-cards { grid-template-columns: 1fr; gap: 8px; }
+  .home-intent-card { padding: 12px 14px; }
+  .live-search { grid-template-columns: 1fr !important; gap: 6px; }
+  .live-search select { display: block !important; } /* sve opcije vidljive */
+  .jl-layout { grid-template-columns: 1fr; }
+  .job-card { grid-template-columns: 44px 1fr; gap: 10px; padding: 12px; }
+  .job-card > .logo { width: 44px; height: 44px; }
+  .job-card .job-title { font-size: 14px; }
+  .job-actions { flex-wrap: wrap; gap: 6px; }
+  .job-actions .btn { flex: 1; min-width: 0; justify-content: center; }
+  .jobs-dense-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px; }
+  .jl-row { grid-template-columns: 46px 1fr; gap: 0 10px; }
+  .jl-row-logo { width: 46px; height: 46px; }
+  .jl-row-title { font-size: 13px; }
+  .premium-employer-card { min-width: 160px; padding: 10px 12px; }
+  .premium-employer-card__body strong { font-size: 12px; }
+  .live-paths { grid-template-columns: 1fr; gap: 8px; }
+  .live-path { padding: 16px 14px; }
+  .live-path h2 { font-size: 18px; }
+  .stat-mosaic, .dash-grid { grid-template-columns: 1fr 1fr; }
+  /* ATS na malom ekranu */
+  .ats-pipeline { overflow-x: auto; flex-wrap: nowrap; gap: 6px; padding-bottom: 4px; }
+  .ats-pipeline-btn { flex-shrink: 0; min-width: 80px; font-size: 11px; }
+}
+
+/* ── 5. BREAKPOINT: 390px (iPhone 14 Pro, Pixel 7) ── */
+@media (max-width: 390px) {
+  .wrap { width: calc(100% - 20px); }
+  .live-hero { padding: 18px 14px 16px; border-radius: 12px; }
+  .job-card { grid-template-columns: 40px 1fr; gap: 8px; padding: 10px 12px; }
+  .job-card > .logo { width: 40px; height: 40px; }
+  .jl-row { grid-template-columns: 42px 1fr; }
+  .jl-row-logo { width: 42px; height: 42px; }
+  .mobile-app-nav .nav-label { display: none; } /* icon-only na najmanjim */
+  .mobile-app-nav a { min-height: 44px; }
+  .mobile-app-nav .nav-icon { font-size: 20px; }
+  .jobs-dense-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 5px; }
+  .job-tile { padding: 10px 6px; min-height: 100px; }
+  .job-tile__logo { width: 38px; height: 38px; }
+  .job-tile__title { font-size: 10px; }
+}
+
+/* ── 6. BREAKPOINT: 375px (iPhone SE, iPhone 13 mini) ── */
+@media (max-width: 375px) {
+  .wrap { width: calc(100% - 16px); }
+  h1 { font-size: clamp(20px, 8vw, 26px); }
+  .brand { font-size: 15px; gap: 6px; }
+  .mark { width: 28px; height: 28px; font-size: 11px; }
+  .top-in { height: 52px; }
+  .app { padding-top: 16px; }
+  .live-hero { padding: 16px 12px 14px; }
+  .btn { padding: 8px 14px; font-size: 12px; min-height: 38px; }
+  .btn.sm { min-height: 36px; }
+}
+
+/* ── 7. BREAKPOINT: 360px (mali Android) ── */
+@media (max-width: 360px) {
+  .wrap { width: calc(100% - 12px); }
+  h1 { font-size: clamp(18px, 7.5vw, 24px); }
+  .brand span:last-child { display: none; } /* sakrij "imaposla.me" tekst, ostavi mark */
+  .brand .brand-dot { display: none; }
+  .top-in { gap: 6px; }
+  .job-card { grid-template-columns: 36px 1fr; gap: 7px; padding: 10px; }
+  .job-card > .logo { width: 36px; height: 36px; border-radius: 8px; }
+  .jl-row { grid-template-columns: 38px 1fr; gap: 0 8px; }
+  .jl-row-logo { width: 38px; height: 38px; }
+  .jobs-dense-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 4px; }
+}
+
+/* ── 8. TABLET (861px–1024px) ── */
+@media (min-width: 861px) and (max-width: 1024px) {
+  .wrap { width: calc(100% - 40px); }
+  .live-hero { padding: 36px 32px; }
+  .jobs-dense-grid { grid-template-columns: repeat(4, 1fr); }
+  .jl-layout { grid-template-columns: 200px 1fr; gap: 18px; }
+}
+
+/* ── 9. LANDSCAPE MOBILE ── */
+@media (max-width: 860px) and (orientation: landscape) {
+  .mobile-app-nav {
+    /* U landscape modu — kompaktniji, jedan red */
+    padding: 4px env(safe-area-inset-right, 8px) 4px env(safe-area-inset-left, 8px);
+  }
+  .mobile-app-nav a { min-height: 40px; }
+  .live-hero { padding: 16px 20px; }
+  .app { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ── 10. LAYOUT ALIGNMENT FIXES ── */
+/* Kartice ne smiju imati horizontalni overflow */
+.job-card, .job-compact, .company-card, .rec-company-card,
+.job-tile, .live-path, .candidate-card, .jl-row,
+.premium-employer-card, .banner-req-row {
+  overflow: hidden;
+  word-break: break-word;
+}
+/* Dugmad u karticama ne smiju ići van */
+.job-actions, .banner-req-row {
+  flex-wrap: wrap;
+}
+/* Text truncation na dugim imenima */
+.jl-row-title, .job-compact__title, .job-card .job-title,
+.premium-employer-card__body strong, .rec-company-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Ali u tile-u dozvoli prelom (2 reda max) */
+.job-tile__title {
+  white-space: normal;
+  overflow: hidden;
+}
+
+/* ── 11. GRID JEDNOREDNI NA MOBILNOM ── */
+@media (max-width: 860px) {
+  /* Jedan oglas po redu */
+  .job-list.two-col { grid-template-columns: 1fr !important; }
+  /* Grids */
+  .grid.two, .grid.three, .grid.four { grid-template-columns: 1fr; }
+  /* Firma i kandidat panel */
+  .app-shell { grid-template-columns: 1fr; }
+  .side { display: none; }
+  .app-main { padding: 16px; min-height: 0; }
+  /* ATS layout */
+  .ats-layout, .ats-body { display: block !important; }
+  .ats-list-col, .ats-detail-col { width: 100% !important; }
+  /* Banner form grid */
+  .banner-req-grid { grid-template-columns: 1fr !important; }
+  /* Form grids */
+  .form-grid { grid-template-columns: 1fr !important; }
+  /* CV builder */
+  .cv-builder-grid { grid-template-columns: 1fr !important; }
+  .cv-preview { display: none; } /* preview skriven na mobilnom */
+  /* Section head stacking */
+  .section-head, .live-section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .live-section-head .btn { align-self: flex-start; }
+  /* Stat mosaic */
+  .stat-mosaic, .dash-grid { grid-template-columns: 1fr 1fr; }
+  /* Search panel */
+  .search-panel { grid-template-columns: 1fr !important; }
+  .live-search { grid-template-columns: 1fr auto !important; }
+  .live-search select { display: none; } /* sakrij selekte u hero search */
+  /* Quick tags — horizontalni scroll */
+  .quick-tags { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+  .quick-tags::-webkit-scrollbar { display: none; }
+  .quick-tag { flex-shrink: 0; }
+  /* Paths */
+  .live-paths { grid-template-columns: 1fr; }
+  /* Jobs dense grid: 3 kolone na mobilnom */
+  .jobs-dense-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 7px; }
+}
+
+/* ── 12. ATS DETAIL PANEL — mobile bottom sheet ── */
+@media (max-width: 860px) {
+  .ats-detail-col {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--paper);
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+    z-index: 60;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    /* Dodaj drag handle */
+    padding-top: 12px;
+  }
+  .ats-detail-col.visible {
+    transform: translateY(0);
+  }
+  .ats-detail-col::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--line2);
+    border-radius: 2px;
+    margin: 0 auto 12px;
+  }
+  .ats-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 59;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+/* ── 13. FIRMA DASHBOARD MOBILE ── */
+@media (max-width: 860px) {
+  /* Banner request form */
+  .banner-req-form { padding: 16px; }
+  .banner-req-form .banner-req-grid { grid-template-columns: 1fr !important; }
+  /* Banner request row */
+  .banner-req-row { flex-wrap: wrap; gap: 8px; }
+  .banner-req-row > div { min-width: 0; }
+  /* Kanban horizontal scroll */
+  .kanban { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .kanban-column { min-width: 280px; }
+  /* ATS pipeline */
+  .ats-pipeline-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ats-pipeline { flex-wrap: nowrap !important; }
+  .ats-pipeline-btn { flex-shrink: 0; }
+}
+
+/* ── 14. PROFILE / FORME MOBILE ── */
+@media (max-width: 860px) {
+  .auth-shell { padding: 20px 16px; max-width: 100%; }
+  .auth-shell h1 { font-size: clamp(24px, 7vw, 36px); }
+  .panel { padding: 16px; border-radius: 14px; }
+  .form-card { padding: 14px; }
+  input.field, textarea.field, select.field, select.select {
+    font-size: 16px; /* Sprečava auto-zoom na iOS */
+  }
+  .cv-builder-head { padding: 16px; flex-direction: column; }
+}
+
+/* ── 15. NOTIFICATION PANEL MOBILE ── */
+@media (max-width: 860px) {
+  .notification-panel {
+    position: fixed;
+    top: 60px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    z-index: 80;
+  }
+}
