@@ -4714,3 +4714,33 @@ img, video, canvas, svg {
     z-index: 80;
   }
 }
+
+/* ── NOTIFICATION PANEL — mobile fix (autoritativni override) ── */
+.notif-backdrop {
+  display: none;
+}
+@media (max-width: 860px) {
+  /* Panel je sad fixed kroz JS style, ali osiguramo da ne probija */
+  .notif-panel {
+    position: fixed !important;
+    top: 64px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    /* Ograniči visinu na mobilnom */
+    max-height: min(420px, 65vh) !important;
+    overflow-y: auto !important;
+    /* Zaobljeni na sve strane (ne samo donji desni) */
+    border-radius: 16px !important;
+    z-index: 9999 !important;
+  }
+  /* Backdrop za zatvaranje tapom van panela */
+  .notif-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
