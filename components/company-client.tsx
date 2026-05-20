@@ -260,7 +260,8 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     const fd = new FormData(e.currentTarget);
     const file = fd.get("proof");
     if (!(file instanceof File) || !file.size) { setMsg("Dodaj dokaz uplate.", "error"); setSaving(false); return; }
-    if (file.size > 10 * 1024 * 1024) { setMsg("Fajl je prevelik (max 10MB).", "error"); setSaving(false); return; }
+    // FIX: bucket limit je 5MB (ne 10MB)
+    if (file.size > 5 * 1024 * 1024) { setMsg("Fajl je prevelik (max 5MB).", "error"); setSaving(false); return; }
 
     const { data: orderData, error: orderError } = await supabase.from("orders").insert({
       company_id: company.id, plan_id: plan.id, status: "pending", amount_eur: plan.price_eur,
@@ -269,17 +270,26 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
     if (orderError || !orderData) { logError("CompanyClient.order", orderError); setMsg(safeMessage(orderError, "submit"), "error"); setSaving(false); return; }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+    // FIX: path mora počinjati sa userId da storage RLS prođe (proofs_owner_upload policy)
     const filePath = `${userId}/${company.id}-${orderData.id}-${Date.now()}-${safeName}`;
     const { error: uploadError } = await supabase.storage.from("payment-proofs").upload(filePath, file, { upsert: false });
     if (uploadError) {
       await supabase.from("orders").delete().eq("id", orderData.id);
       logError("CompanyClient.upload", uploadError); setMsg(safeMessage(uploadError, "submit"), "error"); setSaving(false); return;
     }
-    await supabase.from("payment_proofs").insert({
+    // FIX: dodati uploaded_by eksplicitno — RLS WITH CHECK zahtijeva uploaded_by = auth.uid()
+    const { error: proofError } = await supabase.from("payment_proofs").insert({
       order_id: orderData.id, company_id: company.id, amount_eur: plan.price_eur,
       file_path: filePath, proof_path: filePath, file_name: file.name,
-      note: String(fd.get("note") || "").trim() || null, status: "pending"
+      note: String(fd.get("note") || "").trim() || null,
+      status: "pending",
+      uploaded_by: userId,
     });
+    if (proofError) {
+      logError("CompanyClient.proof", proofError);
+      setMsg("Fajl je uploadovan ali nije evidentiran. Kontaktirajte podršku.", "error");
+      setSaving(false); return;
+    }
     setMsg(`Dokaz poslat! Poziv na broj: ${orderData.payment_reference}`, "success");
     (e.target as HTMLFormElement).reset(); setSaving(false); await load();
   }
@@ -571,7 +581,7 @@ export function CompanyClient({ view }: { view: "dashboard" | "jobs" | "new-job"
               <h2 style={{ fontSize: 24 }}>{plan.name}</h2>
               <div className="plan-price">{plan.price_eur}€<span style={{ fontSize: 14, fontWeight: 400 }}>/mjes</span></div>
               <ul className="plan-features">{plan.features?.map(f => <li key={f}>{f}</li>)}</ul>
-              <label><span className="label">Dokaz uplate (slika/PDF, max 10MB)</span><input className="field" name="proof" type="file" accept="image/*,.pdf" required /></label>
+              <label><span className="label">Dokaz uplate (slika/PDF, max 5MB)</span><input className="field" name="proof" type="file" accept="image/*,.pdf" required /></label>
               <label><span className="label">Napomena</span><input className="field" name="note" placeholder="Broj transakcije ili napomena" /></label>
               <button className="btn blue sm" disabled={saving}>{saving ? "Slanje..." : "Pošalji dokaz →"}</button>
             </form>
