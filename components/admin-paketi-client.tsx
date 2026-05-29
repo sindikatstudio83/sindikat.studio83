@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { DashboardSideNav } from "@/components/dashboard-side-nav";
 
 import { useEffect, useState, useCallback } from "react";
@@ -68,6 +70,7 @@ function PlanPreviewCard({ form }: { form: PlanForm }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 export function AdminPaketiClient() {
+  const router = useRouter();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
@@ -88,12 +91,12 @@ export function AdminPaketiClient() {
 
   const guard = useCallback(async (): Promise<boolean> => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) { window.location.href = "/login?next=/admin/paketi"; return false; }
+    if (error || !data.user) { router.replace("/login?next=/admin/paketi"); return false; }
     setEmail(data.user.email || "");
     const { data: p } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-    if (p?.role !== "admin") { window.location.href = "/"; return false; }
+    if (p?.role !== "admin") { router.replace("/"); return false; }
     return true;
-  }, [supabase]);
+  }, [supabase, router]);
 
   const load = useCallback(async () => {
     setLoading(true);

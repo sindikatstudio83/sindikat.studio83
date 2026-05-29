@@ -56,10 +56,12 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
         else if (prof?.role === "admin") dest = "/admin";
         else dest = "/profil"; // candidate ili fallback
       } catch {
-        // Fallback na metadata ako DB nije dostupan
+        // DB unavailable — fall back to metadata for UX redirect ONLY.
+        // NOTE: metadata fallback intentionally EXCLUDES admin.
+        // Even if user spoofs user_metadata.role=admin, middleware blocks /admin via DB check.
         const metaRole = data.user.user_metadata?.role;
         if (metaRole === "company") dest = "/firma";
-        else if (metaRole === "admin") dest = "/admin";
+        // admin intentionally excluded — middleware enforces real DB role check
       }
     }
 
