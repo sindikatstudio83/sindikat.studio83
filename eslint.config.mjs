@@ -8,7 +8,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   // Ignore compiled Next.js output
-  { ignores: [".next/**", "node_modules/**"] },
+  { ignores: [".next/**", "node_modules/**", "supabase/functions/**"] },
   ...compat.config({
     extends: ["next/core-web-vitals"]
   })
