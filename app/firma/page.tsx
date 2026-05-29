@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { CompanyClient } from "@/components/company-client";
+import { CompanyShell } from "@/lib/company-context";
+import { CompanyDashboard } from "@/components/company-dashboard";
 
 export const metadata: Metadata = { title: "Pregled firme" };
 
 export default function FirmaDashboardPage() {
-  return <CompanyClient view="dashboard" />;
+  return (
+    <CompanyShell>
+      <CompanyDashboard />
+    </CompanyShell>
+  );
 }

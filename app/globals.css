@@ -1,5 +1,5 @@
 /* ── GOOGLE FONTS — imaposla.me brand: Poppins + Inter ── */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
+/* Fonts loaded via <link> in app/layout.tsx — see migration note in that file */
 
 /* ── TOKENS — imaposla.me brand ── */
 :root{
@@ -52,6 +52,41 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:10
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit;color:inherit;border:none;background:none}
 button{cursor:pointer}
+
+/* ── FOCUS VISIBLE — keyboard navigation ──
+   Replaces scattered outline:none with a consistent :focus-visible ring.
+   outline:none on specific elements is still OK when :focus-visible is provided. */
+:focus-visible{
+  outline:2px solid var(--blue);
+  outline-offset:2px;
+  border-radius:4px;
+}
+/* Inputs use border highlight instead of outline ring */
+.field:focus-visible,.select:focus-visible,.textarea:focus-visible{
+  outline:none;
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 18%,transparent);
+}
+/* Buttons keep the ring */
+.btn:focus-visible,.icon-btn:focus-visible{
+  outline:2px solid var(--blue);
+  outline-offset:2px;
+}
+[data-theme="dark"] :focus-visible{outline-color:var(--blue);}
+[data-theme="dark"] .btn:focus-visible,[data-theme="dark"] .icon-btn:focus-visible{outline-color:var(--blue);}
+
+/* ── REDUCED MOTION — respect user preference ──────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .hero-carousel__track{transition:none !important;}
+  .premium-employers__track{animation:none !important;}
+}
+
 img{display:block;max-width:100%}
 
 /* ── LAYOUT ── */
@@ -76,7 +111,7 @@ h1{font-size:clamp(36px,6vw,68px);margin-bottom:16px;font-weight:800}
 h2{font-size:clamp(24px,3.5vw,36px);font-weight:700}
 h3{font-size:18px;font-weight:700}
 .lead{font-size:16px;color:var(--muted);max-width:680px;line-height:1.75;margin-bottom:22px}
-.sub{color:var(--muted);font-size:13px;font-weight:650;margin-top:5px}
+.sub{color:var(--muted);font-size:13px;font-weight:600;margin-top:5px}
 .hint{font-size:12px;color:var(--muted);font-weight:700}
 .grad-text{background:linear-gradient(90deg,var(--blue),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
 
@@ -117,8 +152,9 @@ h3{font-size:18px;font-weight:700}
 .btn:active,.icon-btn:active{transform:translateY(0);filter:brightness(.97)}
 .btn:disabled{opacity:.5;pointer-events:none}
 /* primary = brand red */
-.btn.blue,.btn.red{background:var(--brand-red);color:#fff}
-.btn.lime{background:var(--brand-red);color:#fff}
+.btn.blue{background:var(--blue);color:#fff}
+.btn.red{background:var(--brand-red);color:#fff}
+.btn.lime{background:var(--lime);color:#111}
 .btn.green{background:var(--green);color:#fff}
 .btn.ghost{background:transparent;border:1.5px solid var(--line2);color:var(--muted)}
 .btn.ghost:hover{background:var(--soft);transform:none;color:var(--ink)}
@@ -144,8 +180,7 @@ h3{font-size:18px;font-weight:700}
 .badge,.tag{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
 .tag{background:var(--soft);color:var(--muted)}
 .badge.blue{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue)}
-.badge.lime{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)}
-.badge.green{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)}
+.badge.lime,.badge.green{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)}
 .badge.red{background:color-mix(in srgb,var(--brand-red) 12%,transparent);color:var(--brand-red)}
 .badge.orange{background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--orange)}
 .badge.gray{color:var(--muted);background:var(--soft)}
@@ -372,10 +407,10 @@ h3{font-size:18px;font-weight:700}
 .side-head strong{font-family:var(--display);font-size:15px;display:block;color:var(--side-text, #f0f4ff)}
 .side-head small{display:block;color:rgba(255,255,255,.5);margin-top:2px;font-size:11px}
 .side-nav{display:flex;flex-direction:column;gap:1px}
-.side-nav a{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.72);font-weight:750;font-size:13px;transition:.12s}
+.side-nav a{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.72);font-weight:700;font-size:13px;transition:.12s}
 .side-nav a:hover{background:rgba(255,255,255,.1);color:#fff}
 .side-nav a.active{background:var(--lime)!important;color:#111!important;font-weight:900;box-shadow:0 2px 8px rgba(192,255,61,.25)}
-.side-logout{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.5);font-weight:750;font-size:13px;transition:.12s;margin-top:4px;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;width:100%;text-align:left;cursor:pointer}
+.side-logout{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:13px;color:rgba(255,255,255,.5);font-weight:700;font-size:13px;transition:.12s;margin-top:4px;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;width:100%;text-align:left;cursor:pointer}
 .side-logout:hover{color:var(--red);background:rgba(229,72,77,.1)}
 .app-main{min-width:0}
 
@@ -678,7 +713,7 @@ h3{font-size:18px;font-weight:700}
 .cv-preview aside{text-align:right;min-width:130px}
 .cv-preview section{margin-top:14px}
 .cv-preview h3{margin:0 0 5px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#151515;font-family:var(--display)}
-.cv-preview section p{margin:0;color:#333;line-height:1.55;font-weight:650;white-space:pre-wrap;font-size:13px}
+.cv-preview section p{margin:0;color:#333;line-height:1.55;font-weight:600;white-space:pre-wrap;font-size:13px}
 .cv-skill-list{display:flex;flex-wrap:wrap;gap:5px}
 .cv-skill-list span{padding:4px 8px;border:1.5px solid #151515;border-radius:999px;background:#f5f5f5;font-size:11px;font-weight:850;color:#151515}
 
@@ -690,7 +725,7 @@ h3{font-size:18px;font-weight:700}
 .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:18px}
 .footer-brand{margin-bottom:8px}
 .footer h4{font-family:var(--display);font-size:16px;margin-bottom:8px;color:#fff}
-.footer a,.footer p{display:block;color:rgba(255,255,255,.5);font-weight:700;margin:5px 0;font-size:13px}
+.footer a,.footer p{display:block;color:rgba(255,255,255,.5);font-weight:700;margin:2px 0;font-size:13px;padding:6px 0;min-height:44px;display:flex;align-items:center}
 .footer a:hover{color:#fff}
 
 /* ── MOBILE NAV ── */
@@ -1694,23 +1729,12 @@ h3{font-size:18px;font-weight:700}
 [data-theme="dark"] .hamb:hover{background:var(--soft)}
 [data-theme="dark"] .role-pill{background:var(--lime);color:#0a0e14;border-color:transparent}
 
-/* ── MOBILE APP NAV ── */
-[data-theme="dark"] .mobile-app-nav{background:rgba(20,25,35,.97);border-top:1px solid var(--line);backdrop-filter:blur(12px)}
-[data-theme="dark"] .mobile-app-nav a{color:var(--muted)}
-[data-theme="dark"] .mobile-app-nav a.active{background:var(--lime);color:#0a0e14}
-
 /* ── PAGE LABELS / KICKER ── */
 [data-theme="dark"] .page-label,
 [data-theme="dark"] .kicker{background:color-mix(in srgb,var(--brand-red) 15%,transparent);color:#ff8a8a;border-color:color-mix(in srgb,var(--brand-red) 30%,transparent)}
 [data-theme="dark"] .eyebrow{color:var(--muted)}
 
 /* ── FOOTER ── */
-[data-theme="dark"] .footer{background:var(--paper);border-top:1px solid var(--line)}
-[data-theme="dark"] .footer h4{color:var(--ink)}
-[data-theme="dark"] .footer a{color:var(--muted)}
-[data-theme="dark"] .footer a:hover{color:var(--ink)}
-[data-theme="dark"] .footer p{color:var(--muted)}
-[data-theme="dark"] .footer-brand{color:var(--ink)}
 
 /* ── SIDEBAR (dashboard) ── */
 /* Sidebar uses var(--ink) background intentionally — it's the reversed card */
@@ -2406,66 +2430,6 @@ h3{font-size:18px;font-weight:700}
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   GROWTH FEATURES 2026-05 — dodato uz migraciju
-   ══════════════════════════════════════════════════════════════════ */
-
-/* ── HERO CAROUSEL ─────────────────────────────────────────────── */
-.hero-carousel{position:relative;overflow:hidden;border-radius:20px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
-.hero-carousel__track{position:relative;line-height:0}
-.hero-carousel__img{display:block;width:100%;height:240px;object-fit:cover}
-@media(min-width:960px){.hero-carousel__img{height:320px}}
-.hero-carousel__arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.55);color:#fff;border:2px solid rgba(255,255,255,.25);border-radius:50%;width:38px;height:38px;font-size:20px;line-height:1;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;transition:.15s}
-.hero-carousel__arrow:hover{background:rgba(0,0,0,.8)}
-.hero-carousel__arrow--prev{left:10px}
-.hero-carousel__arrow--next{right:10px}
-.hero-carousel__dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
-.hero-carousel__dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);border:none;cursor:pointer;padding:0;transition:background .2s,transform .2s}
-.hero-carousel__dot.active{background:#fff;transform:scale(1.35)}
-
-/* ── QUICK SEARCH TAGS ─────────────────────────────────────────── */
-.quick-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
-.quick-tags__label{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.quick-tag{font-size:12px;font-weight:800;padding:4px 11px;border-radius:999px;border:1.5px solid var(--line2);color:var(--muted);transition:.12s;white-space:nowrap}
-.quick-tag:hover{border-color:var(--blue);color:var(--blue);background:var(--soft)}
-
-/* ── RECOMMENDED COMPANIES ─────────────────────────────────────── */
-.recommended-companies{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
-@media(max-width:640px){.recommended-companies{grid-template-columns:1fr 1fr}}
-.rec-company-card{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);text-decoration:none;color:inherit;position:relative;transition:.18s;overflow:hidden}
-.rec-company-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 25%,var(--line))}
-.rec-company-card--star{border-color:color-mix(in srgb,var(--brand-red) 18%,var(--line))}
-.rec-company-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.rec-company-name{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rec-company-meta{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rec-company-badge{position:absolute;top:5px;right:6px;color:var(--brand-red);font-size:11px;font-weight:800}
-[data-theme="dark"] .rec-company-card{background:var(--paper);border-color:var(--line);box-shadow:none}
-[data-theme="dark"] .rec-company-card:hover{border-color:var(--blue);box-shadow:0 6px 20px rgba(91,141,255,.18)}
-
-/* ── COMPACT JOB CARD ──────────────────────────────────────────── */
-.job-compact{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 4px rgba(0,24,42,.05);text-decoration:none;color:inherit;position:relative;transition:.18s;overflow:hidden}
-.job-compact:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.1);border-color:color-mix(in srgb,var(--brand-red) 30%,var(--line))}
-.job-compact--promo{border-left:3px solid var(--brand-red)}
-.job-compact--quick{border-left:3px solid var(--green)}
-.job-compact__logo{flex-shrink:0;margin-top:1px}
-.job-compact__body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.job-compact__title{font-size:13px;font-weight:800;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.job-compact__company{font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.job-compact__city{font-size:10px;color:var(--muted)}
-.job-compact__rate{font-size:11px;font-weight:900;color:var(--green)}
-.job-compact__badge{flex-shrink:0;margin-left:auto;padding-left:6px}
-[data-theme="dark"] .job-compact{background:var(--paper);border-color:var(--line);box-shadow:none}
-[data-theme="dark"] .job-compact:hover{border-color:var(--blue);box-shadow:0 6px 20px rgba(91,141,255,.18)}
-
-/* ── KICKER VARIANTS ───────────────────────────────────────────── */
-.kicker--orange{background:var(--orange);color:#fff;border-color:var(--orange)}
-.kicker--lime{background:var(--lime);color:#111}
-.kicker--blue{background:var(--blue);color:#fff;border-color:var(--blue)}
-
-/* ── FILTER PILLS ──────────────────────────────────────────────── */
-.filter-pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
-.filter-pill{font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;border:1px solid var(--line2);color:var(--muted);transition:.15s;white-space:nowrap;text-decoration:none;background:var(--paper)}
-.filter-pill:hover,.filter-pill.active{background:var(--brand-red);color:#fff;border-color:var(--brand-red);transform:translateY(-1px)}
-
 /* ── ADMIN EXTENSIONS ──────────────────────────────────────────── */
 /* Promotion badge na admin kartici */
 .promo-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:900;padding:3px 7px;border-radius:999px;border:1.5px solid}
@@ -2675,7 +2639,6 @@ h3{font-size:18px;font-weight:700}
 .mobile-nav a:hover{border-color:var(--brand-red);color:#fff}
 
 /* ── Hamb icon — visible on mobile ── */
-.hamb{display:none!important}
 @media(max-width:860px){
   .hamb{display:inline-flex!important}
   .nav.desktop-nav{display:none}

@@ -99,20 +99,14 @@ export default async function JobsPage({
                 aria-label="Pretraži"
               />
             </div>
-            <select className="jl-select" name="city" defaultValue={params.city || ""} aria-label="Region">
-              <option value="">Izaberi region</option>
-              {lookups.cities.map((c: LookupItem) => (
-                <option key={c.id} value={c.name}>{c.name}</option>
-              ))}
-            </select>
             <select className="jl-select" name="city" defaultValue={params.city || ""} aria-label="Grad">
-              <option value="">Izaberi grad</option>
+              <option value="">Svi gradovi</option>
               {lookups.cities.map((c: LookupItem) => (
                 <option key={c.id} value={c.name}>{c.name}</option>
               ))}
             </select>
             <select className="jl-select" name="category" defaultValue={params.category || ""} aria-label="Kategorija">
-              <option value="">Izaberi kategoriju</option>
+              <option value="">Sve kategorije</option>
               {lookups.categories.map((c: LookupItem) => (
                 <option key={c.id} value={c.name}>{c.name}</option>
               ))}
@@ -187,7 +181,7 @@ export default async function JobsPage({
 
           {/* Count + reset */}
           <div className="jl-main-head">
-            <span className="jl-count">Oglasi za posao {totalLabel} / {jobs.length}</span>
+            <span className="jl-count">{jobs.length} {jobs.length === 1 ? "oglas" : "oglasa"}</span>
             {isFiltering && (
               <Link href="/oglasi" className="jl-reset">
                 ↺ Poništi pretragu

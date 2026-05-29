@@ -5,7 +5,7 @@ import { PremiumEmployers } from "@/components/premium-employers";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
 import { Button } from "@/components/ui";
 import { BannerSlot } from "@/components/banner-slot";
-import { getLookups, getHomepageData, getCompanies } from "@/lib/queries/public";
+import { getLookups, getHomepageData, getCompanies, getPopularTags } from "@/lib/queries/public";
 import { getActiveBanners } from "@/lib/queries/banners";
 import type { JobWithPromotion } from "@/types/domain";
 
@@ -16,20 +16,12 @@ export const metadata: Metadata = {
 
 export const revalidate = 300;
 
-const POPULAR = [
-  { label: "Konobar",        q: "konobar" },
-  { label: "Moler",          q: "moler" },
-  { label: "Prodavac",       q: "prodavac" },
-  { label: "Sezonski rad",   q: "sezonski" },
-  { label: "Rad od kuće",    q: "rad od kuce" },
-  { label: "Pomoćni radnik", q: "pomocni radnik" },
-];
-
 export default async function HomePage() {
-  const [homepageData, heroBanners, lookups] = await Promise.all([
+  const [homepageData, heroBanners, lookups, popularTags] = await Promise.all([
     getHomepageData(),
     getActiveBanners("homepage_hero", "all", 5),
     getLookups(),
+    getPopularTags(),
   ]);
 
   const { paidTopJobs, featuredJobs, regularJobs, recommendedCompanies } = homepageData;
@@ -84,7 +76,7 @@ export default async function HomePage() {
         {/* Popular tags */}
         <div className="quick-tags">
           <span className="quick-tags__label">Popularno:</span>
-          {POPULAR.map(p => (
+          {popularTags.map(p => (
             <Link key={p.q} href={`/oglasi?q=${encodeURIComponent(p.q)}`} className="quick-tag">
               {p.label}
             </Link>
@@ -130,6 +122,17 @@ export default async function HomePage() {
             <JobCardClean key={job.id} job={job} />
           ))}
         </div>
+
+        {allJobs.length === 0 && (
+          <div className="notice-card" style={{ textAlign: "center", padding: 32 }}>
+            <strong>Trenutno nema aktivnih oglasa</strong>
+            <p>Novi oglasi se objavljuju svakodnevno. Registruj se i prati novosti.</p>
+            <div className="actions" style={{ justifyContent: "center", marginTop: 12 }}>
+              <Button href="/registracija" tone="blue">Registruj se →</Button>
+              <Button href="/oglasi">Pretraži oglase</Button>
+            </div>
+          </div>
+        )}
 
         {allJobs.length > 0 && (
           <div className="home-more-jobs">

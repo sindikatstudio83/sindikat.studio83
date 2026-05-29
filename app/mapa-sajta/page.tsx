@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { Card, PageLabel } from "@/components/ui";
+
+export const metadata: Metadata = {
+  title: "Mapa sajta",
+  description: "Pregled svih dijelova platforme imaposla.me — poslovi, firme, kandidati i upravljanje.",
+  robots: { index: false, follow: true }, // Sitemap page itself doesn't need indexing
+};
 
 export default function SitemapPage() {
   return (
