@@ -6,13 +6,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
-import { stageLabels, stageOrder } from "@/lib/labels";
-import type { JobApplication } from "@/types/domain";
+import { stageLabels, stageOrder, gigStatusLabels } from "@/lib/labels";
+import type { JobApplication, QuickGigApplication } from "@/types/domain";
 
 export function ApplicationsClient() {
   const router = useRouter();
   const { role, userId, ready } = useAuth();
   const [apps, setApps] = useState<JobApplication[]>([]);
+  const [gigApps, setGigApps] = useState<QuickGigApplication[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
 
@@ -32,14 +33,22 @@ export function ApplicationsClient() {
     const supabase = createBrowserSupabase();
 
     async function load() {
-      const { data, error } = await supabase
-        .from("job_applications")
-        .select("*,jobs(id,title,slug,company_id,companies(name,slug))")
-        .eq("candidate_id", userId!)
-        .order("created_at", { ascending: false });
+      const [appsRes, gigsRes] = await Promise.all([
+        supabase
+          .from("job_applications")
+          .select("*,jobs(id,title,slug,company_id,companies(name,slug))")
+          .eq("candidate_id", userId!)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("quick_gig_applications")
+          .select("*,quick_gigs(id,title,city,status)")
+          .eq("candidate_id", userId!)
+          .order("created_at", { ascending: false }),
+      ]);
 
-      if (error) console.error("[ApplicationsClient]", error.message);
-      setApps((data || []) as JobApplication[]);
+      if (appsRes.error) console.error("[ApplicationsClient]", appsRes.error.message);
+      setApps((appsRes.data || []) as JobApplication[]);
+      setGigApps((gigsRes.data || []) as unknown as QuickGigApplication[]);
       setLoading(false);
     }
     load();
@@ -114,6 +123,41 @@ export function ApplicationsClient() {
                 : <Link className="btn blue sm" href="/oglasi">Otvori oglase →</Link>
               }
             </div>
+          </div>
+        )}
+      </div>
+
+      {/* Brze prijave (quick gig applications) */}
+      <div className="section-head compact-head" style={{ marginTop: 28 }}>
+        <div>
+          <h2>⚡ Prijave na brze angažmane</h2>
+          <p className="sub">{gigApps.length} {gigApps.length === 1 ? "prijava" : "prijava"}</p>
+        </div>
+        <Link className="btn ghost sm" href="/brzi-poslovi/angazmani">Brzi angažmani →</Link>
+      </div>
+
+      <div className="table-card">
+        {gigApps.map(ga => {
+          const gig = ga.quick_gigs;
+          return (
+            <Link href={`/brzi-poslovi/angazmani/${gig?.id ?? ""}`} className="table-row" key={ga.id}>
+              <div>
+                <strong>{gig?.title || "Angažman"}</strong>
+                <small>{gig?.city || ""}</small>
+              </div>
+              <div>
+                {gig?.status && <span className={`status-badge ${gig.status === "active" ? "stage-hired" : "stage-review"}`}>{gigStatusLabels[gig.status]}</span>}
+              </div>
+              <div className="muted" style={{ overflowWrap: "anywhere" }}>{ga.message ? ga.message.slice(0, 40) + (ga.message.length > 40 ? "…" : "") : "—"}</div>
+              <div className="muted">{new Date(ga.created_at).toLocaleDateString("sr-ME")}</div>
+            </Link>
+          );
+        })}
+        {gigApps.length === 0 && (
+          <div className="empty">
+            <strong>Još nema prijava na brze angažmane</strong>
+            <p>Pogledaj dostupne brze angažmane i prijavi se.</p>
+            <Link className="btn blue sm" href="/brzi-poslovi/angazmani">Brzi angažmani →</Link>
           </div>
         )}
       </div>

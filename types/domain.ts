@@ -372,3 +372,144 @@ export type CreativeTemplate = {
   created_at: string;
   updated_at: string;
 };
+
+// ════════════════════════════════════════════════════════════════════════════
+// BRZI POSLOVI — quick gigs + worker marketplace
+// ════════════════════════════════════════════════════════════════════════════
+
+export type WorkerStatus = "pending" | "active" | "hidden" | "rejected";
+export type GigStatus = "pending_review" | "active" | "closed" | "rejected" | "expired";
+export type AvailabilityType =
+  | "immediately" | "weekends" | "seasonal" | "by_agreement" | "specific_date";
+
+export type Profession = {
+  id: number;
+  name: string;
+  slug: string;
+  icon: string | null;
+  sort: number;
+  active: boolean;
+};
+
+export type WorkerProfile = {
+  id: number;
+  user_id: string;
+  display_name: string;
+  profession_id: number | null;
+  profession_text: string | null;
+  cities: string[];
+  availability: AvailabilityType;
+  available_from: string | null;
+  experience_years: number;
+  price_text: string | null;
+  languages: string | null;
+  bio: string | null;
+  photo_path: string | null;
+  contact_phone: string | null;
+  contact_viber: string | null;
+  contact_email: string | null;
+  show_phone: boolean;
+  is_public: boolean;
+  status: WorkerStatus;
+  is_premium: boolean;
+  premium_until: string | null;
+  is_verified: boolean;
+  slug: string | null;
+  views: number;
+  created_at: string;
+  updated_at: string;
+  professions?: Pick<Profession, "id" | "name" | "slug" | "icon"> | null;
+  worker_portfolio?: WorkerPortfolioItem[];
+};
+
+export type WorkerPortfolioItem = {
+  id: number;
+  worker_id: number;
+  image_path: string;
+  sort: number;
+  created_at: string;
+};
+
+export type QuickGig = {
+  id: number;
+  posted_by: string;
+  company_id: number | null;
+  title: string;
+  profession_id: number | null;
+  city: string;
+  gig_date: string | null;
+  gig_timing: string | null;
+  pay_text: string | null;
+  description: string | null;
+  is_urgent: boolean;
+  is_featured: boolean;
+  status: GigStatus;
+  created_at: string;
+  updated_at: string;
+  professions?: Pick<Profession, "id" | "name" | "slug" | "icon"> | null;
+  companies?: Pick<Company, "id" | "name" | "slug"> | null;
+};
+
+export type QuickGigApplication = {
+  id: number;
+  gig_id: number;
+  candidate_id: string;
+  message: string | null;
+  created_at: string;
+  quick_gigs?: (Pick<QuickGig, "id" | "title" | "city"> & { status?: GigStatus }) | null;
+  profiles?: Pick<Profile, "full_name" | "email" | "phone"> | null;
+};
+
+export type WorkerMessage = {
+  id: number;
+  worker_id: number;
+  from_user: string;
+  from_name: string | null;
+  from_contact: string | null;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+};
+
+export type CandidateInterests = {
+  user_id: string;
+  professions: number[];
+  cities: string[];
+  categories: number[];
+  job_types: string[];
+  min_daily_pay: number | null;
+  email_enabled: boolean;
+  email_frequency: string;
+  updated_at: string;
+};
+
+// Public-safe worker payload (no contact fields) — from public_worker_profiles view
+export type PublicWorkerProfile = Omit<
+  WorkerProfile,
+  "contact_phone" | "contact_viber" | "contact_email"
+>;
+
+// Contact info returned only via get_worker_contact RPC (login-only, opt-in)
+export type WorkerContactInfo = {
+  contact_email: string | null;
+  contact_phone: string | null;
+  contact_viber: string | null;
+  show_phone: boolean;
+};
+
+export type SavedWorker = {
+  id: number;
+  user_id: string;
+  worker_id: number;
+  created_at: string;
+};
+
+export type PremiumRequest = {
+  id: number;
+  worker_id: number;
+  user_id: string;
+  plan: string;
+  note: string | null;
+  status: "pending" | "paid" | "rejected";
+  created_at: string;
+};

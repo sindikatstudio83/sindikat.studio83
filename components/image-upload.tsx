@@ -13,7 +13,7 @@ const MAX_BYTES_BANNERS = 5 * 1024 * 1024; // 5MB
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 // All valid Supabase Storage buckets used in this project
-export type ImageBucket = "avatars" | "company-logos" | "banners";
+export type ImageBucket = "avatars" | "company-logos" | "banners" | "worker-photos";
 
 /**
  * Generates a public Supabase Storage URL without needing the Supabase client.

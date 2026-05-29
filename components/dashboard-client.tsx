@@ -159,6 +159,18 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
               <strong>Sačuvani oglasi</strong>
               <span>{account.saved.length} {account.saved.length === 1 ? "oglas" : "oglasa"}</span>
             </Link>
+            <Link className="quick-link" href="/profil/brzi-profil">
+              <strong>⚡ Moj brzi profil</strong>
+              <span>Ponudi svoje usluge</span>
+            </Link>
+            <Link className="quick-link" href="/profil/interesovanja">
+              <strong>Moja interesovanja</strong>
+              <span>Nedjeljni email sa poslovima</span>
+            </Link>
+            <Link className="quick-link" href="/profil/brzi-kontakti">
+              <strong>Moji kontakti</strong>
+              <span>Upiti od poslodavaca</span>
+            </Link>
           </div>
 
           <div className="section-head compact-head">
