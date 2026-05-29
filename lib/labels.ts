@@ -46,3 +46,45 @@ export const ATS_LABEL_OPTS = [
 ] as const;
 
 export type AtsLabelKey = typeof ATS_LABEL_OPTS[number]["key"];
+
+// ── BRZI POSLOVI ─────────────────────────────────────────────────────────────
+import type { AvailabilityType, WorkerStatus, GigStatus } from "@/types/domain";
+
+export const availabilityLabels: Record<AvailabilityType, string> = {
+  immediately:   "Dostupan odmah",
+  weekends:      "Vikendom",
+  seasonal:      "Sezonski",
+  by_agreement:  "Po dogovoru",
+  specific_date: "Od određenog datuma",
+};
+
+export const availabilityShort: Record<AvailabilityType, string> = {
+  immediately:   "Odmah",
+  weekends:      "Vikend",
+  seasonal:      "Sezonski",
+  by_agreement:  "Po dogovoru",
+  specific_date: "Od datuma",
+};
+
+export const workerStatusLabels: Record<WorkerStatus, string> = {
+  pending:  "Čeka odobrenje",
+  active:   "Aktivan",
+  hidden:   "Sakriven",
+  rejected: "Odbijen",
+};
+
+export const gigStatusLabels: Record<GigStatus, string> = {
+  pending_review: "Čeka pregled",
+  active:         "Aktivan",
+  closed:         "Zatvoren",
+  rejected:       "Odbijen",
+  expired:        "Istekao",
+};
+
+export const jobTypeOptions = [
+  { value: "weekend",  label: "Rad vikendom" },
+  { value: "seasonal", label: "Sezonski rad" },
+  { value: "urgent",   label: "Hitni angažmani" },
+  { value: "remote",   label: "Rad od kuće" },
+  { value: "night",    label: "Noćni rad" },
+];

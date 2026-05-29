@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getCompanies, getLookups, getPublicJobs } from "@/lib/queries/public";
+import { getPublicWorkers, getProfessions } from "@/lib/queries/brzi-poslovi";
 import { companyUrl, jobUrl } from "@/lib/format";
 
 // Revalidate sitemap every 12 hours
@@ -12,6 +13,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base,                        changeFrequency: "daily",   priority: 1.0 },
     { url: `${base}/oglasi`,            changeFrequency: "hourly",  priority: 0.9 },
+    { url: `${base}/brzi-poslovi`,           changeFrequency: "daily",   priority: 0.9 },
+    { url: `${base}/brzi-poslovi/radnici`,   changeFrequency: "daily",   priority: 0.8 },
+    { url: `${base}/brzi-poslovi/angazmani`, changeFrequency: "hourly",  priority: 0.8 },
     { url: `${base}/firme`,             changeFrequency: "daily",   priority: 0.7 },
     { url: `${base}/gradovi`,           changeFrequency: "weekly",  priority: 0.6 },
     { url: `${base}/kategorije`,        changeFrequency: "weekly",  priority: 0.6 },
@@ -22,10 +26,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Dynamic routes — fetch in parallel, fail gracefully if Supabase unavailable
-  const [jobs, companies, lookups] = await Promise.all([
+  const [jobs, companies, lookups, premiumWorkers, professions] = await Promise.all([
     getPublicJobs({ limit: 500 }).catch(() => []),
     getCompanies(200).catch(() => []),
     getLookups().catch(() => ({ cities: [], categories: [] })),
+    getPublicWorkers({ premium: true, limit: 200 }).catch(() => []),
+    getProfessions().catch(() => []),
   ]);
 
   const jobRoutes: MetadataRoute.Sitemap = jobs.map((job) => ({
@@ -57,5 +63,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-  return [...staticRoutes, ...jobRoutes, ...companyRoutes, ...cityRoutes, ...categoryRoutes];
+  // Premium worker profiles get their own indexable page
+  const workerRoutes: MetadataRoute.Sitemap = premiumWorkers
+    .filter((w) => w.slug)
+    .map((w) => ({
+      url: `${base}/radnici/${w.slug}`,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    }));
+
+  // Profession landing pages (SEO)
+  const professionRoutes: MetadataRoute.Sitemap = professions.map((p) => ({
+    url: `${base}/brzi-poslovi/zanimanje/${p.slug}`,
+    changeFrequency: "daily",
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...jobRoutes, ...companyRoutes, ...cityRoutes, ...categoryRoutes, ...workerRoutes, ...professionRoutes];
 }

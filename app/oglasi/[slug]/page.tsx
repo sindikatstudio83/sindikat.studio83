@@ -66,18 +66,35 @@ export default async function JobDetailPage({ params }: Props) {
             {job.categories?.name && <span className="badge blue">{job.categories.name}</span>}
             {job.contract_type && <span className="tag">{job.contract_type}</span>}
           </div>
-          <h1 style={{ fontSize: "clamp(32px,5vw,52px)", marginBottom: 10 }}>{job.title}</h1>
-          <div className="meta" style={{ marginBottom: 16 }}>
-            {co?.name && <strong>{co.name}</strong>}
-            {job.cities?.name && <span>· {job.cities.name}</span>}
-            <span>· Rok {formatDate(job.deadline)}</span>
-          </div>
-          {job.description && <p className="detail-text">{job.description}</p>}
+          <h1 className="detail-title">{job.title}</h1>
 
-          <div style={{ marginTop: 24 }}>
-            {job.salary_text && <span className="badge lime" style={{ marginRight: 6 }}>{job.salary_text}</span>}
-            {job.contract_type && <span className="badge gray">{job.contract_type}</span>}
+          {/* Key facts grid — never overflows, stacks cleanly on mobile */}
+          <div className="detail-facts">
+            {co?.name && (
+              <div className="detail-fact">
+                <span className="detail-fact__label">Poslodavac</span>
+                <span className="detail-fact__value">{co.name}</span>
+              </div>
+            )}
+            {job.cities?.name && (
+              <div className="detail-fact">
+                <span className="detail-fact__label">Lokacija</span>
+                <span className="detail-fact__value">{job.cities.name}</span>
+              </div>
+            )}
+            {job.salary_text && (
+              <div className="detail-fact">
+                <span className="detail-fact__label">Plata</span>
+                <span className="detail-fact__value detail-fact__value--salary">{job.salary_text}</span>
+              </div>
+            )}
+            <div className="detail-fact">
+              <span className="detail-fact__label">Rok prijave</span>
+              <span className="detail-fact__value">{formatDate(job.deadline)}</span>
+            </div>
           </div>
+
+          {job.description && <p className="detail-text">{job.description}</p>}
 
           {similar.length > 0 && (
             <div style={{ marginTop: 32 }}>
@@ -91,8 +108,8 @@ export default async function JobDetailPage({ params }: Props) {
           <div className="card" style={{ marginBottom: 10 }}>
             <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 14 }}>
               <div className="logo">{initials(co?.name)}</div>
-              <div>
-                <strong style={{ display: "block", fontSize: 16 }}>{co?.name || "Poslodavac"}</strong>
+              <div style={{ minWidth: 0 }}>
+                <strong style={{ display: "block", fontSize: 16, overflowWrap: "anywhere" }}>{co?.name || "Poslodavac"}</strong>
                 <span className="sub">{job.cities?.name || "Crna Gora"}</span>
               </div>
             </div>
@@ -106,12 +123,12 @@ export default async function JobDetailPage({ params }: Props) {
           <div className="card">
             <h2 style={{ fontSize: 22, marginBottom: 14 }}>Prijavi se</h2>
             <JobViewTracker jobId={job.id} />
-      <BannerSlot placement="job_detail_top" />
-      <ApplyForm jobId={job.id} />
+            <BannerSlot placement="job_detail_top" />
+            <ApplyForm jobId={job.id} />
           </div>
         </aside>
-      <BannerSlot placement="job_detail_bottom" />
-    </section>
+        <BannerSlot placement="job_detail_bottom" />
+      </section>
     </>
   );
 }

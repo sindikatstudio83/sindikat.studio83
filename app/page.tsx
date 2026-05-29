@@ -84,6 +84,16 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* ── BRZI POSLOVI PROMO ── */}
+      <Link href="/brzi-poslovi" className="bp-promo">
+        <div className="bp-promo__icon" aria-hidden>⚡</div>
+        <div className="bp-promo__text">
+          <strong>Brzi poslovi — angažuj odmah</strong>
+          <span>Konobari, moleri, hostese i pomoćni radnici dostupni za kratke angažmane.</span>
+        </div>
+        <span className="bp-promo__arrow" aria-hidden>→</span>
+      </Link>
+
       {/* ── PREMIUM POSLODAVCI ── */}
       {displayCompanies.length > 0 && (
         <section className="premium-employers-section" aria-labelledby="premium-employers-title">

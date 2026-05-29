@@ -277,3 +277,80 @@ test.describe("Job detail page", () => {
  *
  * Run these manually before each production deployment.
  */
+
+// ════════════════════════════════════════════════════════════════════════════
+// BRZI POSLOVI — smoke tests
+// ════════════════════════════════════════════════════════════════════════════
+
+test.describe("Brzi poslovi — public pages", () => {
+  test("brzi-poslovi landing loads with tabs", async ({ page }) => {
+    await page.goto("/brzi-poslovi");
+    await expect(page.locator(".bp-tabs")).toBeVisible();
+    await expect(page.locator("text=Tražim radnika")).toBeVisible();
+    await expect(page.locator("text=Tražim brzi posao")).toBeVisible();
+  });
+
+  test("radnici list loads", async ({ page }) => {
+    await page.goto("/brzi-poslovi/radnici");
+    await expect(page.locator("h1")).toBeVisible();
+    // Either worker grid or empty state
+    const ok = await page.locator(".bp-worker-grid, .bp-empty").first().isVisible();
+    expect(ok).toBe(true);
+  });
+
+  test("angazmani list loads", async ({ page }) => {
+    await page.goto("/brzi-poslovi/angazmani");
+    await expect(page.locator("h1")).toBeVisible();
+    const ok = await page.locator(".bp-gig-grid, .bp-empty").first().isVisible();
+    expect(ok).toBe(true);
+  });
+
+  test("worker detail shows locked contact for guest", async ({ page }) => {
+    await page.goto("/brzi-poslovi/radnici");
+    const firstWorker = page.locator(".bp-worker-card a[href*='/radnici/'], .bp-worker-card a[href*='/brzi-poslovi/radnici/']").first();
+    if (await firstWorker.count() > 0) {
+      await firstWorker.click();
+      // Guest must see locked contact CTA, never a phone number
+      await expect(page.locator("text=Kontakt je dostupan prijavljenim")).toBeVisible({ timeout: 5000 });
+    } else {
+      test.skip();
+    }
+  });
+});
+
+test.describe("Brzi poslovi — protected routes redirect guests", () => {
+  test("/profil/brzi-profil redirects to login", async ({ page }) => {
+    await page.goto("/profil/brzi-profil");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("/profil/interesovanja redirects to login", async ({ page }) => {
+    await page.goto("/profil/interesovanja");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("/profil/brzi-kontakti redirects to login", async ({ page }) => {
+    await page.goto("/profil/brzi-kontakti");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("/firma/brzi-angazman redirects to login", async ({ page }) => {
+    await page.goto("/firma/brzi-angazman");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("/firma/radnici redirects to login", async ({ page }) => {
+    await page.goto("/firma/radnici");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("/admin/brzi-profili redirects to login", async ({ page }) => {
+    await page.goto("/admin/brzi-profili");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("/admin/brzi-angazmani redirects to login", async ({ page }) => {
+    await page.goto("/admin/brzi-angazmani");
+    await expect(page).toHaveURL(/\/login/);
+  });
+});
