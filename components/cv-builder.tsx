@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -17,6 +19,7 @@ const emptyCv: CvData = {
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 export function CvBuilder() {
+  const router = useRouter();
   const { userId, email, ready, role } = useAuth();
   const [cv, setCv] = useState<CvData>(emptyCv);
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
@@ -29,7 +32,7 @@ export function CvBuilder() {
     if (!ready) return;
 
     if (!userId || role === "guest") {
-      window.location.href = "/login?next=/profil/biografija";
+      router.replace("/login?next=/profil/biografija");
       return;
     }
 
@@ -65,7 +68,7 @@ export function CvBuilder() {
     return () => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     };
-  }, [ready, userId, email, role]);
+  }, [ready, userId, email, role, router]);
 
   const skills = useMemo(
     () => (cv.skills || "").split(",").map((s) => s.trim()).filter(Boolean),

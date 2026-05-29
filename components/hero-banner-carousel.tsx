@@ -13,8 +13,28 @@ interface Props {
 export function HeroBannerCarousel({ banners, autoPlayMs = 6000 }: Props) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  // Respect prefers-reduced-motion — disable autoplay entirely
+  const [reducedMotion, setReducedMotion] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const count = banners.length;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Pause autoplay when tab is hidden
+  useEffect(() => {
+    function onVisibility() {
+      if (document.hidden) setPaused(true);
+      else setPaused(false);
+    }
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
 
   const goTo = useCallback(
     (idx: number) => setCurrent(((idx % count) + count) % count),
@@ -24,10 +44,11 @@ export function HeroBannerCarousel({ banners, autoPlayMs = 6000 }: Props) {
   const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 
   useEffect(() => {
-    if (paused || count <= 1) return;
+    // Do not autoplay if reduced motion is preferred or manually paused
+    if (paused || reducedMotion || count <= 1) return;
     timerRef.current = setTimeout(next, autoPlayMs);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [current, paused, autoPlayMs, next, count]);
+  }, [current, paused, reducedMotion, autoPlayMs, next, count]);
 
   if (!count) return null;
 
@@ -51,8 +72,11 @@ export function HeroBannerCarousel({ banners, autoPlayMs = 6000 }: Props) {
       className="hero-carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
       role="region"
       aria-label="Sponzorisani baneri"
+      aria-roledescription="carousel"
     >
       <div className="hero-carousel__track" style={{ cursor: banner.target_url ? "pointer" : "default" }} onClick={handleClick}>
         {/* eslint-disable-next-line @next/next/no-img-element */}

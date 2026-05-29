@@ -20,10 +20,12 @@ export function parseIdFromSlug(slug: string) {
   return match ? Number(match[1]) : null;
 }
 
-export function formatDate(value?: string | null) {
+export function formatDate(value?: string | null, options?: { withTime?: boolean }) {
   if (!value) return "Bez roka";
   try {
-    return new Intl.DateTimeFormat("sr-ME").format(new Date(value));
+    const opts: Intl.DateTimeFormatOptions = { dateStyle: "medium" };
+    if (options?.withTime) opts.timeStyle = "short";
+    return new Intl.DateTimeFormat("sr-ME", opts).format(new Date(value));
   } catch {
     return value;
   }

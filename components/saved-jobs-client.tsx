@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -9,6 +11,7 @@ import { Avatar } from "@/components/avatar";
 import type { SavedJob } from "@/types/domain";
 
 export function SavedJobsClient() {
+  const router = useRouter();
   const { role, userId, ready } = useAuth();
   const [items, setItems] = useState<SavedJob[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,15 +19,15 @@ export function SavedJobsClient() {
   useEffect(() => {
     if (!ready) return;
     if (!userId || role === "guest") {
-      window.location.href = "/login?next=/profil/sacuvani";
+      router.replace("/login?next=/profil/sacuvani");
       return;
     }
     if (role !== "candidate" && role !== "admin") {
-      window.location.href = "/profil";
+      router.replace("/profil");
       return;
     }
     getSavedJobs(userId).then(data => { setItems(data); setLoading(false); });
-  }, [ready, role, userId]);
+  }, [ready, role, userId, router]);
 
   async function remove(jobId: number) {
     if (!userId) return;

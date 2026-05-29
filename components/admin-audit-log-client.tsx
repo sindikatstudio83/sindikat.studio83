@@ -2,8 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
+import { formatDate } from "@/lib/format";
+import { useAuth } from "@/lib/auth-context";
+import { DashboardSideNav } from "@/components/dashboard-side-nav";
 
 type AuditRow = {
   id: number;
@@ -17,23 +21,27 @@ type AuditRow = {
   created_at: string;
 };
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("sr-ME", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
 function compactJson(value: Record<string, unknown> | null) {
   if (!value) return "-";
   return JSON.stringify(value);
 }
 
 export function AdminAuditLogClient() {
+  const { role, email: authEmail, ready } = useAuth();
+  const router = useRouter();
   const supabase = useMemo(() => createBrowserSupabase(), []);
   const [rows, setRows] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
+  const [email] = useState(() => authEmail ?? "");
+
+  // Auth guard — consistent with other admin components
+  useEffect(() => {
+    if (!ready) return;
+    if (role !== "admin") {
+      router.replace("/");
+    }
+  }, [ready, role, router]);
 
   useEffect(() => {
     let active = true;
@@ -66,8 +74,15 @@ export function AdminAuditLogClient() {
     };
   }, [supabase]);
 
+  if (!ready || role !== "admin") {
+    return <div className="loading-panel">Provjera pristupa...</div>;
+  }
+
   return (
-    <section className="admin-audit-page">
+    <div className="app-shell">
+      <DashboardSideNav role="admin" email={email} />
+      <main className="app-main">
+      <section className="admin-audit-page">
       <div className="page-head">
         <div>
           <span className="page-label">Admin</span>
@@ -101,7 +116,7 @@ export function AdminAuditLogClient() {
             ) : rows.length ? (
               rows.map((row) => (
                 <tr key={row.id}>
-                  <td>{formatDate(row.created_at)}</td>
+                  <td>{formatDate(row.created_at, { withTime: true })}</td>
                   <td><span className="status-badge stage-review">{row.action}</span></td>
                   <td>{row.target_table || "-"}{row.target_id ? ` #${row.target_id}` : ""}</td>
                   <td>{row.admin_email || "Sistem"}</td>
@@ -118,5 +133,7 @@ export function AdminAuditLogClient() {
         </table>
       </div>
     </section>
+    </main>
+    </div>
   );
 }

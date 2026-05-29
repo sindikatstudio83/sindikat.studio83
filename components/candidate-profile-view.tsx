@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -42,6 +44,7 @@ function SkillChips({ skills }: { skills?: string | null }) {
 }
 
 export function CandidateProfileView({ candidateId }: { candidateId: string }) {
+  const router = useRouter();
   const { role, userId, ready } = useAuth();
   const [cand, setCand] = useState<CandProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +53,7 @@ export function CandidateProfileView({ candidateId }: { candidateId: string }) {
   useEffect(() => {
     if (!ready) return;
     if (!userId || (role !== "company" && role !== "admin")) {
-      window.location.href = "/login?next=/firma/kandidati";
+      router.replace("/login?next=/firma/kandidati");
       return;
     }
     load();

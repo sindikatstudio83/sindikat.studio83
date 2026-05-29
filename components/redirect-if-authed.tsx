@@ -1,33 +1,30 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { roleHomes } from "@/lib/labels";
 
 /**
- * Klijent komponenta koja preusmjerava već ulogovanog korisnika sa /login ili /registracija
- * na njegov dashboard. Ne dira gostove — oni vide formu.
- *
- * VAŽNO: Ne smije se aktivirati kada je Login forma upravo završila prijavu i
- * sama vrši redirect. Koristimo sessionStorage flag 'ip_login_redirecting' da
- * razlikujemo ova dva slučaja i spriječimo dvostruki redirect (koji uzrokuje flicker).
+ * Redirects already-logged-in users away from /login and /registracija.
+ * Skips redirect if LoginForm is already handling it (ip_login_redirecting flag).
  */
 export function RedirectIfAuthed() {
   const { role, ready } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!ready) return;
     if (role === "guest") return;
 
-    // Ako LoginForm upravo završava i redirect-uje, ne dodajemo još jedan redirect
     try {
       if (sessionStorage.getItem("ip_login_redirecting") === "1") return;
     } catch {
-      // sessionStorage nije dostupan (private mode edge case) — nastavi normalno
+      // sessionStorage unavailable in private mode — continue normally
     }
 
-    window.location.replace(roleHomes[role as Exclude<typeof role, "guest">]);
-  }, [ready, role]);
+    router.replace(roleHomes[role as Exclude<typeof role, "guest">]);
+  }, [ready, role, router]);
 
   return null;
 }

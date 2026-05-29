@@ -1,18 +1,24 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
 export function LogoutClient() {
+  const router = useRouter();
+
   useEffect(() => {
-    createBrowserSupabase().auth.signOut().then(() => {
-      window.location.replace("/login");
-    });
-  }, []);
+    async function doLogout() {
+      const supabase = createBrowserSupabase();
+      await supabase.auth.signOut();
+      router.replace("/login");
+    }
+    doLogout();
+  }, [router]);
 
   return (
-    <div style={{ padding: "60px 20px", textAlign: "center" }}>
-      <p style={{ color: "var(--muted)", fontWeight: 700 }}>Odjava...</p>
+    <div className="auth-shell">
+      <p className="lead" style={{ textAlign: "center" }}>Odjava u toku...</p>
     </div>
   );
 }

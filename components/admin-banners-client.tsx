@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -41,6 +43,7 @@ const emptyForm: FormState = {
 };
 
 export function AdminBannersClient() {
+  const router = useRouter();
   const { role, ready, userId } = useAuth();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,11 +55,11 @@ export function AdminBannersClient() {
   useEffect(() => {
     if (!ready) return;
     if (role !== "admin") {
-      window.location.href = "/";
+      router.replace("/");
       return;
     }
     load();
-  }, [ready, role]);
+  }, [ready, role, router]);
 
   async function load() {
     setLoading(true);

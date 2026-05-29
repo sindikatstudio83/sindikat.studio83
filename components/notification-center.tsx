@@ -56,9 +56,58 @@ export function NotificationCenter() {
 
   useEffect(() => {
     if (!ready || !userId) return;
+
+    // Initial load
     load();
-    const t = setInterval(load, 60_000);
-    return () => clearInterval(t);
+
+    // ── Realtime subscription for instant notification delivery ──────
+    // Falls back to polling if Realtime channel fails.
+    const supabase = createBrowserSupabase();
+    const channel = supabase
+      .channel(`notifications:${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `recipient_id=eq.${userId}`,
+        },
+        () => {
+          // New notification arrived — reload the list
+          load();
+        }
+      )
+      .subscribe();
+
+    // ── Polling fallback — paused when tab is hidden ──────────────────
+    // 60s interval, only runs when tab is visible.
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
+    function startPolling() {
+      if (intervalId) return;
+      intervalId = setInterval(() => {
+        if (!document.hidden) load();
+      }, 60_000);
+    }
+
+    function stopPolling() {
+      if (intervalId) { clearInterval(intervalId); intervalId = null; }
+    }
+
+    function onVisibilityChange() {
+      if (document.hidden) stopPolling();
+      else { load(); startPolling(); }
+    }
+
+    startPolling();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      supabase.removeChannel(channel);
+      stopPolling();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, [ready, userId, load]);
 
   // FIX: na mobilnom panel je fixed i ne može ići van ekrana
@@ -161,16 +210,28 @@ export function NotificationCenter() {
           <div
             className="notif-panel"
             role="dialog"
-            aria-label="Obavještenja"
+            aria-modal="true"
+            aria-labelledby="notif-panel-title"
             style={panelStyle}
           >
             <div className="notif-head">
-              <strong>Obavještenja</strong>
-              {unreadCount > 0 && (
-                <button type="button" className="mini-link" onClick={markAllRead}>
-                  Označi sve kao pročitano
+              <strong id="notif-panel-title">Obavještenja</strong>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                {unreadCount > 0 && (
+                  <button type="button" className="mini-link" onClick={markAllRead}>
+                    Označi sve kao pročitano
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="icon-btn"
+                  style={{ width: 28, height: 28, fontSize: 18 }}
+                  onClick={() => setOpen(false)}
+                  aria-label="Zatvori obavještenja"
+                >
+                  ×
                 </button>
-              )}
+              </div>
             </div>
 
             <div style={{ maxHeight: "min(400px, 60vh)", overflowY: "auto" }}>

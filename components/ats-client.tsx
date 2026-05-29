@@ -2,13 +2,13 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { logError, safeMessage } from "@/lib/errors";
 import { initials, formatDate } from "@/lib/format";
-import { stageLabels, stageOrder } from "@/lib/labels";
-import { desktopNavItems } from "@/lib/navigation";
+import { stageLabels, stageOrder, ATS_LABEL_OPTS } from "@/lib/labels";
+import { DashboardSideNav } from "@/components/dashboard-side-nav";
 import { AtsDetailPanel } from "@/components/ats-detail-panel";
 import type { Company, JobApplication } from "@/types/domain";
 
@@ -44,35 +44,7 @@ const STAGE_CONFIG: Record<Stage, { color: string; bg: string; emoji: string }> 
   rejected:  { color: "#e5484d", bg: "rgba(229,72,77,.09)",  emoji: "✗"  },
 };
 
-const LABEL_OPTS = [
-  { key: "top",       label: "Top",        color: "#22c55e" },
-  { key: "interview", label: "Intervju",   color: "#f59e0b" },
-  { key: "rejected",  label: "Ne odgovara", color: "#ef4444" },
-  { key: "followup",  label: "Kasniji",    color: "#a78bfa" },
-  { key: "star",      label: "Zvjezdica",  color: "#3b82f6" },
-] as const;
-
-// ── Side nav (same as CompanyClient) ─────────────────────────
-function SideNav({ email }: { email: string }) {
-  const pathname = usePathname();
-  const nav = desktopNavItems["company"];
-  const name = email.split("@")[0];
-  return (
-    <aside className="side">
-      <div className="side-head">
-        <div className="side-avatar">{initials(name)}</div>
-        <strong>{name}</strong>
-        <small>FIRMA · {email}</small>
-      </div>
-      <nav className="side-nav">
-        {nav.map(item => (
-          <Link href={item.href} key={item.href} className={pathname === item.href ? "active" : ""}>{item.label}</Link>
-        ))}
-      </nav>
-      <Link href="/logout" className="side-logout">Odjava</Link>
-    </aside>
-  );
-}
+// ATS_LABEL_OPTS imported from lib/labels for consistency across ATS components
 
 // ── Candidate avatar initials ─────────────────────────────────
 function CandAvatar({ name, size = 36 }: { name: string; size?: number }) {
@@ -117,6 +89,7 @@ function stageMoveButtons(
 // ── Main component ────────────────────────────────────────────
 export function AtsClient() {
   const { role, userId, email: authEmail, ready } = useAuth();
+  const router = useRouter();
   const [company, setCompany] = useState<Company | null>(null);
   const [apps, setApps] = useState<RichApp[]>([]);
   const [loading, setLoading] = useState(true);
@@ -237,15 +210,15 @@ export function AtsClient() {
   useEffect(() => {
     if (!ready) return;
     if (!userId || role === "guest") {
-      window.location.href = "/login?next=/firma/selekcija";
+      router.replace("/login?next=/firma/selekcija");
       return;
     }
     if (role !== "company" && role !== "admin") {
-      window.location.href = "/profil";
+      router.replace("/profil");
       return;
     }
     load();
-  }, [ready, userId, role, load]);
+  }, [ready, userId, role, load, router]);
 
   // Close panel on outside click (mobile)
   useEffect(() => {
@@ -309,7 +282,7 @@ export function AtsClient() {
   // ── RENDER ────────────────────────────────────────────────────
   return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <DashboardSideNav role="company" email={email} displayName={company?.name} />
       <main className="app-main ats-page">
 
         {/* Header */}
@@ -542,13 +515,13 @@ function CandCard({
       {labelList.length > 0 && (
         <div className="ats-card-labels">
           {labelList.map(({ label }) => {
-            const lo = LABEL_OPTS.find(x => x.key === label);
+            const lo = ATS_LABEL_OPTS.find(x => x.key === label);
             return lo ? (
               <span key={label} className="ats-label-dot" style={{ background: lo.color }} title={lo.label} />
             ) : null;
           })}
           <span className="ats-card-labels-text">
-            {labelList.map(({ label }) => LABEL_OPTS.find(x => x.key === label)?.label).filter(Boolean).join(", ")}
+            {labelList.map(({ label }) => ATS_LABEL_OPTS.find(x => x.key === label)?.label).filter(Boolean).join(", ")}
           </span>
         </div>
       )}

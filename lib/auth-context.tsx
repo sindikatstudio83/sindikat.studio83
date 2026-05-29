@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { normalizeRole } from "@/lib/auth-role";
@@ -10,7 +10,7 @@ type AuthState = {
   role: UserRole;
   userId: string | null;
   email: string | null;
-  /** true only after role is fully resolved (DB confirmed or definitively failed) */
+  /** true only after role is fully resolved from DB (or definitively failed) */
   ready: boolean;
 };
 
@@ -24,31 +24,17 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(initialState);
+  // Use a ref to track mounted state — avoids calling setState after unmount
+  const mountedRef = useRef(true);
 
   useEffect(() => {
+    mountedRef.current = true;
     const supabase = createBrowserSupabase();
-    let mounted = true;
 
-    /**
-     * FIX: Previously, ready:true was set twice — first with metadata role,
-     * then updated with DB role. This caused CompanyClient to redirect to /profil
-     * before the correct "company" role was loaded from the DB.
-     *
-     * New behaviour: ready:true is only set AFTER the DB role check is complete
-     * (or definitively failed). This ensures all guards/redirects fire with the
-     * correct, authoritative role.
-     */
-    async function loadFromSession() {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session?.user) {
-        if (mounted) setState({ role: "guest", userId: null, email: null, ready: true });
-        return;
-      }
-
+    async function resolveRole(session: Session): Promise<AuthState> {
       const user = session.user;
 
-      // Step 1: Try DB role first — this is authoritative
+      // Step 1: Authoritative role comes from DB profiles table
       try {
         const { data, error } = await supabase
           .from("profiles")
@@ -58,67 +44,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (!error && data?.role) {
           const dbRole = normalizeRole(data.role);
-          if (mounted) {
-            setState({
-              role: dbRole !== "guest" ? dbRole : "candidate",
-              userId: user.id,
-              email: user.email || null,
-              ready: true,
-            });
-          }
-          return;
+          return {
+            role: dbRole !== "guest" ? dbRole : "candidate",
+            userId: user.id,
+            email: user.email ?? null,
+            ready: true,
+          };
         }
 
-        // Profile row missing — DB trigger should have created it on signup.
-        // Do NOT auto-assign role here; instead set guest so middleware redirects to login.
-        // The trigger in supabase-auth-complete.sql handles profile creation.
+        // Profile row missing — trigger should have created it.
+        // Best-effort upsert as safe default; admin can correct via admin panel.
         if (!error && !data) {
-          if (mounted) {
-            // Try once to upsert the profile (handles edge case where trigger failed)
-            await supabase.from("profiles").upsert({
-              id: user.id,
-              email: user.email,
-              role: "candidate", // safe default; admin can change via admin panel
-            }, { onConflict: "id" });
-            setState({ role: "candidate", userId: user.id, email: user.email || null, ready: true });
-          }
-          return;
+          await supabase.from("profiles").upsert(
+            { id: user.id, email: user.email, role: "candidate" },
+            { onConflict: "id" }
+          );
+          return { role: "candidate", userId: user.id, email: user.email ?? null, ready: true };
         }
       } catch {
-        // Network or RLS error — fall through to metadata
+        // Network or RLS error — fail closed
       }
 
-      // Step 2: DB query failed (network error, RLS issue, etc.)
-      // Fail-safe: set role to "guest" so middleware denies protected route access.
-      // User will see login page and can retry — better than wrong role access.
-      if (mounted) {
-        setState({ role: "guest", userId: null, email: null, ready: true });
+      // Step 2: DB unavailable — deny access to protected routes
+      return { role: "guest", userId: null, email: null, ready: true };
+    }
+
+    async function loadFromSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        if (mountedRef.current) {
+          setState({ role: "guest", userId: null, email: null, ready: true });
+        }
+        return;
       }
+
+      const resolved = await resolveRole(session);
+      if (mountedRef.current) setState(resolved);
     }
 
     loadFromSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
-      if (event === "SIGNED_OUT" || !session) {
-        if (mounted) setState({ role: "guest", userId: null, email: null, ready: true });
-      } else if (event === "SIGNED_IN") {
-        // Only reload if this is actually a different user session
-        setState(prev => {
-          if (prev.userId !== session.user.id) {
-            // Reset to not-ready while we fetch the new user's role
-            if (mounted) {
-              setState({ role: "guest", userId: null, email: null, ready: false });
-              loadFromSession();
-            }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: string, session: import("@supabase/supabase-js").Session | null) => {
+        if (event === "SIGNED_OUT" || !session) {
+          if (mountedRef.current) {
+            setState({ role: "guest", userId: null, email: null, ready: true });
           }
-          return prev;
-        });
+          return;
+        }
+
+        if (event === "SIGNED_IN") {
+          // FIX: No setState-inside-setState. 
+          // Instead, directly trigger async resolution and set state once with the result.
+          if (mountedRef.current) {
+            // Reset to loading state first (separate synchronous setState call)
+            setState({ role: "guest", userId: null, email: null, ready: false });
+            // Then resolve asynchronously
+            resolveRole(session).then((resolved) => {
+              if (mountedRef.current) setState(resolved);
+            });
+          }
+          return;
+        }
+        // TOKEN_REFRESHED: silently keep current state — no update needed
       }
-      // TOKEN_REFRESHED: silently keep current state
-    });
+    );
 
     return () => {
-      mounted = false;
+      mountedRef.current = false;
       subscription.unsubscribe();
     };
   }, []);

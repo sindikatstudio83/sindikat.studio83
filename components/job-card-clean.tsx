@@ -6,6 +6,8 @@ import type { Job, JobWithPromotion } from "@/types/domain";
 
 type CardJob = Job | JobWithPromotion;
 
+const DESCRIPTION_MAX = 160;
+
 export function JobCardClean({ job }: { job: CardJob }) {
   const co = job.companies;
   const url = jobUrl(job);
@@ -16,6 +18,11 @@ export function JobCardClean({ job }: { job: CardJob }) {
     job.contract_type,
     job.salary_text,
   ].filter(Boolean);
+
+  const desc = job.description ?? "";
+  const descTruncated = desc.length > DESCRIPTION_MAX
+    ? desc.slice(0, DESCRIPTION_MAX) + "…"
+    : desc;
 
   return (
     <article className="job-card job-card-clean">
@@ -37,10 +44,8 @@ export function JobCardClean({ job }: { job: CardJob }) {
         <div className="job-card-clean__meta">
           {meta.map((m, i) => <span key={i}>{m}</span>)}
         </div>
-        {job.description && (
-          <p className="job-desc">
-            {job.description.slice(0, 160)}{job.description.length > 160 ? "" : ""}
-          </p>
+        {descTruncated && (
+          <p className="job-desc">{descTruncated}</p>
         )}
       </div>
 

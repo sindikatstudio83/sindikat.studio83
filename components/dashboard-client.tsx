@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -20,6 +22,7 @@ function homeForRole(role: UserRole) {
 }
 
 export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude<UserRole, "guest">; title: string }) {
+  const router = useRouter();
   const { role, userId, email, ready } = useAuth();
   const [account, setAccount] = useState<AccountState>({ profile: null, applications: [], saved: [] });
   const [loading, setLoading] = useState(true);
@@ -28,11 +31,11 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
     if (!ready) return;
 
     if (role === "guest" || !userId) {
-      window.location.href = "/login?next=/profil";
+      router.replace("/login?next=/profil");
       return;
     }
     if (role !== expectedRole && role !== "admin") {
-      window.location.href = homeForRole(role);
+      router.replace(homeForRole(role));
       return;
     }
 
@@ -79,7 +82,7 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
       setLoading(false);
     }
     load();
-  }, [ready, role, userId, email, expectedRole]);
+  }, [ready, role, userId, email, expectedRole, router]);
 
   if (!ready || loading) {
     return (

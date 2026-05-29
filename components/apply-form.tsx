@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
@@ -12,6 +13,7 @@ const COVER_LETTER_MAX = 1200;
 
 export function ApplyForm({ jobId }: { jobId: number }) {
   const { role, userId, ready } = useAuth();
+  const router = useRouter();
   const [state, setState] = useState<ApplyState>("loading");
   const [message, setMessage] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
@@ -95,7 +97,7 @@ export function ApplyForm({ jobId }: { jobId: number }) {
         candidate_id: userId,
         cover_letter: trimmed,
         cv_path: null,
-        reference_code: `IP-${Date.now()}`
+        reference_code: `IP-${crypto.randomUUID().split("-")[0].toUpperCase()}`
       })
       .select("id")
       .single();
@@ -120,7 +122,6 @@ export function ApplyForm({ jobId }: { jobId: number }) {
     }
 
     setState("done");
-    setTimeout(() => { window.location.href = "/profil/prijave"; }, 1200);
   }
 
   if (!ready || state === "loading") return <p className="notice">Provjeravamo nalog...</p>;
@@ -156,9 +157,15 @@ export function ApplyForm({ jobId }: { jobId: number }) {
   );
 
   if (state === "done") return (
-    <p className="notice success">
-      ✓ Prijava je poslata. Preusmjeravamo te na pregled prijava...
-    </p>
+    <div className="empty">
+      <strong>✓ Prijava je poslata!</strong>
+      <p>Možeš pratiti status u sekciji Moje prijave.</p>
+      <div className="actions">
+        <button className="btn blue sm" onClick={() => router.push("/profil/prijave")}>
+          Moje prijave →
+        </button>
+      </div>
+    </div>
   );
 
   return (

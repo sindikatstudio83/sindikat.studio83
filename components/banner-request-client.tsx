@@ -1,13 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
+import { DashboardSideNav } from "@/components/dashboard-side-nav";
+
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
-import { desktopNavItems } from "@/lib/navigation";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { initials } from "@/lib/format";
 import { placementLabels } from "@/lib/banner-constants";
 import { ImageUpload } from "@/components/image-upload";
 import { supabaseUrl } from "@/lib/supabase/config";
@@ -33,28 +34,10 @@ const emptyForm = {
   note: "",
 };
 
-function SideNav({ email, companyName }: { email: string; companyName?: string | null }) {
-  const pathname = usePathname();
-  const nav = desktopNavItems["company"];
-  const displayName = companyName || email.split("@")[0];
-  return (
-    <aside className="side">
-      <div className="side-head">
-        <div className="side-avatar">{companyName ? companyName.slice(0, 2).toUpperCase() : initials(email.split("@")[0])}</div>
-        <strong>{displayName}</strong>
-        <small>FIRMA · {email}</small>
-      </div>
-      <nav className="side-nav">
-        {nav.map(item => (
-          <Link href={item.href} key={item.href} className={pathname === item.href ? "active" : ""}>{item.label}</Link>
-        ))}
-      </nav>
-      <Link href="/logout" className="side-logout">Odjava</Link>
-    </aside>
-  );
-}
+// SideNav replaced by DashboardSideNav (see components/dashboard-side-nav.tsx)
 
 export function BannerRequestClient() {
+  const router = useRouter();
   const { role, userId, email: authEmail, ready } = useAuth();
   const supabase = createBrowserSupabase();
   const [companyId, setCompanyId] = useState<number | null>(null);
@@ -71,7 +54,7 @@ export function BannerRequestClient() {
   useEffect(() => {
     if (!ready) return;
     if (!userId || (role !== "company" && role !== "admin")) {
-      window.location.href = "/login?next=/firma/baneri";
+      router.replace("/login?next=/firma/baneri");
       return;
     }
     setEmail(authEmail || "");
@@ -127,14 +110,14 @@ export function BannerRequestClient() {
 
   if (loading) return (
     <div className="app-shell">
-      <SideNav email={email} companyName={companyName} />
+      <DashboardSideNav role="company" email={email} displayName={companyName} />
       <main className="app-main"><div className="empty"><strong>Učitavanje...</strong></div></main>
     </div>
   );
 
   return (
     <div className="app-shell">
-      <SideNav email={email} companyName={companyName} />
+      <DashboardSideNav role="company" email={email} displayName={companyName} />
       <main className="app-main">
         <div className="section-head">
           <div>

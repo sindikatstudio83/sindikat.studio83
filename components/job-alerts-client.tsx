@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -8,6 +10,7 @@ import { logError, safeMessage } from "@/lib/errors";
 import type { JobAlert, LookupItem } from "@/types/domain";
 
 export function JobAlertsClient() {
+  const router = useRouter();
   const { userId, role, ready } = useAuth();
   const [alerts, setAlerts] = useState<JobAlert[]>([]);
   const [cities, setCities] = useState<LookupItem[]>([]);
@@ -18,8 +21,8 @@ export function JobAlertsClient() {
 
   useEffect(() => {
     if (!ready) return;
-    if (!userId || role === "guest") { window.location.href = "/login?next=/profil/upozorenja"; return; }
-    if (role !== "candidate" && role !== "admin") { window.location.href = "/profil"; return; }
+    if (!userId || role === "guest") { router.replace("/login?next=/profil/upozorenja"); return; }
+    if (role !== "candidate" && role !== "admin") { router.replace("/profil"); return; }
 
     const supabase = createBrowserSupabase();
     Promise.all([
@@ -33,7 +36,7 @@ export function JobAlertsClient() {
       setCategories((c2.data || []) as LookupItem[]);
       setLoading(false);
     });
-  }, [ready, userId, role]);
+  }, [ready, userId, role, router]);
 
   async function create(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

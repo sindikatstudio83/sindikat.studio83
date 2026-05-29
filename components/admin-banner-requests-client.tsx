@@ -1,14 +1,15 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
+import { DashboardSideNav } from "@/components/dashboard-side-nav";
+
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
 import { supabaseUrl } from "@/lib/supabase/config";
-import { desktopNavItems } from "@/lib/navigation";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { initials } from "@/lib/format";
 import type { BannerRequest, BannerRequestStatus } from "@/types/domain";
 
 type Row = BannerRequest & { companies?: { id: number; name: string } | null };
@@ -22,28 +23,10 @@ const STATUS_LABELS: Record<BannerRequestStatus, { label: string; badge: string 
   expired:  { label: "Istekao",    badge: "badge gray"   },
 };
 
-function SideNav({ email }: { email: string }) {
-  const pathname = usePathname();
-  const nav = desktopNavItems["admin"];
-  const name = email.split("@")[0];
-  return (
-    <aside className="side">
-      <div className="side-head">
-        <div className="side-avatar" style={{ background: "var(--pink)" }}>{initials(name)}</div>
-        <strong>{name}</strong>
-        <small>ADMIN · {email}</small>
-      </div>
-      <nav className="side-nav">
-        {nav.map(item => (
-          <Link href={item.href} key={item.href} className={pathname === item.href ? "active" : ""}>{item.label}</Link>
-        ))}
-      </nav>
-      <Link href="/logout" className="side-logout">Odjava</Link>
-    </aside>
-  );
-}
+// SideNav replaced by DashboardSideNav (see components/dashboard-side-nav.tsx)
 
 export function AdminBannerRequestsClient() {
+  const router = useRouter();
   const { role, ready } = useAuth();
   const supabase = createBrowserSupabase();
   const [rows, setRows] = useState<Row[]>([]);
@@ -57,7 +40,7 @@ export function AdminBannerRequestsClient() {
 
   useEffect(() => {
     if (!ready) return;
-    if (role !== "admin") { window.location.href = "/"; return; }
+    if (role !== "admin") { router.replace("/"); return; }
     load();
   }, [ready, role]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -90,7 +73,7 @@ export function AdminBannerRequestsClient() {
 
   return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <DashboardSideNav role="admin" email={email} />
       <main className="app-main">
         <div className="section-head">
           <div>

@@ -1,12 +1,11 @@
 "use client";
 
+import { DashboardSideNav } from "@/components/dashboard-side-nav";
+
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { logError, safeMessage } from "@/lib/errors";
-import { initials } from "@/lib/format";
-import { desktopNavItems } from "@/lib/navigation";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type Plan = {
@@ -39,28 +38,7 @@ const EMPTY_FORM: PlanForm = {
 };
 
 // ── Side nav (same pattern as AdminClient) ───────────────────────────────────
-function SideNav({ email }: { email: string }) {
-  const pathname = usePathname();
-  const nav = desktopNavItems["admin"];
-  const name = email.split("@")[0];
-  return (
-    <aside className="side">
-      <div className="side-head">
-        <div className="side-avatar" style={{ background: "var(--pink)" }}>{initials(name)}</div>
-        <strong>{name}</strong>
-        <small>ADMIN · {email}</small>
-      </div>
-      <nav className="side-nav">
-        {nav.map(item => (
-          <Link href={item.href} key={item.href} className={pathname === item.href ? "active" : ""}>
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-      <Link href="/logout" className="side-logout">Odjava</Link>
-    </aside>
-  );
-}
+// SideNav replaced by DashboardSideNav (see components/dashboard-side-nav.tsx)
 
 // ── Plan card preview ────────────────────────────────────────────────────────
 function PlanPreviewCard({ form }: { form: PlanForm }) {
@@ -278,7 +256,7 @@ export function AdminPaketiClient() {
 
   return (
     <div className="app-shell">
-      <SideNav email={email} />
+      <DashboardSideNav role="admin" email={email} />
       <main className="app-main">
 
         {/* Header */}

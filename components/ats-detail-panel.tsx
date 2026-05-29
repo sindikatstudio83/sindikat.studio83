@@ -4,17 +4,9 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { logError, safeMessage } from "@/lib/errors";
-import { initials } from "@/lib/format";
-import { stageLabels } from "@/lib/labels";
+import { initials, formatDate } from "@/lib/format";
+import { stageLabels, ATS_LABEL_OPTS } from "@/lib/labels";
 import type { ApplicationComment, ApplicationLabel, ApplicationEvent, JobApplication, CvData } from "@/types/domain";
-
-const LABEL_OPTS = [
-  { key: "top" as const,       label: "Top kandidat",     color: "#22c55e" },
-  { key: "interview" as const, label: "Za intervju",      color: "#f59e0b" },
-  { key: "rejected" as const,  label: "Ne odgovara",      color: "#ef4444" },
-  { key: "followup" as const,  label: "Provjeri kasnije", color: "#a78bfa" },
-  { key: "star" as const,      label: "Zvjezdica",        color: "#3b82f6" },
-];
 
 type ExtProfile = {
   full_name?: string | null;
@@ -107,7 +99,7 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
     setSubmitting(false);
   }
 
-  async function toggleLabel(label: typeof LABEL_OPTS[number]["key"]) {
+  async function toggleLabel(label: typeof ATS_LABEL_OPTS[number]["key"]) {
     const supabase = createBrowserSupabase();
     if (labels.includes(label)) {
       const { error } = await supabase.from("application_labels").delete()
@@ -232,7 +224,7 @@ export function AtsDetailPanel({ application, onClose }: { application: JobAppli
       <div style={{ marginBottom: 14 }}>
         <div className="label">Oznake</div>
         <div className="label-picker">
-          {LABEL_OPTS.map(l => (
+          {ATS_LABEL_OPTS.map(l => (
             <button
               key={l.key}
               type="button"

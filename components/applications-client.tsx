@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -8,6 +10,7 @@ import { stageLabels, stageOrder } from "@/lib/labels";
 import type { JobApplication } from "@/types/domain";
 
 export function ApplicationsClient() {
+  const router = useRouter();
   const { role, userId, ready } = useAuth();
   const [apps, setApps] = useState<JobApplication[]>([]);
   const [filter, setFilter] = useState("all");
@@ -17,12 +20,12 @@ export function ApplicationsClient() {
     if (!ready) return;
 
     if (!userId || role === "guest") {
-      window.location.href = "/login?next=/profil/prijave";
+      router.replace("/login?next=/profil/prijave");
       return;
     }
 
     if (role !== "candidate" && role !== "admin") {
-      window.location.href = "/profil";
+      router.replace("/profil");
       return;
     }
 
@@ -40,7 +43,7 @@ export function ApplicationsClient() {
       setLoading(false);
     }
     load();
-  }, [ready, role, userId]);
+  }, [ready, role, userId, router]);
 
   if (!ready || loading) {
     return <div className="panel loading-panel"><p>Učitavanje prijava...</p></div>;
