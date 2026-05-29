@@ -3,6 +3,15 @@ import { BannerSlot } from "@/components/banner-slot";
 import { EmptyState, SectionHead } from "@/components/ui";
 import { getLookups } from "@/lib/queries/public";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Kategorije poslova",
+  description: "Pregled svih kategorija poslova na imaposla.me.",
+};
+
+
+
 export default async function CategoriesPage() {
   const { categories } = await getLookups();
   return (
