@@ -62,9 +62,24 @@ export async function middleware(request: NextRequest) {
 
   // ── Redirect logged-in users away from login/register ────────────────
   if (isLoggedIn && AUTH_ONLY_PATHS.some(p => pathname === p || pathname.startsWith(p + "/"))) {
-    // We don't know role here without DB — redirect to neutral landing
-    // Client-side AuthContext + RedirectIfAuthed will handle role-specific redirect
-    return NextResponse.redirect(new URL("/", request.url));
+    // Role-aware redirect: query DB role so user lands on their real dashboard,
+    // not a generic homepage. (RedirectIfAuthed can't run — page never renders.)
+    let dest = "/";
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user!.id)
+        .maybeSingle();
+      const role = profile?.role ?? "candidate";
+      dest = role === "company" ? "/firma"
+        : role === "admin" ? "/admin"
+        : "/profil";
+    } catch {
+      // DB unreachable — fall back to homepage (harmless for an authed user)
+      dest = "/";
+    }
+    return NextResponse.redirect(new URL(dest, request.url));
   }
 
   // ── Enforce protected routes ──────────────────────────────────────────
