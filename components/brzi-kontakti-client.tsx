@@ -64,7 +64,7 @@ export function BrziKontaktiClient() {
       <div className="section-head">
         <div>
           <span className="page-label">Brzi poslovi</span>
-          <h1>Moji kontakti</h1>
+          <h1>Upiti za mene</h1>
           <p className="sub">Upiti koje su ti poslali poslodavci i korisnici.</p>
         </div>
       </div>

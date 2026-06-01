@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { safeMessage, logError } from "@/lib/errors";
+import { getStoredIntent, setStoredIntent, clearStoredIntent, setLoginRedirecting } from "@/lib/auth-intent";
 
 export function LoginForm({ nextPath }: { nextPath?: string | null }) {
   const [loading, setLoading] = useState(false);
@@ -34,8 +35,9 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
       return;
     }
 
-    // Postavimo flag ODMAH — sprječava RedirectIfAuthed da pravi race condition redirect
-    try { sessionStorage.setItem("ip_login_redirecting", "1"); } catch { /* ignore */ }
+    // Postavimo flag ODMAH — sprječava RedirectIfAuthed da pravi race condition redirect.
+    // Timestamp (ne trajna "1") da flag ne ostane zaglavljen.
+    setLoginRedirecting();
 
     // UVIJEK provjeravamo DB role — ne oslanjamo se na user_metadata
     // (metadata može biti zastarjela ili ne-postavljena za starije korisnike)
@@ -52,9 +54,12 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
           .eq("id", data.user.id)
           .maybeSingle();
 
+        const intent = getStoredIntent();
         if (prof?.role === "company") dest = "/firma";
         else if (prof?.role === "admin") dest = "/admin";
-        else dest = "/profil"; // candidate ili fallback
+        else if (intent === "worker") dest = "/profil/brzi-profil";
+        else if (intent === "job_seeker") dest = "/profil/biografija";
+        else dest = "/profil"; // candidate bez intent-a ili fallback
       } catch {
         // DB unavailable — fall back to metadata for UX redirect ONLY.
         // NOTE: metadata fallback intentionally EXCLUDES admin.
@@ -64,6 +69,9 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
         // admin intentionally excluded — middleware enforces real DB role check
       }
     }
+
+    // Intent je jednokratni onboarding signal — očisti ga za SVE role poslije upotrebe.
+    clearStoredIntent();
 
     // Jedan, pouzdan redirect — replace() ne dodaje u history
     window.location.replace(dest);
@@ -103,7 +111,7 @@ export function LoginForm({ nextPath }: { nextPath?: string | null }) {
   );
 }
 
-export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "company" }) {
+export function RegisterForm({ selectedRole, intent }: { selectedRole: "candidate" | "company"; intent?: string }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -123,6 +131,11 @@ export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "co
       setLoading(false);
       return;
     }
+
+    // Sačuvaj namjeru PRIJE registracije — koristi se za UX redirect poslije
+    // potvrde e-pošte / prijave. Intent je SAMO UX, ne utiče na sigurnost/role.
+    const effectiveIntent = intent || (selectedRole === "company" ? "employer" : "job_seeker");
+    setStoredIntent(effectiveIntent);
 
     const supabase = createBrowserSupabase();
 
@@ -179,7 +192,13 @@ export function RegisterForm({ selectedRole }: { selectedRole: "candidate" | "co
         />
       </label>
       <button className="btn blue" type="submit" disabled={loading}>
-        {loading ? "Kreiranje..." : selectedRole === "company" ? "Kreiraj nalog firme" : "Kreiraj nalog kandidata"}
+        {loading
+          ? "Kreiranje..."
+          : selectedRole === "company"
+            ? "Kreiraj nalog firme"
+            : intent === "worker"
+              ? "Napravi profil za usluge"
+              : "Kreiraj nalog"}
       </button>
       {message && !success && <p className="notice error" role="alert">{message}</p>}
       <p className="hint">

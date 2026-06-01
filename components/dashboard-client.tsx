@@ -142,6 +142,7 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
 
       {expectedRole === "candidate" && (
         <>
+          <div className="kicker dash-section-label">Tražim posao</div>
           <div className="quick-links">
             <Link className="quick-link" href="/oglasi">
               <strong>Pretraži oglase</strong>
@@ -152,24 +153,32 @@ export function DashboardClient({ expectedRole, title }: { expectedRole: Exclude
               <span>{cvPercent}% popunjeno</span>
             </Link>
             <Link className="quick-link" href="/profil/prijave">
-              <strong>Sve prijave</strong>
+              <strong>Moje prijave</strong>
               <span>{apps.length} prijava</span>
             </Link>
             <Link className="quick-link" href="/profil/sacuvani">
               <strong>Sačuvani oglasi</strong>
               <span>{account.saved.length} {account.saved.length === 1 ? "oglas" : "oglasa"}</span>
             </Link>
-            <Link className="quick-link" href="/profil/brzi-profil">
-              <strong>⚡ Moj brzi profil</strong>
-              <span>Ponudi svoje usluge</span>
-            </Link>
             <Link className="quick-link" href="/profil/interesovanja">
-              <strong>Moja interesovanja</strong>
-              <span>Nedjeljni email sa poslovima</span>
+              <strong>Obavještenja za poslove</strong>
+              <span>Nedjeljni email sa relevantnim poslovima</span>
+            </Link>
+          </div>
+
+          <div className="kicker dash-section-label">Nudim brze usluge</div>
+          <div className="quick-links">
+            <Link className="quick-link" href="/profil/brzi-profil">
+              <strong>⚡ Moja ponuda usluga</strong>
+              <span>Tvoj javni profil koji firme vide</span>
             </Link>
             <Link className="quick-link" href="/profil/brzi-kontakti">
-              <strong>Moji kontakti</strong>
-              <span>Upiti od poslodavaca</span>
+              <strong>Upiti za mene</strong>
+              <span>Poruke od firmi i korisnika</span>
+            </Link>
+            <Link className="quick-link" href="/brzi-poslovi/angazmani">
+              <strong>Brzi angažmani</strong>
+              <span>Kratki poslovi za prijavu</span>
             </Link>
           </div>
 

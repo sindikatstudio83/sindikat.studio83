@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { roleHomes } from "@/lib/labels";
+import { getStoredIntent, clearStoredIntent, isFreshLoginRedirect } from "@/lib/auth-intent";
 
 /**
  * Redirects already-logged-in users away from /login and /registracija.
- * Skips redirect if LoginForm is already handling it (ip_login_redirecting flag).
+ * Skips redirect only if LoginForm is ACTIVELY handling it (fresh timestamp flag).
  */
 export function RedirectIfAuthed() {
   const { role, ready } = useAuth();
@@ -17,13 +18,22 @@ export function RedirectIfAuthed() {
     if (!ready) return;
     if (role === "guest") return;
 
-    try {
-      if (sessionStorage.getItem("ip_login_redirecting") === "1") return;
-    } catch {
-      // sessionStorage unavailable in private mode — continue normally
+    // Preskoči samo ako je login-redirect svjež (<10s). Stari flag se sam briše.
+    if (isFreshLoginRedirect()) return;
+
+    let dest = roleHomes[role as Exclude<typeof role, "guest">];
+
+    // Candidate: ako postoji sačuvana namjera, vodi na odgovarajuću stranicu (samo UX)
+    if (role === "candidate") {
+      const intent = getStoredIntent();
+      if (intent === "worker") dest = "/profil/brzi-profil";
+      else if (intent === "job_seeker") dest = "/profil/biografija";
     }
 
-    router.replace(roleHomes[role as Exclude<typeof role, "guest">]);
+    // Intent je jednokratni signal — očisti ga za SVE role poslije upotrebe.
+    clearStoredIntent();
+
+    router.replace(dest);
   }, [ready, role, router]);
 
   return null;

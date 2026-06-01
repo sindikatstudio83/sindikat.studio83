@@ -84,8 +84,9 @@ export function WorkerContact({ worker }: { worker: PublicWorkerProfile }) {
   if (!userId) {
     return (
       <div className="bp-contact-locked">
-        <p style={{ marginBottom: 12 }}><strong>Kontakt je dostupan prijavljenim korisnicima.</strong></p>
-        <p style={{ marginBottom: 16 }}>Prijavi se ili napravi nalog da kontaktiraš ovog radnika.</p>
+        <p style={{ marginBottom: 8 }}><strong>Prijavi se da pošalješ upit ovom radniku.</strong></p>
+        <p style={{ marginBottom: 6 }}>Radnik će dobiti tvoju poruku i kontakt koji ostaviš.</p>
+        <p style={{ marginBottom: 16, fontSize: 12, color: "var(--muted)" }}>Nalog tražimo da zaštitimo radnike od spama. Besplatno je i traje minut.</p>
         <div className="actions" style={{ justifyContent: "center", gap: 8 }}>
           <Link className="btn blue sm" href={`/login?next=/brzi-poslovi/radnici/${worker.id}`}>Prijava</Link>
           <Link className="btn ghost sm" href="/registracija">Registracija</Link>
@@ -100,7 +101,7 @@ export function WorkerContact({ worker }: { worker: PublicWorkerProfile }) {
       <div className="bp-contact-locked">
         <p><strong>Ovo je tvoj profil.</strong></p>
         <p style={{ marginTop: 6 }}>
-          <Link className="btn ghost sm" href="/profil/brzi-profil">Uredi brzi profil →</Link>
+          <Link className="btn ghost sm" href="/profil/brzi-profil">Uredi moju ponudu usluga →</Link>
         </p>
       </div>
     );
@@ -148,14 +149,14 @@ export function WorkerContact({ worker }: { worker: PublicWorkerProfile }) {
           <input className="field" name="from_name" placeholder="Ime i prezime / firma" maxLength={120} />
         </label>
         <label style={{ display: "block", marginBottom: 8 }}>
-          <span className="label">Kako da te kontaktira</span>
+          <span className="label">Telefon ili email za odgovor</span>
           <input className="field" name="from_contact" placeholder="Telefon ili email" maxLength={120} />
         </label>
         <label style={{ display: "block", marginBottom: 6 }}>
           <span className="label">Poruka *</span>
           <textarea
             className="textarea" name="message" rows={3}
-            placeholder="Opiši posao i kada ti treba radnik..."
+            placeholder="Opiši posao, lokaciju i kada ti treba radnik."
             maxLength={MESSAGE_MAX}
             value={message}
             onChange={(e) => setMessage(e.target.value)}

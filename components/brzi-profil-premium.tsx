@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import { ImageUpload } from "@/components/image-upload";
 import { supabaseUrl } from "@/lib/supabase/config";
@@ -74,13 +75,18 @@ export function BrziProfilPremium({ worker, userId }: { worker: WorkerProfile; u
       <div className="form-card" style={{ marginTop: 16 }}>
         <div className="kicker" style={{ marginBottom: 6 }}>★ Premium profil</div>
         <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 12, lineHeight: 1.6 }}>
-          Premium profil dobija vlastitu stranicu, galeriju radova, oznaku „Premium“, bolju poziciju u listi i bolji SEO.
-          <strong style={{ color: "var(--ink)" }}> Premium aktivira admin nakon uplate.</strong>
+          Premium brzi profil ti daje <strong style={{ color: "var(--ink)" }}>posebnu javnu stranicu</strong> na imaposla.me,
+          galeriju radova i bolju vidljivost u listi.
+          {worker.slug && (
+            <> Javni link: <code style={{ fontSize: 13 }}>/radnici/{worker.slug}</code></>
+          )}
+          <br />
+          <strong style={{ color: "var(--ink)" }}>Premium aktivira admin nakon uplate.</strong>
         </p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button className="btn blue sm" disabled={requesting} onClick={() => requestPremium("7d")}>5€ / 7 dana</button>
-          <button className="btn blue sm" disabled={requesting} onClick={() => requestPremium("30d")}>15€ / mjesec</button>
-          <button className="btn blue sm" disabled={requesting} onClick={() => requestPremium("season")}>30€ / sezona</button>
+          <button className="btn blue sm" disabled={requesting} onClick={() => requestPremium("7d")}>Zatraži — 5€ / 7 dana</button>
+          <button className="btn blue sm" disabled={requesting} onClick={() => requestPremium("30d")}>Zatraži — 15€ / mjesec</button>
+          <button className="btn blue sm" disabled={requesting} onClick={() => requestPremium("season")}>Zatraži — 30€ / sezona</button>
         </div>
         {notice && <p className={`notice ${notice.type}`} style={{ marginTop: 12 }}>{notice.text}</p>}
       </div>
@@ -91,6 +97,14 @@ export function BrziProfilPremium({ worker, userId }: { worker: WorkerProfile; u
   return (
     <div className="form-card" style={{ marginTop: 16 }}>
       <div className="kicker" style={{ marginBottom: 6 }}>★ Galerija radova (Premium)</div>
+      {worker.slug && (
+        <p style={{ fontSize: 13, marginBottom: 10 }}>
+          Tvoja javna stranica:{" "}
+          <Link href={`/radnici/${worker.slug}`} style={{ color: "var(--brand-red)", fontWeight: 700 }}>
+            Pogledaj javnu stranicu →
+          </Link>
+        </p>
+      )}
       <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 12 }}>
         Dodaj do {MAX_IMAGES} slika svojih radova. ({items.length}/{MAX_IMAGES})
       </p>

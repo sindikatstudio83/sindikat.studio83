@@ -111,4 +111,5 @@ const NAV_ICONS: Record<string, string> = {
   kandidati:  "◉",   // Added: missing mapping caused fallback "•" dot
   audit:      "▦",   // Added: missing mapping caused fallback "•" dot
   brzi:       "⚡",   // Brzi poslovi
+  usluge:     "🧰",   // Moja ponuda usluga (radnik)
 };

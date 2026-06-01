@@ -96,11 +96,28 @@ export function CompanyDashboard() {
           </div>
         </div>
 
-        {/* Quick links */}
+        {/* Šta želiš da uradiš? — glavne namjere firme */}
+        <div className="kicker" style={{ marginBottom: 8 }}>Šta želiš da uradiš?</div>
         <div className="grid three" style={{ marginBottom: 16 }}>
-          <Link className="quick-link" href="/firma/novi-oglas"><strong>✏️ Objavi oglas</strong><span>Pošalji na odobrenje</span></Link>
-          <Link className="quick-link" href="/firma/selekcija"><strong>🗂 ATS selekcija</strong><span>{applications.length} prijava</span></Link>
+          <Link className="quick-link" href="/firma/novi-oglas">
+            <strong>Objavi oglas za posao</strong>
+            <span>Za stalne, sezonske ili duže pozicije. Kandidati šalju prijave i pratiš ih kroz selekciju.</span>
+          </Link>
+          <Link className="quick-link" href="/firma/radnici">
+            <strong>⚡ Nađi radnika odmah</strong>
+            <span>Pregledaj dostupne konobare, molere, hostese i druge radnike za kratak angažman.</span>
+          </Link>
+          <Link className="quick-link" href="/firma/brzi-angazman">
+            <strong>⚡ Objavi hitan angažman</strong>
+            <span>Objavi kratak posao i primi prijave kandidata.</span>
+          </Link>
+        </div>
+
+        {/* Pomoćne akcije */}
+        <div className="grid three" style={{ marginBottom: 16 }}>
+          <Link className="quick-link" href="/firma/selekcija"><strong>🗂 Selekcija (ATS)</strong><span>{applications.length} prijava</span></Link>
           <Link className="quick-link" href="/firma/pretplata"><strong>💳 Plan i uplate</strong><span>Upravljaj pretplatom</span></Link>
+          <Link className="quick-link" href="/firma/baneri"><strong>📣 Reklame</strong><span>Promoviši firmu</span></Link>
         </div>
 
         {/* Approval status notice */}

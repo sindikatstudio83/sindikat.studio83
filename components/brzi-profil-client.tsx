@@ -137,7 +137,7 @@ export function BrziProfilClient() {
       <div className="section-head">
         <div>
           <span className="page-label">Brzi poslovi</span>
-          <h1>Moj brzi profil</h1>
+          <h1>Moja ponuda usluga</h1>
           <p className="sub">Kratka ponuda tvojih usluga za brze angažmane.</p>
         </div>
       </div>

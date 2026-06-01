@@ -107,9 +107,14 @@ export function InteresovanjaClient() {
       <div className="section-head">
         <div>
           <span className="page-label">Brzi poslovi</span>
-          <h1>Moja interesovanja</h1>
+          <h1>Obavještenja za poslove</h1>
           <p className="sub">Izaberi šta te zanima — šaljemo ti nedjeljni email sa aktivnim poslovima.</p>
         </div>
+      </div>
+
+      <div className="notice-card" style={{ marginBottom: 16 }}>
+        <strong>Šta je ovo?</strong>
+        <p>Odaberi zanimanja, gradove i tip posla. Jednom nedjeljno šaljemo email sa aktivnim poslovima i brzim angažmanima koji odgovaraju tvom izboru. Bez spama, isključuješ kad hoćeš.</p>
       </div>
 
       <div className="form-card">
