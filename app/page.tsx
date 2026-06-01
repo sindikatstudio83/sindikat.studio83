@@ -43,15 +43,19 @@ export default async function HomePage() {
           dobijaju prijave i vode selekciju na jednom mjestu.
         </p>
 
-        {/* Intent switch */}
-        <div className="home-intent-switch" aria-label="Izaberi šta želiš da uradiš">
-          <Link href="/registracija?role=company" className="home-intent-card home-intent-card--employer">
-            <span>Nudim posao</span>
-            <strong>Objavi oglas i pronađi kandidate</strong>
-          </Link>
+        {/* Intent switch — tri ravnopravne namjere */}
+        <div className="home-intent-switch home-intent-switch--three" aria-label="Izaberi šta želiš da uradiš">
           <Link href="/oglasi" className="home-intent-card home-intent-card--candidate">
             <span>Tražim posao</span>
-            <strong>Pretraži oglase i pošalji prijavu</strong>
+            <strong>Pretraži oglase, napravi biografiju i prati prijave.</strong>
+          </Link>
+          <Link href="/registracija?role=candidate&intent=worker" className="home-intent-card home-intent-card--worker">
+            <span>Nudim brze usluge</span>
+            <strong>Konobar, moler, hostesa, šanker, pomoćni radnik? Napravi profil da te firme mogu kontaktirati.</strong>
+          </Link>
+          <Link href="/registracija?role=company" className="home-intent-card home-intent-card--employer">
+            <span>Zapošljavam</span>
+            <strong>Objavi oglas ili pronađi radnika za kratak angažman.</strong>
           </Link>
         </div>
 
@@ -152,17 +156,23 @@ export default async function HomePage() {
       </section>
 
       {/* ── CTA PATHS ── */}
-      <div className="live-paths">
+      <div className="live-paths live-paths--three">
         <Link className="live-path" href="/oglasi">
-          <span>Kandidat</span>
+          <span>Tražim posao</span>
           <h2>Tražim posao</h2>
           <p>Otvori oglas, pročitaj uslove, dopuni biografiju i pošalji prijavu bez komplikacija.</p>
           <strong>Otvori oglase →</strong>
         </Link>
+        <Link className="live-path" href="/registracija?role=candidate&intent=worker">
+          <span>Brze usluge</span>
+          <h2>Nudim brze usluge</h2>
+          <p>Napravi profil sa svojim uslugama (konobar, moler, hostesa…) da te firme i ljudi kontaktiraju za kratke angažmane.</p>
+          <strong>Napravi profil →</strong>
+        </Link>
         <Link className="live-path" href="/registracija?role=company">
           <span>Firma</span>
-          <h2>Nudim posao</h2>
-          <p>Napravi profil firme, pošalji oglas na pregled i vodi kandidate kroz selekciju.</p>
+          <h2>Zapošljavam</h2>
+          <p>Objavi oglas ili pronađi radnika za kratak angažman i vodi kandidate kroz selekciju.</p>
           <strong>Kreni kao firma →</strong>
         </Link>
       </div>

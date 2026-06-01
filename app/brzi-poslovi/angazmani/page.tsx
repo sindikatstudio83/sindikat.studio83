@@ -37,8 +37,8 @@ export default async function AngazmaniPage({ searchParams }: Props) {
 
       <div className="bp-tabs" role="tablist">
         <Link className="bp-tab" href="/brzi-poslovi" role="tab">Pregled</Link>
-        <Link className="bp-tab" href="/brzi-poslovi/radnici" role="tab">Tražim radnika</Link>
-        <Link className="bp-tab active" href="/brzi-poslovi/angazmani" role="tab" aria-selected="true">Tražim brzi posao</Link>
+        <Link className="bp-tab" href="/brzi-poslovi/radnici" role="tab">Dostupni radnici</Link>
+        <Link className="bp-tab active" href="/brzi-poslovi/angazmani" role="tab" aria-selected="true">Brzi angažmani</Link>
       </div>
 
       <div className="bp-professions" aria-label="Filtriraj po zanimanju">

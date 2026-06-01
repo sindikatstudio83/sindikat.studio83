@@ -18,8 +18,8 @@ export default async function BrziPosloviPage() {
   return (
     <>
       <div className="bp-hero">
-        <h1>Brzi poslovi</h1>
-        <p>Brzi angažmani i dostupni radnici na jednom mjestu — konobari, moleri, hostese, promoteri, dostavljači i sezonski radnici. Pronađi nekoga odmah ili ponudi svoje usluge.</p>
+        <h1>Brzi poslovi i radnici</h1>
+        <p>Pronađi radnika za kratak angažman ili napravi profil da te drugi kontaktiraju — konobari, moleri, hostese, promoteri, dostavljači i sezonski radnici.</p>
       </div>
 
       {/* Tab switch */}
@@ -28,11 +28,17 @@ export default async function BrziPosloviPage() {
           Pregled
         </Link>
         <Link className="bp-tab" href="/brzi-poslovi/radnici" role="tab" aria-selected="false">
-          Tražim radnika
+          Dostupni radnici
         </Link>
         <Link className="bp-tab" href="/brzi-poslovi/angazmani" role="tab" aria-selected="false">
-          Tražim brzi posao
+          Brzi angažmani
         </Link>
+      </div>
+
+      {/* Napravi profil — jasan ulaz za pružaoce usluga */}
+      <div className="bp-make-profile">
+        <span>Nudiš usluge? Napravi svoj profil da te firme kontaktiraju.</span>
+        <Link className="btn blue sm" href="/profil/brzi-profil">Napravi brzi profil →</Link>
       </div>
 
       {/* Profession chips */}

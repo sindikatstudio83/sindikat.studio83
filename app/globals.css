@@ -3513,6 +3513,8 @@ html,body{overflow-x:hidden;max-width:100vw}
 
 /* ── 22. LIVE PATHS — fix mobile ── */
 .live-paths{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.live-paths--three{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:760px){.live-paths--three{grid-template-columns:1fr}}
 @media(max-width:600px){.live-paths{grid-template-columns:1fr;gap:10px}}
 .live-path{
   background:var(--paper);border:1px solid var(--line);border-radius:16px;
@@ -3768,6 +3770,8 @@ html,body{overflow-x:hidden;max-width:100vw}
   display:grid;grid-template-columns:1fr 1fr;gap:10px;
   margin:4px 0;
 }
+.home-intent-switch--three{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:760px){.home-intent-switch--three{grid-template-columns:1fr}}
 @media(max-width:560px){.home-intent-switch{grid-template-columns:1fr}}
 
 .home-intent-card{
@@ -3791,6 +3795,7 @@ html,body{overflow-x:hidden;max-width:100vw}
 }
 .home-intent-card--employer span{color:#ff9999}
 .home-intent-card--candidate span{color:rgba(255,255,255,.6)}
+.home-intent-card--worker span{color:#ffd27a}
 .home-intent-card strong{
   font-size:14px;font-weight:700;color:#fff;line-height:1.35;
 }
@@ -5122,4 +5127,57 @@ img, video, canvas, svg {
 @media(max-width:520px){
   .brand-logo__img{height:30px}
   .brand-logo__text{font-size:18px}
+}
+
+/* ── REGISTRACIJA — izbor namjere ───────────────────────────────────────────── */
+.reg-intent-list{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.reg-intent{
+  display:flex;flex-direction:column;gap:3px;
+  padding:14px 16px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--paper);
+  text-decoration:none;transition:.15s;
+}
+.reg-intent:hover{border-color:color-mix(in srgb,var(--brand-red) 35%,var(--line));transform:translateY(-1px)}
+.reg-intent strong{font-size:15px;font-weight:800;color:var(--ink)}
+.reg-intent span{font-size:13px;color:var(--muted);line-height:1.45}
+.reg-intent--active{
+  border-color:var(--brand-red);
+  background:color-mix(in srgb,var(--brand-red) 6%,var(--paper));
+}
+.reg-intent--active strong{color:var(--brand-red)}
+[data-theme="dark"] .reg-intent{background:var(--paper);border-color:var(--line)}
+[data-theme="dark"] .reg-intent strong{color:var(--ink)}
+
+/* ── DASHBOARD sekcijski naslov ─────────────────────────────────────────────── */
+.dash-section-label{margin:18px 0 8px;font-size:12px;letter-spacing:.06em}
+.dash-section-label:first-of-type{margin-top:0}
+
+/* ── BRZI POSLOVI — "napravi profil" traka ──────────────────────────────────── */
+.bp-make-profile{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+  padding:12px 16px;margin-bottom:16px;
+  background:color-mix(in srgb,var(--blue) 7%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--blue) 20%,var(--line));
+  border-radius:12px;
+}
+.bp-make-profile span{font-size:13px;font-weight:600;color:var(--ink);min-width:0}
+@media(max-width:520px){
+  .bp-make-profile{flex-direction:column;align-items:stretch;text-align:center}
+  .bp-make-profile .btn{justify-content:center}
+}
+
+/* ── GUEST CTA (oglasi lista) ────────────────────────────────────────────────── */
+.guest-cta{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 16px;margin:0 0 14px;
+  background:color-mix(in srgb,var(--green) 7%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--green) 20%,var(--line));
+  border-radius:12px;
+}
+.guest-cta span{font-size:13px;font-weight:600;color:var(--ink);min-width:0}
+.guest-cta__actions{display:flex;gap:8px;flex-shrink:0}
+@media(max-width:520px){
+  .guest-cta{flex-direction:column;align-items:stretch;text-align:center}
+  .guest-cta__actions{justify-content:center}
 }

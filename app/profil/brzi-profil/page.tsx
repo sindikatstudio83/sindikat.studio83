@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BrziProfilClient } from "@/components/brzi-profil-client";
 
 export const metadata: Metadata = {
-  title: "Moj brzi profil",
+  title: "Moja ponuda usluga",
   robots: { index: false, follow: false },
 };
 

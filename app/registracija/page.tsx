@@ -6,43 +6,66 @@ import { PageLabel } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Registracija",
-  description: "Kreiraj nalog na imaposla.me."
+  description: "Kreiraj nalog na imaposla.me — traži posao, nudi brze usluge ili zapošljavaj."
 };
 
-export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
+type Intent = "job_seeker" | "worker" | "employer";
+
+function resolve(searchRole?: string, searchIntent?: string): { role: "candidate" | "company"; intent: Intent } {
+  if (searchIntent === "worker") return { role: "candidate", intent: "worker" };
+  if (searchIntent === "employer" || searchRole === "company") return { role: "company", intent: "employer" };
+  if (searchIntent === "job_seeker") return { role: "candidate", intent: "job_seeker" };
+  if (searchRole === "candidate") return { role: "candidate", intent: "job_seeker" };
+  return { role: "candidate", intent: "job_seeker" };
+}
+
+const COPY: Record<Intent, { lead: string }> = {
+  job_seeker: { lead: "Apliciraš na oglase, praviš biografiju i pratiš svoje prijave." },
+  worker: { lead: "Praviš javni profil sa svojim uslugama (konobar, moler, hostesa…) da te firme i ljudi kontaktiraju za kratke angažmane." },
+  employer: { lead: "Objavljuješ oglase, pregledaš prijave i tražiš radnike za kratke angažmane." },
+};
+
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ role?: string; intent?: string }> }) {
   const params = await searchParams;
-  const role = params.role === "company" ? "company" : "candidate";
+  const { role, intent } = resolve(params.role, params.intent);
+  const copy = COPY[intent];
 
   return (
     <><RedirectIfAuthed /><section className="auth-shell auth-two">
       <div>
         <PageLabel>Registracija</PageLabel>
-        <h1>Napravi nalog.</h1>
-        <p>
-          {role === "company"
-            ? "Objavljuješ oglase, primaš prijave i vodiš selekciju kandidata."
-            : "Tražiš posao, praviš biografiju i šalješ prijave firmama."
-          }
-        </p>
-        <div className="auth-actions">
+        <h1>Šta želiš da radiš?</h1>
+        <p>{copy.lead}</p>
+
+        <div className="reg-intent-list" role="group" aria-label="Izaberi namjeru">
           <Link
-            className={`btn ${role === "candidate" ? "blue" : "ghost"}`}
-            href="/registracija?role=candidate"
+            className={`reg-intent ${intent === "job_seeker" ? "reg-intent--active" : ""}`}
+            href="/registracija?intent=job_seeker"
           >
-            Tražim posao
+            <strong>Tražim posao</strong>
+            <span>Apliciram na oglase, pravim biografiju i pratim prijave.</span>
           </Link>
           <Link
-            className={`btn ${role === "company" ? "blue" : "ghost"}`}
-            href="/registracija?role=company"
+            className={`reg-intent ${intent === "worker" ? "reg-intent--active" : ""}`}
+            href="/registracija?intent=worker"
           >
-            Zapošljavam
+            <strong>Nudim brze usluge</strong>
+            <span>Pravim javni profil da me firme i ljudi kontaktiraju za kratke angažmane.</span>
+          </Link>
+          <Link
+            className={`reg-intent ${intent === "employer" ? "reg-intent--active" : ""}`}
+            href="/registracija?intent=employer"
+          >
+            <strong>Zapošljavam</strong>
+            <span>Objavljujem oglase, pregledam prijave i tražim radnike.</span>
           </Link>
         </div>
+
         <div className="auth-actions">
           <Link className="btn ghost" href="/login">Već imam nalog → Prijava</Link>
         </div>
       </div>
-      <RegisterForm selectedRole={role} />
+      <RegisterForm selectedRole={role} intent={intent} />
     </section></>
   );
 }

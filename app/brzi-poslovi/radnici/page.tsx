@@ -41,8 +41,8 @@ export default async function RadniciPage({ searchParams }: Props) {
 
       <div className="bp-tabs" role="tablist">
         <Link className="bp-tab" href="/brzi-poslovi" role="tab">Pregled</Link>
-        <Link className="bp-tab active" href="/brzi-poslovi/radnici" role="tab" aria-selected="true">Tražim radnika</Link>
-        <Link className="bp-tab" href="/brzi-poslovi/angazmani" role="tab">Tražim brzi posao</Link>
+        <Link className="bp-tab active" href="/brzi-poslovi/radnici" role="tab" aria-selected="true">Dostupni radnici</Link>
+        <Link className="bp-tab" href="/brzi-poslovi/angazmani" role="tab">Brzi angažmani</Link>
       </div>
 
       {/* Profession chips */}

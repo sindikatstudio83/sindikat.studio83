@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Avatar } from "@/components/avatar";
 import { BannerSlot } from "@/components/banner-slot";
+import { GuestJobsCta } from "@/components/guest-jobs-cta";
 import { getLookups, getPublicJobs } from "@/lib/queries/public";
 import { jobUrl, formatDate } from "@/lib/format";
 import type { Job, LookupItem } from "@/types/domain";
@@ -79,6 +80,8 @@ export default async function JobsPage({
       <div className="jl-header">
         <h1 className="jl-title">Oglasi za posao</h1>
       </div>
+
+      <GuestJobsCta />
 
       <BannerSlot placement="jobs_list_top" />
 
