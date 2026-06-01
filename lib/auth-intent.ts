@@ -44,6 +44,15 @@ export function setLoginRedirecting(): void {
   }
 }
 
+/** Obriši login-redirect flag (npr. ako login padne ili poslije odluke o destinaciji). */
+export function clearLoginRedirecting(): void {
+  try {
+    sessionStorage.removeItem(REDIRECT_KEY);
+  } catch {
+    /* ignoriši */
+  }
+}
+
 /**
  * Da li je login-redirect flag svjež (mlađi od 10s)?
  * Ako je star/nevalidan, briše ga i vraća false (ne blokira redirect).
