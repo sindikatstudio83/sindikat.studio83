@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getLookups } from "@/lib/queries/public";
 import { BannerSlot } from "@/components/banner-slot";
 
@@ -16,7 +17,7 @@ export async function Footer() {
       <div className="wrap foot-grid">
         <div>
           <Link className="brand footer-brand" href="/">
-            <span className="mark">ip</span>
+            <Image src="/logo-mark-light.png" alt="" width={30} height={37} className="footer-logo-img" />
             <span>imaposla<span style={{ color: "var(--brand-red)" }}>.me</span></span>
           </Link>
           <p>Platforma za oglase, prijave i jednostavnije zapošljavanje u Crnoj Gori.</p>

@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { roleHomes, roleLabels } from "@/lib/labels";
 import { desktopNavItems } from "@/lib/navigation";
 import { NotificationCenter } from "@/components/notification-center";
+import { Logo } from "@/components/logo";
 
 export function Header() {
   const { role } = useAuth();
@@ -42,9 +43,7 @@ export function Header() {
     <header className="top">
       <div className="top-in">
         <Link className="brand" href="/">
-          {/* ip mark: dark navy square with red dot — brandbook logo */}
-          <span className="mark">ip</span>
-          <span>imaposla<span className="brand-dot">.me</span></span>
+          <Logo size={34} />
         </Link>
 
         <nav className="nav desktop-nav" aria-label="Navigacija">
