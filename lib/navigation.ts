@@ -32,8 +32,8 @@ export const desktopNavItems: Record<UserRole, NavItem[]> = {
     { icon: "oglasi",      label: "Oglasi",           href: "/admin/oglasi" },
     { icon: "firme",       label: "Firme",            href: "/admin/firme" },
     { icon: "brzi",        label: "Brzi profili",     href: "/admin/brzi-profili" },
-    { icon: "brzi",        label: "Brzi angažmani",   href: "/admin/brzi-angazmani" },
-    { icon: "brzi",        label: "Brzi kontakti",    href: "/admin/brzi-kontakti" },
+    { icon: "novi",        label: "Brzi angažmani",   href: "/admin/brzi-angazmani" },
+    { icon: "prijave",     label: "Upiti radnicima",  href: "/admin/brzi-kontakti" },
     { icon: "uplate",      label: "Uplate",           href: "/admin/uplate" }
   ]
 };
@@ -50,8 +50,8 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "oglasi",      label: "Oglasi",    href: "/oglasi" },
     { icon: "brzi",        label: "Brzi",      href: "/brzi-poslovi" },
     { icon: "prijave",     label: "Prijave",   href: "/profil/prijave" },
-    { icon: "profil",      label: "Profil",    href: "/profil" },
-    { icon: "upozorenja",  label: "Alertovi",  href: "/profil/upozorenja" }
+    { icon: "usluge",      label: "Usluge",    href: "/profil/brzi-profil" },
+    { icon: "profil",      label: "Profil",    href: "/profil" }
   ],
   company: [
     { icon: "pregled",     label: "Pregled",   href: "/firma" },
@@ -65,7 +65,7 @@ export const mobileNavItems: Record<UserRole, NavItem[]> = {
     { icon: "home",        label: "Pregled",   href: "/admin" },
     { icon: "oglasi",      label: "Oglasi",    href: "/admin/oglasi" },
     { icon: "brzi",        label: "Profili",   href: "/admin/brzi-profili" },
-    { icon: "brzi",        label: "Angažmani", href: "/admin/brzi-angazmani" },
+    { icon: "novi",        label: "Angažmani", href: "/admin/brzi-angazmani" },
     { icon: "firme",       label: "Firme",     href: "/admin/firme" },
     { icon: "uplate",      label: "Uplate",    href: "/admin/uplate" }
   ]
