@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { JobCard } from "@/components/job-card";
+import { JobCardClean } from "@/components/job-card-clean";
 import { Badge, Button, EmptyState, SectionHead } from "@/components/ui";
 import { BannerSlot } from "@/components/banner-slot";
 import { parseIdFromSlug } from "@/lib/format";
@@ -62,7 +62,7 @@ export default async function CompanyDetailPage({ params }: Props) {
       </div>
       <SectionHead title="Aktivni oglasi" text="Svi javni oglasi ovog poslodavca." />
       <div className="job-list">
-        {companyJobs.map((job) => <JobCard job={job} key={job.id} />)}
+        {companyJobs.map((job) => <JobCardClean job={job} key={job.id} />)}
         {!companyJobs.length ? <EmptyState title="Nema aktivnih oglasa" text="Ova firma trenutno nema javno aktivnih oglasa." /> : null}
       </div>
       <BannerSlot placement="company_pages_bottom" />

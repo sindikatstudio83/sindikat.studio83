@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JobCard } from "@/components/job-card";
+import { JobCardClean } from "@/components/job-card-clean";
 import { BannerSlot } from "@/components/banner-slot";
 import { EmptyState, SectionHead } from "@/components/ui";
 import { getPublicJobsByCategory } from "@/lib/queries/public";
@@ -24,7 +24,7 @@ export default async function CategoryJobsPage({ params }: Props) {
       <BannerSlot placement="category_page_top" />
       <SectionHead label="Kategorija" title={`Poslovi: ${category}`} text="Aktivni oglasi iz izabrane kategorije." />
       <div className="job-list">
-        {jobs.map((job) => <JobCard job={job} key={job.id} />)}
+        {jobs.map((job) => <JobCardClean job={job} key={job.id} />)}
         {!jobs.length ? <EmptyState title="Nema oglasa" text="Za ovu kategoriju trenutno nema aktivnih oglasa." /> : null}
       </div>
     </>

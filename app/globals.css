@@ -357,18 +357,16 @@ h3{font-size:18px;font-weight:700}
   .tower-banner-fixed-right{right:calc(50% - 590px - 10px - 160px)}
 }
 .tower-banner-placeholder{pointer-events:none}
-.job-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:start;transition:.15s;position:relative}
-.job-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,24,42,.08);border-color:color-mix(in srgb,var(--brand-red) 35%,var(--line))}
-[data-theme="dark"] .job-card .job-title{color:var(--ink)}
-[data-theme="dark"] .job-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.3);border-color:var(--blue)}
+/* NOTE: canonical .job-card layout lives further below (single source of truth).
+   Legacy 3-column grid + vertical .job-actions removed — it caused buttons to
+   stack and overlap in "Slični oglasi". Only shared primitives kept here. */
 .job-card.featured{border-color:color-mix(in srgb,var(--brand-red) 18%,var(--line))}
 .featured-badge{position:absolute;top:-9px;left:18px;background:var(--orange);border:1.5px solid var(--ink);border-radius:999px;padding:2px 8px;font-size:10px;font-weight:900;color:#fff}
 .logo{width:56px;height:56px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;font-weight:700;font-family:var(--display);background:var(--soft);flex-shrink:0;font-size:16px;overflow:hidden;color:var(--muted)}
 .job-title{font-family:var(--display);font-size:18px;font-weight:850;letter-spacing:-.03em;margin:4px 0;display:inline-block}
 .job-title:hover{color:var(--blue);text-decoration:underline}
 .job-desc{color:var(--muted);margin:7px 0;line-height:1.6;font-size:13px}
-.job-actions{display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:140px}
-.deadline{font-size:11px;color:var(--muted);font-weight:800;text-align:right}
+.deadline{font-size:11px;color:var(--muted);font-weight:800}
 
 /* ── COMPANY CARDS ── */
 .company-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;gap:13px;align-items:flex-start;transition:.18s}

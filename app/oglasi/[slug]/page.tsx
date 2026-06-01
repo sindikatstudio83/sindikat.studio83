@@ -6,7 +6,7 @@ import { JobViewTracker } from "@/components/job-view-tracker";
 import { BannerSlot } from "@/components/banner-slot";
 import { formatDate, initials, jobUrl, parseIdFromSlug } from "@/lib/format";
 import { getJobById, getPublicJobs } from "@/lib/queries/public";
-import { JobCard } from "@/components/job-card";
+import { JobCardClean } from "@/components/job-card-clean";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -99,7 +99,7 @@ export default async function JobDetailPage({ params }: Props) {
           {similar.length > 0 && (
             <div style={{ marginTop: 32 }}>
               <div className="section-head compact-head"><div><h2 style={{ fontSize: 24 }}>Slični oglasi</h2></div></div>
-              <div className="job-list">{similar.map(j => <JobCard job={j} key={j.id} />)}</div>
+              <div className="job-list">{similar.map(j => <JobCardClean job={j} key={j.id} />)}</div>
             </div>
           )}
         </article>
