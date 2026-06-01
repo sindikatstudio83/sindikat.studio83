@@ -5103,3 +5103,23 @@ img, video, canvas, svg {
   .bp-promo__text strong{font-size:14px}
   .bp-promo__text span{font-size:12px}
 }
+
+/* ── BRAND LOGO (image mark + wordmark) ─────────────────────────────────────── */
+.brand-logo{display:inline-flex;align-items:center;gap:10px}
+.brand-logo__img{display:block;height:34px;width:auto;object-fit:contain}
+/* Show dark-ink mark on light theme, white mark on dark theme */
+.brand-logo__img--dark{display:none}
+[data-theme="dark"] .brand-logo__img--light{display:none}
+[data-theme="dark"] .brand-logo__img--dark{display:block}
+.brand-logo__text{
+  font-weight:800;font-family:var(--display);letter-spacing:-.03em;
+  font-size:20px;white-space:nowrap;color:var(--brand-navy);line-height:1;
+}
+[data-theme="dark"] .brand-logo__text{color:#fff}
+.brand-logo__text .brand-dot{color:var(--brand-red)}
+/* Footer logo: always on dark bg → white mark already, just size it */
+.footer-logo-img{display:block;height:30px;width:auto;object-fit:contain;flex-shrink:0}
+@media(max-width:520px){
+  .brand-logo__img{height:30px}
+  .brand-logo__text{font-size:18px}
+}
